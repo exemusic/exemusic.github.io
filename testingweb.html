@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple PNG Upload</title>
+    <meta charset="UTF-8">
+    <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+</head>
+<body style="font-family: Arial; padding: 30px;">
+
+    <h2>Upload PNG to Back4App</h2>
+
+    <input type="file" id="fileInput" accept="image/png">
+    <br><br>
+    <button onclick="uploadImage()">Upload</button>
+
+    <p id="status"></p>
+    <img id="preview" width="200" style="display:none; margin-top:20px;">
+
+<script>
+    // 🔹 Config Back4App
+    Parse.initialize("UqZ751TeTPxZ1kryoUEy4fclTgKVCMTqTuNf2LUp", "jx3I9ieWtAqJ50sLS9VrzaUwGk31t3vsHkwk7phb");
+    Parse.serverURL = "https://parseapi.back4app.com/";
+
+    async function uploadImage() {
+        const fileInput = document.getElementById("fileInput");
+        const status = document.getElementById("status");
+        const preview = document.getElementById("preview");
+
+        if (!fileInput.files.length) {
+            status.innerText = "Pilih file PNG dulu.";
+            return;
+        }
+
+        const fileData = fileInput.files[0];
+
+        // 🔒 Validasi hanya PNG
+        if (fileData.type !== "image/png") {
+            status.innerText = "Hanya file PNG yang diizinkan!";
+            return;
+        }
+
+        status.innerText = "Uploading...";
+
+        try {
+            const parseFile = new Parse.File(fileData.name, fileData);
+            await parseFile.save();
+
+            const imageUrl = parseFile.url();
+
+            status.innerText = "Upload berhasil!";
+            preview.src = imageUrl;
+            preview.style.display = "block";
+
+            console.log("URL File:", imageUrl);
+
+        } catch (error) {
+            status.innerText = "Upload gagal: " + error.message;
+        }
+    }
+</script>
+
+</body>
+</html>
