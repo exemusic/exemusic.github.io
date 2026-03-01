@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Miracle Community</title>
+<title>Miracle Roleplay — Community Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -273,6 +273,22 @@ tr:hover td{background:rgba(255,255,255,.01)}
 .adm-mob-menu{display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--b3);border-top:none;z-index:300;max-height:60vh;overflow-y:auto;box-shadow:0 10px 35px rgba(0,0,0,.7)}
 .adm-mob-item{display:flex;align-items:center;gap:8px;padding:10px 15px;border-bottom:1px solid var(--b2);cursor:pointer;font-size:12px;color:var(--t2);transition:.1s}
 .adm-mob-item:hover,.adm-mob-item.act{background:var(--bg3);color:#fff}
+
+
+/* GEAR DROPDOWN */
+.gear-wrap{position:relative;display:inline-block}
+.gear-btn{background:rgba(0,0,0,.6);border:1px solid var(--b3);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:.15s;backdrop-filter:blur(4px)}
+.gear-btn:hover{background:rgba(108,99,255,.35);border-color:var(--acc)}
+.gear-drop{display:none;position:absolute;right:0;top:38px;background:var(--bg2);border:1px solid var(--b3);border-radius:var(--r2);min-width:175px;box-shadow:0 12px 40px rgba(0,0,0,.7);z-index:50;overflow:hidden;animation:min .15s ease}
+.gear-drop.open{display:block}
+.gear-item{display:flex;align-items:center;gap:8px;padding:9px 13px;font-size:12px;color:var(--t2);cursor:pointer;transition:background .1s;border-bottom:1px solid var(--b2)}
+.gear-item:last-child{border:none}
+.gear-item:hover{background:var(--bg3);color:#fff}
+.gear-item .gi{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.gear-item.danger{color:var(--red)}
+.gear-item.danger:hover{background:rgba(239,69,101,.08)}
+/* USERNAME MODAL */
+.cd-badge{display:inline-block;font-size:9px;padding:1px 6px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.2);color:var(--gold);border-radius:3px;margin-left:5px}
 @media(max-width:960px){.side-col{display:none}}
 @media(max-width:768px){
   .hbg{display:flex}.tb-nav{display:none}.two-col{padding:9px 0 28px}.ctr{padding:0 11px}
@@ -325,14 +341,38 @@ tr:hover td{background:rgba(255,255,255,.01)}
 
 <div class="modal" id="moBan"><div class="mdl"><div class="mhdr"><div class="mtitle" style="color:var(--red)">⚠ Ban User</div><button class="mcls" onclick="cm('moBan')">✕</button></div><div class="mbody"><p style="font-size:12px;color:var(--t2);margin-bottom:11px" id="banInfo"></p><div class="fg"><label class="fl">Alasan Ban</label><input type="text" class="fi" id="banReason" placeholder="Tulis alasan..."></div></div><div class="mfoot"><button class="btn" onclick="cm('moBan')">Batal</button><button class="btn btn-r" onclick="confirmBan()">Konfirmasi Ban</button></div></div></div>
 <div class="modal" id="moIC"><div class="mdl"><div class="mhdr"><div class="mtitle">Edit IC Name</div><button class="mcls" onclick="cm('moIC')">✕</button></div><div class="mbody"><p style="font-size:12px;color:var(--t2);margin-bottom:11px" id="icInfo"></p><div class="fg"><label class="fl">Nama IC Baru</label><input type="text" class="fi" id="icInput" placeholder="Nama_IC"></div></div><div class="mfoot"><button class="btn" onclick="cm('moIC')">Batal</button><button class="btn btn-p" onclick="confirmIC()">Simpan</button></div></div></div>
+
+<div class="modal" id="moUsername">
+  <div class="mdl">
+    <div class="mhdr"><div class="mtitle">Edit Username</div><button class="mcls" onclick="cm('moUsername')">✕</button></div>
+    <div class="mbody">
+      <div id="unCooldownBox" class="ibox warn" style="display:none"></div>
+      <div class="fg"><label class="fl">Username Baru</label><input type="text" class="fi" id="unInput" placeholder="Username..." maxlength="30"></div>
+      <p style="font-size:10.5px;color:var(--t3);line-height:1.6">Username hanya bisa diubah setiap <strong style="color:var(--gold)">7 hari</strong> sekali.</p>
+    </div>
+    <div class="mfoot"><button class="btn" onclick="cm('moUsername')">Batal</button><button class="btn btn-p" id="saveUnBtn" onclick="confirmUsername()">Simpan</button></div>
+  </div>
+</div>
+
+<div class="modal" id="moSetupUsername">
+  <div class="mdl">
+    <div class="mhdr"><div class="mtitle">Selamat Datang! 👋</div></div>
+    <div class="mbody">
+      <p style="font-size:12.5px;color:var(--t2);margin-bottom:13px;line-height:1.7">Akun kamu berhasil dibuat! Pilih username yang ingin digunakan di Miracle RP.</p>
+      <div class="fg"><label class="fl">Username</label><input type="text" class="fi" id="setupUnInput" placeholder="Username kamu..." maxlength="30" oninput="checkUnAvail(this.value)"></div>
+      <div id="setupUnStatus" style="font-size:10.5px;margin-top:-5px;margin-bottom:9px;height:14px"></div>
+    </div>
+    <div class="mfoot"><button class="btn btn-p" style="width:100%" id="setupUnBtn" onclick="confirmSetupUsername()">Mulai →</button></div>
+  </div>
+</div>
 <div class="modal" id="moBanner">
   <div class="mdl">
     <div class="mhdr"><div class="mtitle">Edit Banner Profil</div><button class="mcls" onclick="cm('moBanner')">✕</button></div>
     <div class="mbody">
       <p style="font-size:12px;color:var(--t2);margin-bottom:13px">Upload foto banner. Rasio ideal 4:1 (contoh: 1200x300px). Max 5MB.</p>
-      <div id="bannerDropZone" onclick="document.getElementById('bannerFileIn').click()" style="border:2px dashed var(--b3);border-radius:var(--r2);padding:22px;text-align:center;cursor:pointer;transition:border-color .13s;margin-bottom:11px" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b3)'">
+      <div id="bannerDropZone" onclick="document.getElementById('bannerFileIn').click()" ondragover="event.preventDefault();this.style.borderColor='var(--acc)'" ondragleave="this.style.borderColor='var(--b3)'" ondrop="event.preventDefault();this.style.borderColor='var(--b3)';if(event.dataTransfer.files[0]){document.getElementById('bannerFileIn').files=event.dataTransfer.files;previewBannerFile(document.getElementById('bannerFileIn'));}" style="border:2px dashed var(--b3);border-radius:var(--r2);padding:22px;text-align:center;cursor:pointer;transition:border-color .13s;margin-bottom:11px" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--b3)'">
         <div style="font-size:24px;margin-bottom:6px">🖼</div>
-        <div style="font-size:12px;color:var(--t2)">Klik untuk pilih foto</div>
+        <div style="font-size:12px;color:var(--t2)">Klik atau drag foto ke sini</div>
         <div style="font-size:10px;color:var(--t3);margin-top:3px">JPG, PNG, WEBP — max 5MB</div>
         <input type="file" id="bannerFileIn" accept="image/*" style="display:none" onchange="previewBannerFile(this)">
       </div>
@@ -348,7 +388,13 @@ tr:hover td{background:rgba(255,255,255,.01)}
     </div>
   </div>
 </div>
-<div class="modal" id="moImg"><div class="mdl" style="background:transparent;border:none;max-width:90vw;width:auto;position:relative"><button onclick="cm('moImg')" style="position:absolute;top:-28px;right:0;background:none;border:none;color:#fff;font-size:21px;cursor:pointer">✕</button><img id="moImgSrc" style="max-width:100%;max-height:84vh;border-radius:var(--r)" src=""></div></div>
+<div class="modal" id="moImg" onclick="if(event.target===this)cm('moImg')">
+  <div class="mdl" style="background:transparent;border:none;max-width:92vw;width:auto;position:relative">
+    <button onclick="cm('moImg')" style="position:absolute;top:-36px;right:0;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;backdrop-filter:blur(4px)" title="Tutup">✕</button>
+    <img id="moImgSrc" style="max-width:100%;max-height:85vh;border-radius:var(--r);display:block;box-shadow:0 20px 60px rgba(0,0,0,.8)" src="">
+    <div style="text-align:center;margin-top:9px;font-size:10px;color:rgba(255,255,255,.3)">Klik di luar gambar untuk menutup</div>
+  </div>
+</div>
 
 <!-- MOBILE NAV -->
 <div class="mob-ov" id="mobOv" onclick="closeMob()"></div>
@@ -615,11 +661,9 @@ tr:hover td{background:rgba(255,255,255,.01)}
     <div class="tabs">
       <button class="tbn act" onclick="stab(this,'lb-posts');loadLB('posts')">📰 Posts</button>
       <button class="tbn" onclick="stab(this,'lb-pts');loadLB('pts')">⭐ Points</button>
-      <button class="tbn" onclick="stab(this,'lb-wl');loadLB('wl')">✅ WL Terbaru</button>
     </div>
     <div class="tpanel act" id="lb-posts"><div class="card" id="lbPostsEl"><div style="padding:22px;text-align:center;color:var(--t3)">Memuat...</div></div></div>
     <div class="tpanel" id="lb-pts"><div class="card" id="lbPtsEl"><div style="padding:22px;text-align:center;color:var(--t3)">Memuat...</div></div></div>
-    <div class="tpanel" id="lb-wl"><div class="card" id="lbWLEl"><div style="padding:22px;text-align:center;color:var(--t3)">Memuat...</div></div></div>
   </div></div></div>
 </div>
 
@@ -683,13 +727,15 @@ tr:hover td{background:rgba(255,255,255,.01)}
 <div class="page" id="page-profile">
   <div class="ctr" style="padding-top:13px;padding-bottom:38px;max-width:800px">
     <div class="card" style="margin-bottom:9px;overflow:visible">
-      <div class="prof-banner" id="profBanner">
+      <div class="prof-banner" id="profBanner" style="cursor:pointer" onclick="if(document.getElementById('gearDrop').classList.contains('open'))document.getElementById('gearDrop').classList.remove('open')">
         <img id="profBannerImg" src="" style="display:none" class="prof-banner-img">
         <div class="prof-banner-ov"></div>
-        <button id="editBannerBtn" onclick="om('moBanner')" style="position:absolute;top:7px;right:7px;background:rgba(0,0,0,.55);border:1px solid var(--b3);color:var(--t2);padding:3px 8px;font-size:10px;border-radius:var(--r);cursor:pointer;display:none;z-index:2">✏ Banner</button>
       </div>
       <div class="prof-head">
-        <div class="prof-ava" id="profAva"></div>
+        <div style="position:relative;flex-shrink:0;cursor:pointer" id="profAvaWrap" title="Klik untuk ganti foto profil">
+          <div class="prof-ava" id="profAva"></div>
+          <div id="profAvaOverlay" style="display:none;position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.55);align-items:center;justify-content:center;font-size:18px;pointer-events:none">📷</div>
+        </div>
         <div style="flex:1;padding-bottom:3px">
           <div class="prof-name" id="profName">—</div>
           <span id="profRole" style="font-size:10px;color:var(--t3)">Member</span>
@@ -699,8 +745,17 @@ tr:hover td{background:rgba(255,255,255,.01)}
             <div class="prof-stat"><span class="sv" id="profJoined">—</span><span class="sl">Bergabung</span></div>
           </div>
         </div>
-        <div style="margin-left:auto;align-self:flex-start;margin-top:40px">
-          <button class="btn btn-r btn-sm" id="profLogout" onclick="logoutUser()" style="display:none">Logout</button>
+        <div style="margin-left:auto;align-self:flex-start;margin-top:38px;display:flex;gap:6px;align-items:center">
+          <div class="gear-wrap" id="gearWrap" style="display:none">
+            <button class="gear-btn" id="gearBtn" onclick="toggleGear(event)" title="Pengaturan profil">⚙</button>
+            <div class="gear-drop" id="gearDrop">
+              <div class="gear-item" onclick="triggerPhotoUpload();closeGear()"><span class="gi">📷</span>Edit Foto Profil</div>
+              <div class="gear-item" onclick="om('moBanner');closeGear()"><span class="gi">🖼</span>Edit Banner</div>
+              <div class="gear-item" onclick="openUsernameModal();closeGear()"><span class="gi">✏️</span>Edit Username <span class="cd-badge" id="unCdBadge">7 hari</span></div>
+              <div class="gear-item danger" onclick="logoutUser();closeGear()"><span class="gi">🚪</span>Logout</div>
+            </div>
+          </div>
+          <input type="file" id="photoFileInGear" accept="image/*" style="display:none" onchange="previewPhotoFile(this,'gear')">
         </div>
       </div>
     </div>
@@ -712,10 +767,11 @@ tr:hover td{background:rgba(255,255,255,.01)}
     <div class="tpanel act" id="p-about">
       <div class="card card-p">
         <div class="drow"><div class="dk">Username</div><div class="dv" id="profUN">—</div></div>
-        <div class="drow"><div class="dk">Email</div><div class="dv" id="profEmail">—</div></div>
+        <div class="drow"><div class="dk">Email</div><div class="dv" id="profEmail" style="font-size:11.5px;color:var(--t3)">—</div></div>
         <div class="drow"><div class="dk">Status WL</div><div class="dv" id="profWL">—</div></div>
         <div class="drow"><div class="dk">IC Name</div><div class="dv" id="profIC">—</div></div>
-        <div class="drow" style="margin:0"><div class="dk">URL Profil</div><div class="dv" id="profURL" style="font-size:11px;color:var(--t3)">—</div></div>
+        <div class="drow"><div class="dk">Bergabung</div><div class="dv" id="profJoinedDetail">—</div></div>
+        <div class="drow" style="margin:0"><div class="dk">Aktivitas Terakhir</div><div class="dv" id="profLastAct" style="font-size:11.5px;color:var(--t3)">—</div></div>
       </div>
     </div>
     <div class="tpanel" id="p-posts"><div class="card" id="myPostList"></div></div>
@@ -1028,7 +1084,9 @@ firebase.auth().onAuthStateChanged(function(u){
   if(u){
     DB.ref('users/'+u.uid).get().then(function(snap){
       if(!snap.exists()){
-        return DB.ref('users/'+u.uid).set({uid:u.uid,email:u.email,username:u.displayName||u.email.split('@')[0],photoURL:u.photoURL||'',role:'user',status:'active',wlStatus:'none',icName:'',postCount:0,points:0,bannerUrl:'',createdAt:Date.now()}).then(function(){
+        // New user - create with temp username, show setup modal
+        var tempUN = u.displayName||u.email.split('@')[0];
+        return DB.ref('users/'+u.uid).set({uid:u.uid,email:u.email,username:tempUN,photoURL:u.photoURL||'',role:'user',status:'active',wlStatus:'none',icName:'',postCount:0,points:0,bannerUrl:'',needsUsernameSetup:true,createdAt:Date.now(),lastActive:Date.now()}).then(function(){
           return DB.ref('users/'+u.uid).get();
         });
       }
@@ -1039,7 +1097,17 @@ firebase.auth().onAuthStateChanged(function(u){
       return DB.ref('admin_perms/'+u.uid).get();
     }).then(function(ps){
       if(ps&&ps.exists()){var pd=ps.val();if(pd.role)UP.role=pd.role;if(pd.perms)UP.perms=pd.perms;}
+      // update lastActive
+      if(UP)DB.ref('users/'+u.uid+'/lastActive').set(Date.now());
       renderAuth();hideLoader();
+      // Show username setup for new users
+      if(UP&&UP.needsUsernameSetup){
+        setTimeout(function(){
+          document.getElementById('setupUnInput').value='';
+          document.getElementById('setupUnStatus').textContent='';
+          om('moSetupUsername');
+        },600);
+      }
     }).catch(function(e){if(e!=='banned'){renderAuth();hideLoader();}});
   } else {
     renderAuth();hideLoader();
@@ -1135,7 +1203,13 @@ function renderPost(key,p){
   var imgH=p.imageUrl?'<img class="post-img" src="'+esc(p.imageUrl)+'" onclick="viewImg(this.src)" alt="foto">':'';
   return '<div class="post-card" id="pc-'+key+'"><div class="post-hdr"><div class="post-ava">'+av+'</div><div style="flex:1"><div style="font-size:12.5px;font-weight:600;color:#fff">'+esc(p.author||'?')+' <span class="'+rc(p.role)+'" style="font-size:9px;padding:1px 5px;background:rgba(255,255,255,.04);border-radius:3px">'+esc(RLBL[p.role||'user']||'Member')+'</span></div><div style="font-size:10px;color:var(--t3)">'+ago(p.ts)+'</div></div>'+(canDel?'<button class="btn btn-r btn-xs" onclick="delPost(\''+key+'\')" style="margin-left:auto">Hapus</button>':'')+'</div>'+(p.content?'<div class="post-body">'+esc(p.content)+'</div>':'')+imgH+'<div class="post-acts"><button class="rbtn'+(liked?' liked':'')+'" id="like-'+key+'" onclick="toggleLike(\''+key+'\',this)">&#10084; '+likes+'</button><button class="rbtn" onclick="toggleCmt(\''+key+'\')">&#128172; Komentar</button></div><div class="cmt-box" id="cmt-'+key+'" style="display:none"><div id="cmtList-'+key+'" style="margin-bottom:7px"></div>'+(CU?'<div style="display:flex;gap:6px;align-items:center"><div class="cmt-av">'+ini(UP&&UP.username||'?')+'</div><input class="cmt-inp" placeholder="Komentar..." onkeydown="if(event.key===\'Enter\')addCmt(\''+key+'\',this)"></div>':'<div style="font-size:11px;color:var(--t3)">Login untuk komentar.</div>')+'</div></div>';
 }
-function viewImg(url){document.getElementById('moImgSrc').src=url;om('moImg');}
+function viewImg(url){
+  document.getElementById('moImgSrc').src=url;
+  om('moImg');
+  // Close on overlay click
+  var mo=document.getElementById('moImg');
+  mo.onclick=function(e){if(e.target===mo)cm('moImg');};
+}
 function handleImg(input){
   var file=input.files[0];if(!file)return;
   if(file.size>4*1024*1024){toast('Foto max 4MB!','e');input.value='';return;}
@@ -1331,15 +1405,6 @@ function loadLB(type){
         return'<div class="lb-row"><div class="lb-rank'+(i<3?' r'+(i+1):'')+'">'+( i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1)+'</div><div class="lb-av">'+av+'</div><div class="lb-info"><div class="lb-name">'+esc(u.username||'?')+'</div><div class="lb-sub">'+esc(RLBL[u.role||'user']||'Member')+'</div></div><div class="lb-val lb-pts">'+(u.points||0)+' pts</div></div>';
       }).join('');
     });
-  } else if(type==='wl'){
-    DB.ref('registrations').orderByChild('status').equalTo('accepted').limitToLast(10).get().then(function(snap){
-      var el=document.getElementById('lbWLEl');if(!el)return;
-      if(!snap.exists()){el.innerHTML='<div style="padding:22px;text-align:center;color:var(--t3)">Belum ada data.</div>';return;}
-      var list=Object.values(snap.val()).sort(function(a,b){return(b.submittedAt||0)-(a.submittedAt||0);});
-      el.innerHTML=list.slice(0,10).map(function(r,i){
-        return'<div class="lb-row"><div class="lb-rank">'+(i+1)+'</div><div class="lb-info"><div class="lb-name">'+esc(r.username||'?')+'</div><div class="lb-sub">IC: '+esc(r.name||'—')+' • '+fmtD(r.submittedAt)+'</div></div><span class="bdg b-accepted">DITERIMA</span></div>';
-      }).join('');
-    });
   }
 }
 
@@ -1384,27 +1449,86 @@ function submitReport(){
 }
 
 // ============ PROFILE ============
+function maskEmail(email) {
+  if(!email || !email.includes('@')) return email;
+  var parts = email.split('@');
+  var local = parts[0];
+  if(local.length <= 3) return local[0] + '***@' + parts[1];
+  var visible_start = local.slice(0,2);
+  var visible_end = local.slice(-2);
+  var stars = '*'.repeat(Math.max(3, local.length - 4));
+  return visible_start + stars + visible_end + '@' + parts[1];
+}
+
 function initProfile(){
   if(!CU){om('moLogin');return;}
   DB.ref('users/'+CU.uid).get().then(function(snap){
     UP=snap.val();if(!UP)return;
+    // Update lastActive
+    DB.ref('users/'+CU.uid+'/lastActive').set(Date.now());
+    
     st('profName',UP.username||'—');
     st('profUN',UP.username||'—');
-    st('profEmail',CU.email||'—');
+    st('profEmail', maskEmail(CU.email||''));
     st('profWL',UP.wlStatus||'none');
     st('profIC',UP.icName||'—');
     st('profPosts',UP.postCount||0);
     st('profPoints',UP.points||0);
     st('profJoined',fmtD(UP.createdAt));
-    st('profURL','Miracle RP Profile/'+CU.uid);
-    var profEl=document.getElementById('profRole');if(profEl)profEl.className=rc(UP.role);profEl.textContent=RLBL[UP.role||'user']||'Member';
+    var jd = document.getElementById('profJoinedDetail');
+    if(jd) jd.textContent = fmtD(UP.createdAt);
+    var la = document.getElementById('profLastAct');
+    if(la) la.textContent = UP.lastActive ? fmtDT(UP.lastActive) + ' (' + ago(UP.lastActive) + ')' : '—';
+    
+    var profEl=document.getElementById('profRole');
+    if(profEl){profEl.className=rc(UP.role);profEl.textContent=RLBL[UP.role||'user']||'Member';}
     var ava=document.getElementById('profAva');
     if(ava)ava.innerHTML=UP.photoURL?'<img src="'+esc(UP.photoURL)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">':'<span>'+ini(UP.username)+'</span>';
-    if(UP.bannerUrl){var bi=document.getElementById('profBannerImg');if(bi){bi.src=UP.bannerUrl;bi.style.display='';}}
-    show('profLogout');show('editBannerBtn');sv('setUN',UP.username||'');
-    // populate settings avatar preview
+    
+    // Banner
+    var bi=document.getElementById('profBannerImg');
+    if(bi){if(UP.bannerUrl){bi.src=UP.bannerUrl;bi.style.display='';}else bi.style.display='none';}
+    
+    // Gear & controls
+    show('gearWrap');
+    // Avatar hover overlay
+    var avaWrap = document.getElementById('profAvaWrap');
+    var avaOv = document.getElementById('profAvaOverlay');
+    if(avaWrap && avaOv){
+      avaWrap.onmouseenter = function(){avaOv.style.display='flex';};
+      avaWrap.onmouseleave = function(){avaOv.style.display='none';};
+      avaWrap.onclick = function(){triggerPhotoUpload();};
+    }
+    // Banner hover to indicate clickable for edit via gear
+    var bannerEl = document.getElementById('profBanner');
+    if(bannerEl){
+      bannerEl.title = 'Klik gear ⚙ untuk edit banner';
+    }
+    sv('setUN',UP.username||'');
+    
+    // Settings photo preview
     var sp = document.getElementById('setAvaPreview');
     if(sp) sp.innerHTML = UP.photoURL ? '<img src="'+esc(UP.photoURL)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">' : '<span style="font-size:20px;font-weight:700">'+ini(UP.username)+'</span>';
+    
+    // Username CD badge
+    var cdBadge = document.getElementById('unCdBadge');
+    if(cdBadge && UP.lastUsernameChange){
+      var cd = 7*24*3600000 - (Date.now() - UP.lastUsernameChange);
+      if(cd > 0){
+        var days = Math.ceil(cd/86400000);
+        cdBadge.textContent = days+'h lagi';
+        cdBadge.style.background = 'rgba(239,69,101,.1)';
+        cdBadge.style.color = 'var(--red)';
+      } else {
+        cdBadge.textContent = 'Tersedia';
+        cdBadge.style.background = 'rgba(6,214,160,.08)';
+        cdBadge.style.color = 'var(--grn)';
+      }
+    } else if(cdBadge){
+      cdBadge.textContent = 'Tersedia';
+      cdBadge.style.background = 'rgba(6,214,160,.08)';
+      cdBadge.style.color = 'var(--grn)';
+    }
   });
 }
 function loadMyPosts(){
@@ -1419,8 +1543,15 @@ function loadMyPosts(){
 }
 function saveProfile(){
   if(!CU)return;
-  var un=gv('setUN').trim();if(!un){toast('Username tidak boleh kosong!','e');return;}
-  DB.ref('users/'+CU.uid+'/username').set(un).then(function(){UP.username=un;toast('Profil disimpan!','s');renderAuth();st('profName',un);st('profUN',un);}).catch(function(e){toast('Gagal: '+e.message,'e');});
+  var un=gv('setUN').trim();if(!un||un.length<3){toast('Username min. 3 karakter!','e');return;}
+  var cd7=7*24*3600000;
+  if(UP.lastUsernameChange&&(Date.now()-UP.lastUsernameChange)<cd7){
+    toast('Username masih cooldown 7 hari!','e');return;
+  }
+  DB.ref('users/'+CU.uid).update({username:un,lastUsernameChange:Date.now()}).then(function(){
+    UP.username=un;UP.lastUsernameChange=Date.now();
+    toast('Profil disimpan!','s');renderAuth();st('profName',un);st('profUN',un);
+  }).catch(function(e){toast('Gagal: '+e.message,'e');});
 }
 // ============ IMAGE UPLOAD (ImgBB) ============
 var IMGBB_KEY = '17f2d9f0be09f2eb84119ec6be65e88a';
@@ -1492,44 +1623,144 @@ function saveBanner() {
 }
 
 // --- FOTO PROFIL ---
-function previewPhotoFile(input) {
+function triggerPhotoUpload(){
+  // Use gear input or settings input
+  var inp = document.getElementById('photoFileInGear') || document.getElementById('photoFileIn');
+  if(inp) inp.click();
+}
+function previewPhotoFile(input, source) {
   var file = input.files[0]; if(!file) return;
-  if(file.size > 3*1024*1024){toast('Foto max 3MB!','e');return;}
+  if(file.size > 3*1024*1024){toast('Foto max 3MB!','e');input.value='';return;}
   var r = new FileReader();
   r.onload = function(e) {
     pendingPhotoB64 = e.target.result;
-    var prev = document.getElementById('setAvaPreview');
-    if(prev) prev.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    // Update all avatar previews immediately
+    var ava = document.getElementById('profAva');
+    if(ava) ava.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+    var sp = document.getElementById('setAvaPreview');
+    if(sp) sp.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
     document.getElementById('savePhotoBtn').style.display = '';
+    // Auto-upload immediately when triggered from gear
+    if(source==='gear') savePhoto(true);
   };
   r.readAsDataURL(file);
 }
-function savePhoto() {
+function savePhoto(autoSave) {
   if(!CU || !pendingPhotoB64) return;
   var btn = document.getElementById('savePhotoBtn');
   var st2 = document.getElementById('photoUploadStatus');
-  btn.disabled = true; btn.textContent = 'Mengupload...';
-  st2.style.display = ''; st2.className = 'ibox info'; st2.textContent = 'Mengupload foto ke server...';
+  if(btn){btn.disabled = true; btn.textContent = 'Mengupload...';}
+  if(st2){st2.style.display = ''; st2.className = 'ibox info'; st2.textContent = 'Mengupload foto ke server...';}
+  if(autoSave) toast('Mengupload foto profil...','i');
   uploadToImgBB(pendingPhotoB64, function(err, url) {
-    btn.textContent = 'Simpan Foto Profil'; btn.disabled = false;
+    if(btn){btn.textContent = 'Simpan Foto Profil'; btn.disabled = false;}
     if(err) {
-      st2.className = 'ibox err';
-      st2.textContent = 'Upload gagal: ' + err + '. Coba lagi atau periksa API key ImgBB.';
+      if(st2){st2.className = 'ibox err'; st2.textContent = 'Upload gagal: ' + err;}
+      toast('Upload gagal: '+err,'e');
       return;
     }
     DB.ref('users/'+CU.uid+'/photoURL').set(url).then(function(){
-      UP.photoURL = url; st2.style.display = 'none';
-      // Update avatar di profil
+      UP.photoURL = url;
+      if(st2) st2.style.display = 'none';
       var ava = document.getElementById('profAva');
       if(ava) ava.innerHTML = '<img src="'+url+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
-      // Update composer avatar
+      var sp = document.getElementById('setAvaPreview');
+      if(sp) sp.innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
       var ca = document.getElementById('compAva');
       if(ca) ca.innerHTML = '<img src="'+url+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
       renderAuth();
-      toast('Foto profil berhasil disimpan!','s');
+      toast('Foto profil disimpan!','s');
       pendingPhotoB64 = null;
+      document.getElementById('savePhotoBtn').style.display = 'none';
     }).catch(function(e){toast('Gagal simpan: '+e.message,'e');});
   });
+}
+
+// ============ GEAR + USERNAME MODAL ============
+function toggleGear(e){
+  e.stopPropagation();
+  var d = document.getElementById('gearDrop');
+  d.classList.toggle('open');
+}
+function closeGear(){
+  var d = document.getElementById('gearDrop');
+  if(d) d.classList.remove('open');
+}
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('gearWrap');
+  if(wrap && !wrap.contains(e.target)) closeGear();
+});
+
+function openUsernameModal(){
+  if(!CU||!UP) return;
+  var cd7 = 7*24*3600000;
+  var last = UP.lastUsernameChange||0;
+  var cdLeft = cd7 - (Date.now() - last);
+  var box = document.getElementById('unCooldownBox');
+  var btn = document.getElementById('saveUnBtn');
+  var inp = document.getElementById('unInput');
+  inp.value = UP.username||'';
+  if(cdLeft > 0){
+    var days = Math.ceil(cdLeft/86400000);
+    var hrs = Math.ceil(cdLeft/3600000);
+    box.style.display = '';
+    box.textContent = '⏳ Kamu baru mengubah username. Bisa diubah lagi dalam ' + (days > 1 ? days + ' hari' : hrs + ' jam') + '.';
+    btn.disabled = true;
+  } else {
+    box.style.display = 'none';
+    btn.disabled = false;
+  }
+  om('moUsername');
+}
+function confirmUsername(){
+  if(!CU||!UP) return;
+  var un = document.getElementById('unInput').value.trim();
+  if(!un || un.length < 3){toast('Username min. 3 karakter!','e');return;}
+  if(un === UP.username){cm('moUsername');return;}
+  var cd7 = 7*24*3600000;
+  if(UP.lastUsernameChange && (Date.now()-UP.lastUsernameChange) < cd7){toast('Masih dalam cooldown 7 hari!','e');return;}
+  DB.ref('users/'+CU.uid).update({username:un, lastUsernameChange:Date.now()}).then(function(){
+    UP.username = un; UP.lastUsernameChange = Date.now();
+    cm('moUsername');
+    toast('Username diubah jadi: '+un,'s');
+    st('profName', un); st('profUN', un);
+    renderAuth();
+    initProfile();
+  }).catch(function(e){toast('Gagal: '+e.message,'e');});
+}
+
+var unCheckTimer = null;
+function checkUnAvail(val){
+  var el = document.getElementById('setupUnStatus');
+  if(!val || val.length < 3){el.textContent='';el.style.color='';return;}
+  clearTimeout(unCheckTimer);
+  el.textContent = 'Mengecek...'; el.style.color = 'var(--t3)';
+  unCheckTimer = setTimeout(function(){
+    DB.ref('users').orderByChild('username').equalTo(val).get().then(function(snap){
+      if(snap.exists()){
+        el.textContent = '✗ Username sudah dipakai';
+        el.style.color = 'var(--red)';
+        document.getElementById('setupUnBtn').disabled = true;
+      } else {
+        el.textContent = '✓ Username tersedia';
+        el.style.color = 'var(--grn)';
+        document.getElementById('setupUnBtn').disabled = false;
+      }
+    });
+  }, 500);
+}
+function confirmSetupUsername(){
+  var un = document.getElementById('setupUnInput').value.trim();
+  if(!un||un.length<3){toast('Username min. 3 karakter!','e');return;}
+  var btn = document.getElementById('setupUnBtn');
+  btn.disabled = true; btn.textContent = 'Menyimpan...';
+  DB.ref('users/'+CU.uid).update({username:un, needsUsernameSetup:false, lastUsernameChange:Date.now()}).then(function(){
+    UP.username = un; UP.needsUsernameSetup = false;
+    cm('moSetupUsername');
+    toast('Selamat datang, '+un+'! 🎉','s');
+    renderAuth();
+    btn.disabled = false; btn.textContent = 'Mulai →';
+  }).catch(function(e){toast('Gagal: '+e.message,'e');btn.disabled=false;btn.textContent='Mulai →';});
 }
 
 // ============ LOGS ============
@@ -1987,4 +2218,3 @@ setTimeout(function(){document.getElementById('loader').classList.add('out');}, 
 </script>
 </body>
 </html>
-
