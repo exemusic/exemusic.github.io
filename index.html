@@ -584,16 +584,17 @@ tr:hover td{background:rgba(255,255,255,.01)}
             <div id="wlP1">
               <div style="font-size:12.5px;font-weight:700;color:#fff;margin-bottom:13px">Data Diri</div>
               <div id="wlReqInfo" class="ibox info" style="display:none"></div>
-              <div class="fg"><label class="fl">Nama IC (Format: Nama_Belakang)</label><input type="text" class="fi" id="wlIC" placeholder="John_Doe"></div>
-              <div class="fg"><label class="fl">Nama Lengkap OOC</label><input type="text" class="fi" id="wlFN" placeholder="Nama lengkap kamu"></div>
+              <div class="fg"><label class="fl">Nama IC Format: (Nama_Kamu)</label><input type="text" class="fi" id="wlIC" placeholder="John_Doe"></div>
+              <div class="fg"><label class="fl">Nama OOC (Optional)</label><input type="text" class="fi" id="wlFN" placeholder="Nama lengkap kamu"></div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
-                <div class="fg"><label class="fl">Umur</label><input type="number" class="fi" id="wlAge" placeholder="17" min="10" max="80"></div>
-                <div class="fg"><label class="fl">No. WhatsApp</label><input type="text" class="fi" id="wlWA" placeholder="08xxx"></div>
+                <div class="fg"><label class="fl">Umur OOC (Optional)</label><input type="number" class="fi" id="wlAge" placeholder="17" min="10" max="80"></div>
+                <div class="fg"><label class="fl">No. WhatsApp</label><input type="text" class="fi" id="wlWA" placeholder="628xxx"></div>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
-                <div class="fg"><label class="fl">Pengalaman SA:MP</label><select class="fi" id="wlExp"><option value="">Pilih...</option><option value="veteran">Veteran (3+ tahun)</option><option value="menengah">Menengah (1-3 tahun)</option><option value="pemula">Pemula</option></select></div>
-                <div class="fg"><label class="fl">Fraksi Diminati</label><input type="text" class="fi" id="wlFaction" placeholder="Civilian, LSPD, dll"></div>
+                <div class="fg"><label class="fl">Pengalaman Bermain</label><select class="fi" id="wlExp"><option value="">Pilih...</option><option value="pemula">Pemula</option><option value="menengah">Menengah 1-3 Tahun</option><option value="veteran">Veteran 3+ Tahun</option></select></div>
+                <div class="fg"><label class="fl">Fraksi Diminati (Optional)</label><input type="text" class="fi" id="wlFaction" placeholder="Civilian, LSPD, dll"></div>
               </div>
+              <div class="fg"><label class="fl">Invite By (Optional)</label><input type="text" class="fi" id="wlInvite" placeholder="Nama yang undang (jika ada)"></div>
               <button class="btn btn-p" onclick="wlNext(1)">Lanjut →</button>
             </div>
             <div id="wlP2" style="display:none">
@@ -1421,16 +1422,47 @@ function wlNext(p){
     if(!ic||!fn||!age||!wa||!exp){toast('Isi semua field!','e');return;}
     if(!CU){om('moLogin');return;}
     wlData={name:ic,fullName:fn,age:parseInt(age),wa:wa,exp:exp,faction:gv('wlFaction').trim()};
+    
+    // Check if beginner - skip quest
+    if(exp.toLowerCase().includes('pemula')||exp.toLowerCase().includes('newbie')||exp.toLowerCase().includes('new')||exp.toLowerCase().includes('belum pernah')){
+      // Beginner: skip quest questions
+      wlData.isBeginner = true;
+      hide('wlP1');
+      show('wlP3');
+      setWlStep(3);
+      document.getElementById('wlPreview').innerHTML='<b>IC:</b> '+esc(wlData.name)+'<br><b>OOC:</b> '+esc(wlData.fullName)+'<br><b>Umur:</b> '+wlData.age+'<br><b>WA:</b> '+esc(wlData.wa)+'<br><b>Exp:</b> '+esc(wlData.exp)+' <span class="bdg b-warn">(Pemula - Quest Skip)</span><br><b>Fraksi:</b> '+esc(wlData.faction||'—');
+      return;
+    }
+    
+    // Veteran: must answer quest
     hide('wlP1');show('wlP2');setWlStep(2);
   } else if(p===2){
     var q1=gv('wlQ1').trim(),q2=gv('wlQ2').trim(),q3=gv('wlQ3').trim(),rs=gv('wlReason').trim();
     if(!q1||!q2||!q3||!rs){toast('Jawab semua pertanyaan!','e');return;}
     Object.assign(wlData,{q1:q1,q2:q2,q3:q3,reason:rs});
     hide('wlP2');show('wlP3');setWlStep(3);
-    document.getElementById('wlPreview').innerHTML='<b>IC:</b> '+esc(wlData.name)+'<br><b>OOC:</b> '+esc(wlData.fullName)+'<br><b>Umur:</b> '+wlData.age+'<br><b>WA:</b> '+esc(wlData.wa)+'<br><b>Exp:</b> '+esc(wlData.exp)+'<br><b>Fraksi:</b> '+esc(wlData.faction||'—');
+    var expBadge = wlData.isBeginner ? ' <span class="bdg b-warn">(Pemula - Quest Skip)</span>' : '';
+    document.getElementById('wlPreview').innerHTML='<b>IC:</b> '+esc(wlData.name)+'<br><b>OOC:</b> '+esc(wlData.fullName)+'<br><b>Umur:</b> '+wlData.age+'<br><b>WA:</b> '+esc(wlData.wa)+'<br><b>Exp:</b> '+esc(wlData.exp)+expBadge+'<br><b>Fraksi:</b> '+esc(wlData.faction||'—');
   }
 }
-function wlBack(p){if(p===2){hide('wlP2');show('wlP1');setWlStep(1);}else if(p===3){hide('wlP3');show('wlP2');setWlStep(2);}}
+function wlBack(p){
+  if(p===2){
+    // Check if coming from beginner path (skip quest)
+    if(wlData.isBeginner){
+      hide('wlP3');show('wlP1');setWlStep(1);
+    } else {
+      hide('wlP2');show('wlP1');setWlStep(1);
+    }
+  } else if(p===3){
+    hide('wlP3');
+    // Go back to quest page if veteran, or to form if beginner
+    if(wlData.isBeginner){
+      show('wlP1');setWlStep(1);
+    } else {
+      show('wlP2');setWlStep(2);
+    }
+  }
+}
 function setWlStep(n){for(var i=1;i<=4;i++){var s=document.getElementById('wlS'+i);if(!s)continue;s.className='wl-step'+(i<n?' done':i===n?' act':'');}}
 function wlSubmit(){
   if(!CU)return;
