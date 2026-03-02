@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Miracle Roleplay — Community Portal</title>
+<title>Miracle Community</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1285,6 +1285,14 @@ function openDirectWA(){
     toast('WhatsApp belum diatur','e');
   }
 }
+function chatWA(msg){
+  if(CFG.waNumber){
+    var message = msg || 'Hallo, saya ingin bertanya... ';
+    window.open('https://wa.me/'+CFG.waNumber+'?text='+encodeURIComponent(message),'_blank');
+  } else {
+    toast('WhatsApp belum diatur','e');
+  }
+}
 function openWA(phone, message){
   var msg = message || 'Hallo, saya ingin bertanya...';
   window.open('wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank');
@@ -1439,8 +1447,8 @@ function wlNext(p){
     if(!CU){om('moLogin');return;}
     wlData={name:ic,fullName:fn,age:parseInt(age),wa:wa,exp:exp,faction:gv('wlFaction').trim()};
     
-    // Check if beginner - skip quest
-    if(exp.toLowerCase().includes('pemula')||exp.toLowerCase().includes('newbie')||exp.toLowerCase().includes('new')||exp.toLowerCase().includes('belum pernah')){
+    // Check if beginner - skip quest (only skip for "pemula")
+    if(exp === 'pemula'){
       // Beginner: skip quest questions
       wlData.isBeginner = true;
       hide('wlP1');
@@ -1450,7 +1458,7 @@ function wlNext(p){
       return;
     }
     
-    // Veteran: must answer quest
+    // Veteran/Menengah: must answer quest
     hide('wlP1');show('wlP2');setWlStep(2);
   } else if(p===2){
     var q1=gv('wlQ1').trim(),q2=gv('wlQ2').trim(),q3=gv('wlQ3').trim(),rs=gv('wlReason').trim();
@@ -2343,6 +2351,14 @@ function reviewWL(key,status){
     toast('WL '+status+'!','s');cm('moWL');loadAdmWL();loadAdmDashboard();
   });
 }
+function deleteWL(key){
+  if(!hasPerm('handle_wl')){toast('Tidak ada izin.','e');return;}
+  if(!confirm('Yakin hapus WL ini? Data akan dihapus permanen.'))return;
+  DB.ref('registrations/'+key).remove().then(function(){
+    addLog('WL_DELETE',UP.username+' hapus WL: '+key);
+    toast('WL dihapus!','s');cm('moWL');loadAdmWL();
+  });
+}
 
 // Admin CS
 function loadAdmCS(){
@@ -2372,6 +2388,14 @@ function reviewCS(key,status){
     addLog('CS_REVIEW',UP.username+' '+status+' CS: '+key);toast('CS '+status+'!','s');cm('moCS');loadAdmCS();
   });
 }
+function deleteCS(key){
+  if(!hasPerm('handle_cs')){toast('Tidak ada izin.','e');return;}
+  if(!confirm('Yakin hapus CS ini? Data akan dihapus permanen.'))return;
+  DB.ref('cs_requests/'+key).remove().then(function(){
+    addLog('CS_DELETE',UP.username+' hapus CS: '+key);
+    toast('CS dihapus!','s');cm('moCS');loadAdmCS();
+  });
+}
 
 // Admin Import
 function loadAdmImport(){
@@ -2397,6 +2421,14 @@ function reviewImp(key,status){
   var note=document.getElementById('impNote')?gv('impNote'):'';
   DB.ref('import_requests/'+key).update({status:status,adminNote:note,reviewedBy:UP.username,reviewedAt:Date.now()}).then(function(){
     addLog('IMPORT',UP.username+' '+status+' import: '+key);toast('Import '+status+'!','s');cm('moImport');loadAdmImport();
+  });
+}
+function deleteImp(key){
+  if(!hasPerm('handle_import')){toast('Tidak ada izin.','e');return;}
+  if(!confirm('Yakin hapus Import ini? Data akan dihapus permanen.'))return;
+  DB.ref('import_requests/'+key).remove().then(function(){
+    addLog('IMPORT_DELETE',UP.username+' hapus import: '+key);
+    toast('Import dihapus!','s');cm('moImport');loadAdmImport();
   });
 }
 
@@ -2607,6 +2639,13 @@ function processTicket(ticketId, status){
     });
   }).catch(function(e){
     toast('Gagal: ' + e, 'e');
+  });
+}
+function deleteTicket(ticketId){
+  if(!confirm('Yakin hapus ticket ini? Data akan dihapus permanen.'))return;
+  DB.ref('tickets/'+ticketId).remove().then(function(){
+    addLog('TICKET_DELETE',UP.username+' hapus ticket: '+ticketId);
+    toast('Ticket dihapus!','s');cm('moTicketDetail');loadAdmTickets();
   });
 }
 
