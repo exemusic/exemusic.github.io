@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ExeMusic YT Audio</title>
+<title>ExeMusic YT Player</title>
 
 <style>
+
 body{
 background:#0f0f0f;
 font-family:Arial;
@@ -20,7 +20,7 @@ margin:0;
 .box{
 background:#1c1c1c;
 padding:30px;
-border-radius:14px;
+border-radius:15px;
 width:420px;
 text-align:center;
 }
@@ -30,7 +30,7 @@ width:100%;
 padding:12px;
 border:none;
 border-radius:8px;
-background:#2a2a2a;
+background:#2b2b2b;
 color:white;
 margin-bottom:10px;
 }
@@ -42,7 +42,6 @@ border:none;
 border-radius:8px;
 background:#ff0033;
 color:white;
-font-weight:bold;
 cursor:pointer;
 }
 
@@ -50,6 +49,7 @@ audio{
 margin-top:20px;
 width:100%;
 }
+
 </style>
 </head>
 
@@ -57,11 +57,11 @@ width:100%;
 
 <div class="box">
 
-<h2>ExeMusic YT Audio</h2>
+<h2>ExeMusic YouTube Audio</h2>
 
-<input id="url" placeholder="Paste YouTube Link">
+<input id="yt" placeholder="Paste YouTube Link">
 
-<button onclick="play()">Play</button>
+<button onclick="playAudio()">Play</button>
 
 <audio id="player" controls></audio>
 
@@ -70,14 +70,17 @@ width:100%;
 <script>
 
 function getID(url){
+
 let regExp = /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&#]+)/;
 let match = url.match(regExp);
+
 return match ? match[1] : null;
+
 }
 
-async function play(){
+async function playAudio(){
 
-let url = document.getElementById("url").value
+let url = document.getElementById("yt").value
 let id = getID(url)
 
 if(!id){
@@ -85,7 +88,7 @@ alert("Link tidak valid")
 return
 }
 
-let api = "https://piped.video/api/v1/streams/" + id
+let api = "https://pipedapi.kavin.rocks/streams/" + id
 
 let res = await fetch(api)
 let data = await res.json()
@@ -93,6 +96,7 @@ let data = await res.json()
 let audio = data.audioStreams[0].url
 
 let player = document.getElementById("player")
+
 player.src = audio
 player.play()
 
