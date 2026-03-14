@@ -3,240 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Supabase Media Gallery</title>
-
+<title>Supabase Media Gallery with Email Verification</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial, sans-serif;
-}
-
-body{
-background:#0f172a;
-color:white;
-min-height:100vh;
-padding:30px;
-}
-
-h1{
-text-align:center;
-margin-bottom:20px;
-}
-
-.upload-box{
-border:2px dashed #3b82f6;
-padding:30px;
-text-align:center;
-border-radius:12px;
-margin-bottom:30px;
-background:#1e293b;
-}
-
-.upload-box input{
-margin-top:10px;
-}
-
-button{
-background:#3b82f6;
-border:none;
-padding:10px 16px;
-border-radius:8px;
-color:white;
-cursor:pointer;
-margin:5px;
-}
-
-button:hover{
-background:#2563eb;
-}
-
-.gallery{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-gap:20px;
-}
-
-.card{
-background:#1e293b;
-border-radius:12px;
-padding:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.4);
-transition:0.2s;
-}
-
-.card:hover{
-transform:scale(1.03);
-}
-
-.card img{
-width:100%;
-height:150px;
-object-fit:cover;
-border-radius:8px;
-}
-
-.card audio{
-width:100%;
-margin-top:5px;
-}
-
-.filename{
-font-size:14px;
-margin-top:5px;
-word-break:break-all;
-}
-
-.actions{
-margin-top:8px;
-display:flex;
-justify-content:space-between;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#0f172a;color:white;min-height:100vh;padding:20px;}
+h1{text-align:center;margin-bottom:20px;}
+.container{max-width:900px;margin:auto;}
+.card{background:#1e293b;border-radius:12px;padding:10px;box-shadow:0 0 10px rgba(0,0,0,0.4);transition:.2s;margin-bottom:15px;}
+.card:hover{transform:scale(1.03);}
+.card img{width:100%;height:150px;object-fit:cover;border-radius:8px;}
+.card audio{width:100%;margin-top:5px;}
+.filename{font-size:14px;margin-top:5px;word-break:break-all;}
+.actions{margin-top:8px;display:flex;justify-content:space-between;}
+button{background:#3b82f6;border:none;padding:8px 14px;border-radius:8px;color:white;cursor:pointer;margin:3px;}
+button:hover{background:#2563eb;}
+input, .email-check{padding:8px;border-radius:8px;border:none;margin:5px 0;width:100%;}
+.upload-box, .auth-box{border:2px dashed #3b82f6;padding:20px;border-radius:12px;margin-bottom:20px;background:#1e293b;}
+#gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
+.message{margin:5px 0;color:#facc15;font-weight:bold;}
 </style>
 </head>
-
 <body>
-
+<div class="container">
 <h1>📁 Supabase Media Gallery</h1>
 
-<div class="upload-box">
+<div class="auth-box" id="authBox">
+<h3>Login / Register</h3>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+<button onclick="register()">Register</button>
+<button onclick="login()">Login</button>
+<div id="verifyMessage" class="message"></div>
+<button onclick="resendVerification()" id="resendBtn" style="display:none;">Kirim Ulang Verifikasi</button>
+<button onclick="logout()" id="logoutBtn" style="display:none;">Logout</button>
+</div>
+
+<div class="upload-box" id="uploadBox" style="display:none;">
 <h3>Upload File</h3>
-<input type="file" id="fileInput">
-<br>
+<input type="file" id="fileInput"><br>
 <button onclick="uploadFile()">Upload</button>
 </div>
 
-<div class="gallery" id="gallery"></div>
+<div id="gallery"></div>
+</div>
 
 <script>
+const SUPABASE_URL = "https://hikzgjseckxanetyxqkc.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_lRARo_osK1IOcIDegeW-jA_9k39aCto";
+const BUCKET_NAME = "music";
 
-const supabase = window.supabase.createClient(
-"https://hikzgjseckxanetyxqkc.supabase.co",
-"sb_publishable_lRARo_osK1IOcIDegeW-jA_9k39aCto"
-)
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const bucket = "music"
+async function register(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if(error){alert(error.message);return;}
+  document.getElementById("verifyMessage").innerText = "Cek email untuk verifikasi!";
+  document.getElementById("resendBtn").style.display = "inline-block";
+}
+
+async function resendVerification(){
+  const email = document.getElementById("email").value;
+  const { data, error } = await supabase.auth.api.sendVerificationEmail(email);
+  if(error){alert(error.message);return;}
+  alert("Link verifikasi sudah dikirim ulang!");
+}
+
+async function login(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if(error){alert(error.message);return;}
+  checkVerified();
+}
+
+async function checkVerified(){
+  const { data: { user } } = await supabase.auth.getUser();
+  if(!user) return;
+  if(!user.email_confirmed_at){
+    document.getElementById("verifyMessage").innerText = "Email belum diverifikasi!";
+    document.getElementById("resendBtn").style.display = "inline-block";
+    document.getElementById("uploadBox").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "inline-block";
+  } else {
+    document.getElementById("verifyMessage").innerText = "";
+    document.getElementById("uploadBox").style.display = "block";
+    document.getElementById("authBox").style.display = "none";
+    loadFiles();
+  }
+}
+
+async function logout(){
+  await supabase.auth.signOut();
+  document.getElementById("authBox").style.display = "block";
+  document.getElementById("uploadBox").style.display = "none";
+  document.getElementById("logoutBtn").style.display = "none";
+  document.getElementById("verifyMessage").innerText = "";
+}
 
 async function uploadFile(){
-
-const file = document.getElementById("fileInput").files[0]
-
-if(!file){
-alert("Pilih file dulu")
-return
-}
-
-const fileName = Date.now() + "_" + file.name
-
-const { error } = await supabase.storage
-.from(bucket)
-.upload(fileName,file)
-
-if(error){
-alert("Upload gagal")
-console.log(error)
-return
-}
-
-loadFiles()
+  const { data: { user } } = await supabase.auth.getUser();
+  if(!user.email_confirmed_at){alert("Verifikasi email dulu!"); return;}
+  const file = document.getElementById("fileInput").files[0];
+  if(!file){alert("Pilih file dulu"); return;}
+  const fileName = Date.now() + "_" + file.name;
+  const { error } = await supabase.storage.from(BUCKET_NAME).upload(fileName, file);
+  if(error){alert("Upload gagal"); console.log(error); return;}
+  loadFiles();
 }
 
 async function loadFiles(){
-
-const gallery = document.getElementById("gallery")
-gallery.innerHTML="Loading..."
-
-const { data, error } = await supabase
-.storage
-.from(bucket)
-.list("",{limit:100})
-
-if(error){
-gallery.innerHTML="Error load files"
-return
-}
-
-gallery.innerHTML=""
-
-for(const file of data){
-
-const { data:urlData } = supabase
-.storage
-.from(bucket)
-.getPublicUrl(file.name)
-
-const url = urlData.publicUrl
-
-let preview=""
-
-if(file.name.match(/\.(jpg|png|jpeg|webp|gif)$/i)){
-preview = `<img src="${url}">`
-}
-else if(file.name.match(/\.(mp3|wav|ogg)$/i)){
-preview = `<audio controls src="${url}"></audio>`
-}
-else{
-preview = `<img src="https://cdn-icons-png.flaticon.com/512/716/716784.png">`
-}
-
-const card = document.createElement("div")
-card.className="card"
-
-card.innerHTML=`
-
-${preview}
-
-<div class="filename">${file.name}</div>
-
-<div class="actions">
-<button onclick="downloadFile('${file.name}')">Download</button>
-<button onclick="deleteFile('${file.name}')">Delete</button>
-</div>
-
-`
-
-gallery.appendChild(card)
-
-}
-
+  const { data, error } = await supabase.storage.from(BUCKET_NAME).list("", { limit:100 });
+  const gallery = document.getElementById("gallery");
+  if(error){gallery.innerHTML="Error load files"; return;}
+  gallery.innerHTML="";
+  for(const file of data){
+    const { data:urlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(file.name);
+    const url = urlData.publicUrl;
+    let preview="";
+    if(file.name.match(/\.(jpg|png|jpeg|webp|gif)$/i)){
+      preview = `<img src="${url}">`;
+    } else if(file.name.match(/\.(mp3|wav|ogg)$/i)){
+      preview = `<audio controls src="${url}"></audio>`;
+    } else {
+      preview = `<img src="https://cdn-icons-png.flaticon.com/512/716/716784.png">`;
+    }
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      ${preview}
+      <div class="filename">${file.name}</div>
+      <div class="actions">
+        <button onclick="downloadFile('${file.name}')">Download</button>
+        <button onclick="deleteFile('${file.name}')">Delete</button>
+      </div>
+    `;
+    gallery.appendChild(card);
+  }
 }
 
 async function downloadFile(name){
-
-const { data } = supabase
-.storage
-.from(bucket)
-.getPublicUrl(name)
-
-window.open(data.publicUrl,"_blank")
-
+  const { data } = supabase.storage.from(BUCKET_NAME).getPublicUrl(name);
+  window.open(data.publicUrl, "_blank");
 }
 
 async function deleteFile(name){
-
-if(!confirm("Hapus file ini?")) return
-
-const { error } = await supabase
-.storage
-.from(bucket)
-.remove([name])
-
-if(error){
-alert("Delete gagal")
-return
+  if(!confirm("Hapus file ini?")) return;
+  const { error } = await supabase.storage.from(BUCKET_NAME).remove([name]);
+  if(error){alert("Delete gagal"); return;}
+  loadFiles();
 }
 
-loadFiles()
+// Cek session otomatis
+supabase.auth.onAuthStateChange((event, session) => {
+  checkVerified();
+});
 
-}
-
-loadFiles()
-
+checkVerified();
 </script>
-
 </body>
 </html>
