@@ -1,277 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>a</title>
+<title>Internet Speed Test</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:system-ui,-apple-system,Segoe UI,Roboto;
-}
-
 body{
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#020617;
-color:white;
-overflow:hidden;
+  background:#0b0f1a;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+  padding-top:100px;
 }
-
-/* particle background */
-
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:0;
-}
-
-/* container */
-
-.container{
-text-align:center;
-z-index:2;
-animation:fadeIn 2s ease;
-}
-
-/* logo animation */
-
-.logo{
-font-size:60px;
-font-weight:800;
-letter-spacing:3px;
-
-background:linear-gradient(90deg,#22c1ff,#6f8cff,#22c1ff);
-background-size:200%;
-
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-
-animation:
-gradientMove 6s linear infinite,
-pulse 3s ease-in-out infinite;
-}
-
-@keyframes gradientMove{
-to{background-position:200%}
-}
-
-@keyframes pulse{
-0%,100%{filter:drop-shadow(0 0 5px #3b82f6)}
-50%{filter:drop-shadow(0 0 25px #3b82f6)}
-}
-
-.version{
-opacity:.6;
-margin-top:5px;
-}
-
-/* equalizer */
-
-.equalizer{
-display:flex;
-justify-content:center;
-gap:7px;
-margin-top:30px;
-}
-
-.bar{
-width:6px;
-height:25px;
-background:#3b82f6;
-border-radius:4px;
-animation:beat 1s infinite ease-in-out;
-}
-
-.bar:nth-child(2){animation-delay:.15s}
-.bar:nth-child(3){animation-delay:.3s}
-.bar:nth-child(4){animation-delay:.45s}
-.bar:nth-child(5){animation-delay:.6s}
-
-@keyframes beat{
-0%,100%{height:20px}
-50%{height:50px}
-}
-
-/* wait text */
-
-.wait{
-margin-top:25px;
-font-size:15px;
-opacity:.8;
-}
-
-/* button */
 
 button{
-margin-top:28px;
-padding:14px 40px;
-
-font-size:16px;
-
-border:none;
-border-radius:12px;
-
-background:#1e293b;
-color:#aaa;
-
-cursor:not-allowed;
-transition:.3s;
+  padding:15px 40px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#00f5ff;
+  cursor:pointer;
 }
 
-button.active{
-background:linear-gradient(90deg,#3b82f6,#22c1ff);
-color:white;
-cursor:pointer;
-transform:scale(1.05);
-box-shadow:0 0 20px rgba(59,130,246,.7);
+.result{
+  font-size:30px;
+  margin-top:30px;
 }
-
-button.active:hover{
-transform:scale(1.1);
-}
-
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1}
-}
-
-/* responsive */
-
-@media(max-width:600px){
-
-.logo{
-font-size:38px;
-}
-
-}
-
 </style>
 </head>
 
 <body>
 
-<canvas id="bg"></canvas>
+<h1>Speed Test</h1>
 
-<div class="container">
+<button onclick="testSpeed()">Start Test</button>
 
-<div class="logo">MiraAudio</div>
-<div class="version">Welcome • v1.0</div>
-
-<div class="equalizer">
-<div class="bar"></div>
-<div class="bar"></div>
-<div class="bar"></div>
-<div class="bar"></div>
-<div class="bar"></div>
-</div>
-
-<div class="wait">
-Please wait <span id="count">5</span> seconds
-</div>
-
-<button id="continueBtn" disabled>Continue</button>
-
-</div>
-
-<audio id="welcomeAudio">
-<source src="https://audio.jukehost.co.uk/22z0kp56nmEaZgdWYOvvmbBy0NJjMGBd.mp3">
-</audio>
+<div class="result" id="ping">Ping: -</div>
+<div class="result" id="download">Download: -</div>
+<div class="result" id="upload">Upload: -</div>
 
 <script>
+async function testSpeed(){
 
-/* particle background */
+document.getElementById("ping").innerHTML="Ping: testing...";
+document.getElementById("download").innerHTML="Download: testing...";
+document.getElementById("upload").innerHTML="Upload: testing...";
 
-const canvas=document.getElementById("bg");
-const ctx=canvas.getContext("2d");
+// ping test
+let start=performance.now();
+await fetch("https://librespeed.org/backend/empty.php");
+let ping=Math.round(performance.now()-start);
 
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+document.getElementById("ping").innerHTML="Ping: "+ping+" ms";
 
-let particles=[];
+// download test
+let t1=performance.now();
+let r=await fetch("https://librespeed.org/backend/garbage.php?r="+Math.random());
+let b=await r.blob();
+let t2=performance.now();
 
-for(let i=0;i<80;i++){
+let speed=(b.size*8)/((t2-t1)/1000)/1000000;
 
-particles.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:Math.random()*2+1,
-vx:(Math.random()-0.5)*0.5,
-vy:(Math.random()-0.5)*0.5
+document.getElementById("download").innerHTML="Download: "+speed.toFixed(2)+" Mbps";
+
+// upload test
+let data=new Blob([new Uint8Array(5*1024*1024)]);
+
+let t3=performance.now();
+await fetch("https://librespeed.org/backend/empty.php",{
+method:"POST",
+body:data
 });
+let t4=performance.now();
+
+let up=(data.size*8)/((t4-t3)/1000)/1000000;
+
+document.getElementById("upload").innerHTML="Upload: "+up.toFixed(2)+" Mbps";
 
 }
-
-function animate(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-particles.forEach(p=>{
-
-p.x+=p.vx;
-p.y+=p.vy;
-
-if(p.x<0||p.x>canvas.width)p.vx*=-1;
-if(p.y<0||p.y>canvas.height)p.vy*=-1;
-
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-ctx.fillStyle="rgba(59,130,246,.7)";
-ctx.fill();
-
-});
-
-requestAnimationFrame(animate);
-
-}
-
-animate();
-
-/* audio */
-
-const audio=document.getElementById("welcomeAudio");
-audio.volume=0.15;
-
-document.addEventListener("click",()=>{
-audio.play().catch(()=>{});
-},{once:true});
-
-/* countdown */
-
-let time=5;
-const count=document.getElementById("count");
-const btn=document.getElementById("continueBtn");
-
-const timer=setInterval(()=>{
-
-time--;
-count.textContent=time;
-
-if(time<=0){
-
-clearInterval(timer);
-
-btn.disabled=false;
-btn.classList.add("active");
-
-}
-
-},1000);
-
-/* continue */
-
-btn.onclick=()=>{
-window.location.href="index.html";
-};
-
 </script>
 
 </body>
