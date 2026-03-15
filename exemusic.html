@@ -10,6 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -2159,6 +2160,176 @@
     }
     .upload-queue-btn:hover {
       background: rgba(255,255,255,0.12);
+    }
+
+    /* ============================================================
+       SUPABASE FILE UPLOAD - v3.2.3
+    ============================================================ */
+    .upload-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .upload-tab-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid rgba(0,255,136,0.3);
+      background: rgba(0,255,136,0.05);
+      color: #aaa;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .upload-tab-btn:hover {
+      background: rgba(0,255,136,0.1);
+      border-color: rgba(0,255,136,0.5);
+    }
+    .upload-tab-btn.active {
+      background: linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,212,255,0.15));
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 15px rgba(0,255,136,0.2);
+    }
+    .upload-section {
+      display: none;
+    }
+    .upload-section.active {
+      display: block;
+    }
+    .file-upload-area {
+      border: 2px dashed rgba(0,255,136,0.3);
+      border-radius: 12px;
+      padding: 25px 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(0,0,0,0.2);
+      margin-bottom: 12px;
+    }
+    .file-upload-area:hover {
+      border-color: var(--accent);
+      background: rgba(0,255,136,0.05);
+    }
+    .file-upload-area.dragover {
+      border-color: var(--accent);
+      background: rgba(0,255,136,0.1);
+      box-shadow: 0 0 20px rgba(0,255,136,0.2);
+    }
+    .file-upload-area.has-file {
+      border-color: var(--accent2);
+      background: rgba(0,212,255,0.08);
+    }
+    .file-upload-icon {
+      font-size: 36px;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .file-upload-text {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 5px;
+    }
+    .file-upload-hint {
+      font-size: 10px;
+      color: #555;
+    }
+    .file-selected-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .file-selected-name {
+      font-size: 12px;
+      color: var(--accent2);
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 70%;
+    }
+    .file-selected-size {
+      font-size: 10px;
+      color: #777;
+    }
+    .file-remove-btn {
+      background: rgba(255,51,51,0.2);
+      border: none;
+      color: var(--danger);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .file-remove-btn:hover {
+      background: var(--danger);
+      color: white;
+    }
+    .upload-progress-wrap {
+      margin: 12px 0;
+      display: none;
+    }
+    .upload-progress-wrap.active {
+      display: block;
+    }
+    .upload-progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .upload-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .upload-progress-text {
+      font-size: 11px;
+      color: #888;
+      text-align: center;
+      margin-top: 6px;
+    }
+    .upload-error {
+      color: var(--danger);
+      font-size: 11px;
+      text-align: center;
+      margin-top: 8px;
+      display: none;
+    }
+    .upload-error.show {
+      display: block;
+    }
+    #supabaseFileInput {
+      display: none;
+    }
+    @media (max-width: 480px) {
+      .upload-tabs {
+        flex-direction: column;
+        gap: 6px;
+      }
+      .file-selected-info {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+      .file-selected-name {
+        max-width: 100%;
+      }
     }
 
     .upload-cd-card {
@@ -5100,15 +5271,54 @@
     </div>
   </div>
 
-  <div class="modal" id="modalReq" onclick="if(event.target==this)this.style.display='none'">
+  <div class="modal" id="modalReq" onclick="if(event.target==this){this.style.display='none';resetUploadForm();}">
     <div class="sheet">
       <h3 style="text-align:center; margin-bottom:10px; color:var(--accent); font-family:'Rajdhani',sans-serif; letter-spacing:1px">UPLOAD LAGU</h3>
       <div class="rules-warn"><b>⚠️ PERHATIAN:</b> Dilarang upload konten SARA, pornografi audio, atau earrape. Pelanggaran = <b>BANNED PERMANENT</b>!</div>
       <p style="font-size:12px; color:#88c; margin:10px 0">Belum tau cara buat Top4Top? <span class="tutorial-link" onclick="openTutorial()">klik disini</span></p>
       <div id="uploadFormUser" style="display:none">
         <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
-        <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top)">
-        <button onclick="confirmAndSave()" class="btn-act">POST SEKARANG</button>
+        
+        <!-- Upload Tabs -->
+        <div class="upload-tabs">
+          <button class="upload-tab-btn active" onclick="switchUploadTab('file')" id="tabFileBtn">
+            <i class="fas fa-cloud-upload-alt"></i> Upload File
+          </button>
+          <button class="upload-tab-btn" onclick="switchUploadTab('url')" id="tabUrlBtn">
+            <i class="fas fa-link"></i> Pakai Link
+          </button>
+        </div>
+        
+        <!-- File Upload Section -->
+        <div id="uploadSectionFile" class="upload-section active">
+          <input type="file" id="supabaseFileInput" accept="audio/*" onchange="handleFileSelect(this)">
+          <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('supabaseFileInput').click()">
+            <div class="file-upload-icon"><i class="fas fa-music"></i></div>
+            <div class="file-upload-text">Klik atau drag file lagu kesini</div>
+            <div class="file-upload-hint">Max 10MB (MP3, WAV, M4A, OGG)</div>
+          </div>
+          <div id="fileSelectedInfo" class="file-selected-info" style="display:none">
+            <div>
+              <div class="file-selected-name" id="fileSelectedName">filename.mp3</div>
+              <div class="file-selected-size" id="fileSelectedSize">0 MB</div>
+            </div>
+            <button class="file-remove-btn" onclick="removeSelectedFile(event)"><i class="fas fa-times"></i></button>
+          </div>
+          <div id="uploadProgress" class="upload-progress-wrap">
+            <div class="upload-progress-bar">
+              <div class="upload-progress-fill" id="uploadProgressFill"></div>
+            </div>
+            <div class="upload-progress-text" id="uploadProgressText">Mengupload...</div>
+          </div>
+          <div id="uploadError" class="upload-error"></div>
+        </div>
+        
+        <!-- URL Section (Hidden by default) -->
+        <div id="uploadSectionUrl" class="upload-section">
+          <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top)">
+        </div>
+        
+        <button onclick="confirmAndSave()" class="btn-act" id="postBtn">POST SEKARANG</button>
         <div id="uploadQueueSection" class="upload-queue-section" style="display:none">
           <div class="upload-queue-header">
             <span class="upload-queue-title-label">UPLOAD QUEUE</span>
@@ -5618,6 +5828,20 @@
     const auth = firebase.auth();
     const db = firebase.database();
     const storage = firebase.storage();
+
+    // ============================================================
+    // SUPABASE CONFIGURATION - v3.2.3
+    // ============================================================
+    const supabaseUrl = 'https://rirernnkstrjjquvblge.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpcmVybm5rc3RyampxdXZibGdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0OTYyMzAsImV4cCI6MjA4OTA3MjIzMH0.M2JDFy327Pny7gchW2pZVt5dzNbyw63gebYe_SkP4Mk';
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Max file size: 10MB
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+
+    // Upload state
+    let selectedFile = null;
+    let isUploading = false;
 
     // ============================================================
     // LOADING SCREEN LOGIC
@@ -8355,16 +8579,290 @@
       if (!userData || userData.role === 'admin') return 0;
       return 1;
     }
+
+    // ============================================================
+    // SUPABASE FILE UPLOAD FUNCTIONS - v3.2.3
+    // ============================================================
+    function switchUploadTab(tab) {
+      const fileBtn = document.getElementById('tabFileBtn');
+      const urlBtn = document.getElementById('tabUrlBtn');
+      const fileSection = document.getElementById('uploadSectionFile');
+      const urlSection = document.getElementById('uploadSectionUrl');
+      
+      if (tab === 'file') {
+        fileBtn.classList.add('active');
+        urlBtn.classList.remove('active');
+        fileSection.classList.add('active');
+        urlSection.classList.remove('active');
+      } else {
+        fileBtn.classList.remove('active');
+        urlBtn.classList.add('active');
+        fileSection.classList.remove('active');
+        urlSection.classList.add('active');
+      }
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function handleFileSelect(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const errorEl = document.getElementById('uploadError');
+      errorEl.classList.remove('show');
+
+      // Check file size (max 10MB)
+      if (file.size > MAX_FILE_SIZE) {
+        errorEl.textContent = '❌ File terlalu besar! Maksimum 10MB.';
+        errorEl.classList.add('show');
+        input.value = '';
+        return;
+      }
+
+      // Check file type
+      const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/ogg', 'audio/x-m4a', 'audio/wave', 'audio/x-wav'];
+      if (!allowedTypes.includes(file.type) && !file.name.match(/\.(mp3|wav|m4a|ogg)$/i)) {
+        errorEl.textContent = '❌ Format file tidak didukung! Gunakan MP3, WAV, M4A, atau OGG.';
+        errorEl.classList.add('show');
+        input.value = '';
+        return;
+      }
+
+      selectedFile = file;
+      
+      // Update UI
+      const uploadArea = document.getElementById('fileUploadArea');
+      const fileInfo = document.getElementById('fileSelectedInfo');
+      const fileName = document.getElementById('fileSelectedName');
+      const fileSize = document.getElementById('fileSelectedSize');
+
+      uploadArea.classList.add('has-file');
+      fileName.textContent = file.name;
+      fileSize.textContent = formatFileSize(file.size);
+      fileInfo.style.display = 'flex';
+    }
+
+    function removeSelectedFile(event) {
+      if (event) event.stopPropagation();
+      selectedFile = null;
+      
+      const input = document.getElementById('supabaseFileInput');
+      input.value = '';
+      
+      const uploadArea = document.getElementById('fileUploadArea');
+      const fileInfo = document.getElementById('fileSelectedInfo');
+      const errorEl = document.getElementById('uploadError');
+      
+      uploadArea.classList.remove('has-file');
+      fileInfo.style.display = 'none';
+      errorEl.classList.remove('show');
+    }
+
+    async function uploadToSupabase(file) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const progressWrap = document.getElementById('uploadProgress');
+          const progressFill = document.getElementById('uploadProgressFill');
+          const progressText = document.getElementById('uploadProgressText');
+          const errorEl = document.getElementById('uploadError');
+          
+          progressWrap.classList.add('active');
+          progressFill.style.width = '0%';
+          progressText.textContent = 'Mengupload ke server...';
+          errorEl.classList.remove('show');
+
+          // Generate unique filename
+          const timestamp = Date.now();
+          const randomId = Math.random().toString(36).substring(2, 8);
+          const ext = file.name.split('.').pop();
+          const fileName = `music_${timestamp}_${randomId}.${ext}`;
+
+          // Upload to Supabase Storage
+          const { data, error } = await supabaseClient.storage
+            .from('music')
+            .upload(fileName, file, {
+              cacheControl: '3600',
+              upsert: false,
+              contentType: file.type
+            });
+
+          if (error) {
+            throw error;
+          }
+
+          // Get public URL
+          const { data: urlData } = supabaseClient.storage
+            .from('music')
+            .getPublicUrl(fileName);
+
+          progressFill.style.width = '100%';
+          progressText.textContent = 'Upload selesai!';
+          
+          resolve(urlData.publicUrl);
+        } catch (error) {
+          console.error('Upload error:', error);
+          const errorEl = document.getElementById('uploadError');
+          errorEl.textContent = '❌ Gagal upload: ' + (error.message || 'Coba lagi nanti');
+          errorEl.classList.add('show');
+          reject(error);
+        }
+      });
+    }
+
+    // Get current upload mode
+    function getCurrentUploadMode() {
+      const fileBtn = document.getElementById('tabFileBtn');
+      return fileBtn.classList.contains('active') ? 'file' : 'url';
+    }
+
+    // Initialize drag and drop for file upload
+    function initFileUpload() {
+      const uploadArea = document.getElementById('fileUploadArea');
+      if (!uploadArea) return;
+
+      // Prevent default drag behaviors
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      });
+
+      // Highlight on drag over
+      ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+          uploadArea.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+          uploadArea.classList.remove('dragover');
+        });
+      });
+
+      // Handle drop
+      uploadArea.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          const input = document.getElementById('supabaseFileInput');
+          input.files = files;
+          handleFileSelect(input);
+        }
+      });
+    }
+
+    // Reset upload form
+    function resetUploadForm() {
+      selectedFile = null;
+      isUploading = false;
+      removeSelectedFile();
+      document.getElementById('rLagu').value = '';
+      document.getElementById('rUrl').value = '';
+      document.getElementById('uploadProgress').classList.remove('active');
+      switchUploadTab('file');
+      const postBtn = document.getElementById('postBtn');
+      if (postBtn) {
+        postBtn.disabled = false;
+        postBtn.textContent = 'POST SEKARANG';
+      }
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', function() {
+      initFileUpload();
+    });
+
     async function confirmAndSave() {
       const title = document.getElementById('rLagu').value;
       const url = document.getElementById('rUrl').value;
-      if (!title || !url) return msg('Isi semua data!');
+      const uploadMode = getCurrentUploadMode();
+      
+      if (!title) return msg('Isi judul lagu!');
       if (!auth.currentUser || !userData) return msg('Login dulu!');
       if (userData.banUpload) {
         msg('Akun ini dibanned dari upload');
         return;
       }
-      const lastUpload = userData.lastUpload || 0;
+
+      // Handle file upload mode
+      if (uploadMode === 'file') {
+        if (!selectedFile) return msg('Pilih file dulu!');
+        if (isUploading) return msg('Sedang upload, tunggu...');
+        
+        // Get user data for cooldown check - fetch fresh from Firebase
+        const uid = auth.currentUser.uid;
+        let lastUpload = 0;
+        let isAdmin = false;
+        let vipType = null;
+        
+        try {
+          const userSnap = await db.ref('users/' + uid).get();
+          const freshUserData = userSnap.val();
+          if (freshUserData) {
+            lastUpload = freshUserData.lastUpload || 0;
+            isAdmin = freshUserData.role === 'admin';
+            vipType = freshUserData.vipType || null;
+          }
+        } catch(e) {
+          console.error('Error fetching user data:', e);
+        }
+        
+        const now = Date.now();
+        const diff = (now - lastUpload) / 1000 / 60;
+        const cooldown = isAdmin ? 0 : (vipType ? 15 : 30);
+        
+        // Debug log
+        console.log('File Upload - lastUpload:', lastUpload, 'diff:', diff.toFixed(2), 'cooldown:', cooldown, 'isAdmin:', isAdmin);
+        
+        if (!isAdmin && diff < cooldown) {
+          const remainingMinutes = Math.floor(cooldown - diff);
+          const remainingSeconds = Math.floor((cooldown - diff - remainingMinutes) * 60);
+          const timeDisplay = remainingMinutes > 0 
+            ? `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}` 
+            : `0:${remainingSeconds.toString().padStart(2, '0')}`;
+          return msg(`⏳ Tunggu ${timeDisplay} lagi!`);
+        }
+        
+        isUploading = true;
+        const postBtn = document.getElementById('postBtn');
+        if (postBtn) { postBtn.disabled = true; postBtn.textContent = 'Mengupload...'; }
+
+        try {
+          // Upload file to Supabase
+          const uploadedUrl = await uploadToSupabase(selectedFile);
+          
+          // After successful upload, proceed with saving
+          await processUpload(title, uploadedUrl);
+          
+          // Reset file selection
+          removeSelectedFile();
+        } catch (error) {
+          msg('Gagal upload file!');
+        } finally {
+          isUploading = false;
+          postBtn.disabled = false;
+          postBtn.textContent = 'POST SEKARANG';
+        }
+        return;
+      }
+
+      // Handle URL mode (original logic)
+      if (!url) return msg('Isi semua data!');
+      
+      // Fetch latest lastUpload from Firebase for accurate cooldown check
+      let lastUpload = userData.lastUpload || 0;
+      try {
+        const userSnap = await db.ref('users/' + auth.currentUser.uid + '/lastUpload').get();
+        if (userSnap.val()) lastUpload = userSnap.val();
+      } catch (e) { console.log('Using cached lastUpload'); }
+      
       const now = Date.now();
       const diff = (now - lastUpload) / 1000 / 60;
       const vipType = getVipStatus(userData);
@@ -8399,12 +8897,18 @@
           willClose: () => {
             if (cdInterval) clearInterval(cdInterval);
           }
-        }).then(r => { if (r.isConfirmed) saveMusic(title, url); });
+        }).then(r => { if (r.isConfirmed) processUpload(title, url); });
         return;
       }
       const queueLimit = getUploadQueueLimit();
       if (!queueLimit) {
-        Swal.fire({ icon: 'error', title: 'Sabar...', text: `Tunggu ${Math.ceil(cooldown - diff)} menit lagi.`, background: '#181828', color: '#fff' });
+        // Calculate remaining cooldown in minutes and seconds
+        const remainingMinutes = Math.floor(cooldown - diff);
+        const remainingSeconds = Math.floor((cooldown - diff - remainingMinutes) * 60);
+        const timeDisplay = remainingMinutes > 0 
+          ? `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}` 
+          : `0:${remainingSeconds.toString().padStart(2, '0')}`;
+        Swal.fire({ icon: 'error', title: 'Sabar...', text: `Tunggu ${timeDisplay} lagi.`, background: '#181828', color: '#fff' });
         return;
       }
       const qSnap = await db.ref('uploadQueue/' + auth.currentUser.uid).get();
@@ -8431,6 +8935,41 @@
           document.getElementById('rUrl').value = '';
         });
     }
+    
+    async function processUpload(title, url) {
+      // This function handles both file and URL upload
+      const now = Date.now();
+      const lastUpload = userData.lastUpload || 0;
+      const diff = (now - lastUpload) / 1000 / 60;
+      const vipType = getVipStatus(userData);
+      const isAdmin = userData.role === 'admin';
+      const cooldown = isAdmin ? 0 : (vipType ? 15 : 30);
+      
+      if (isAdmin || diff >= cooldown) {
+        // Direct upload
+        saveMusic(title, url);
+      } else {
+        // Add to queue
+        const queueLimit = getUploadQueueLimit();
+        if (!queueLimit) {
+          // Calculate remaining cooldown in minutes and seconds
+          const remainingMinutes = Math.floor(cooldown - diff);
+          const remainingSeconds = Math.floor((cooldown - diff - remainingMinutes) * 60);
+          const timeDisplay = remainingMinutes > 0 
+            ? `${remainingMinutes}:${remainingSeconds.toString().padStart(2, '0')}` 
+            : `0:${remainingSeconds.toString().padStart(2, '0')}`;
+          Swal.fire({ icon: 'error', title: 'Sabar...', text: `Tunggu ${timeDisplay} lagi.`, background: '#181828', color: '#fff' });
+          return;
+        }
+        const scheduledAt = Math.max(lastUpload + cooldown * 60 * 1000, now);
+        const item = { title, url, uid: auth.currentUser.uid, by: userData.username, createdAt: now, scheduledAt, status: 'queued', cooldownMinutes: cooldown, vip: !!vipType };
+        await db.ref('uploadQueue/' + auth.currentUser.uid).push(item);
+        msg('✅ Lagu masuk upload queue');
+        document.getElementById('rLagu').value = '';
+        document.getElementById('rUrl').value = '';
+      }
+    }
+    
     function saveMusic(t, u) {
       const newSong = { title: t, url: u, uid: auth.currentUser.uid, by: userData.username, timestamp: Date.now() };
       db.ref('songs').push(newSong).then(() => {
