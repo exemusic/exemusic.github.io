@@ -3,54 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Execurive Arena</title>
+    <title>Execurive Arena - Multiplayer</title>
     <style>
-        /* CSS dasar untuk merapikan tampilan */
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            background: #1a1a1a; /* Warna gelap ala game */
-            color: white; 
-            margin-top: 100px; 
-        }
-        button { 
-            padding: 12px 24px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            background: #4285F4; /* Warna biru Google */
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            font-weight: bold;
-        }
-        button:hover { background: #357ae8; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: white; text-align: center; margin: 0; overflow: hidden; }
+        #login-screen { margin-top: 100px; }
         
-        /* Area info pemain disembunyikan dulu sampai pemain berhasil login */
-        #player-info { margin-top: 30px; display: none; }
-        #logout-btn { background: #e53935; margin-top: 20px; }
-        #logout-btn:hover { background: #b71c1c; }
+        /* UI Lobby */
+        #lobby-screen { display: none; padding: 20px; }
+        .player-list { background: #1f1f1f; border-radius: 10px; padding: 15px; width: 300px; margin: 20px auto; border: 1px solid #333; }
+        .player-item { padding: 8px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
+        .status-ready { color: #4caf50; font-weight: bold; }
+
+        /* Area Game */
+        #game-canvas { background: #000; border: 2px solid #444; display: none; margin: 0 auto; cursor: crosshair; }
+        
+        button { padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; transition: 0.3s; }
+        .btn-google { background: #4285F4; color: white; }
+        .btn-ready { background: #ff9800; color: white; margin-top: 20px; }
+        .btn-logout { background: #e53935; color: white; position: absolute; top: 10px; right: 10px; padding: 5px 10px; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <h1>Welcome to Execurive Arena</h1>
-    <p>Silakan login untuk masuk ke Lobby Server</p>
-
-    <button id="login-btn">Login dengan Google</button>
-
-    <div id="player-info">
-        <h2>Halo, Agent <span id="player-name"></span>!</h2>
-        <p>Email: <span id="player-email"></span></p>
-        <p><i>Mempersiapkan data ke server Execurive...</i></p>
-        <button id="logout-btn">Logout</button>
+    <div id="login-screen">
+        <h1>EXE AI: EXECURIVE ARENA</h1>
+        <p>Gunakan akun Google untuk mulai mabar</p>
+        <button class="btn-google" id="login-btn">LOGIN WITH GOOGLE</button>
     </div>
 
+    <div id="lobby-screen">
+        <button class="btn-logout" id="logout-btn">LOGOUT</button>
+        <h2>LOBBY ARENA</h2>
+        <div class="player-list">
+            <h3>Pemain Online</h3>
+            <div id="players-container"></div>
+        </div>
+        <button class="btn-ready" id="start-btn">MASUK ARENA (READY)</button>
+    </div>
+
+    <canvas id="game-canvas" width="800" height="500"></canvas>
+
     <script type="module">
-        // 1. Mengambil alat-alat (fungsi) yang kita butuhkan dari server Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        // Import tambahan untuk Database Realtime
+        import { getDatabase, ref, set, onValue, onDisconnect, update, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // 2. Kunci rahasia milik Execurive Arena
         const firebaseConfig = {
             apiKey: "AIzaSyCl4ei8kfMaBoQEokFE5FlkPvz-NdEhQXw",
             authDomain: "exeai-eefc8.firebaseapp.com",
@@ -59,52 +57,113 @@
             storageBucket: "exeai-eefc8.firebasestorage.app",
             messagingSenderId: "1013428002517",
             appId: "1:1013428002517:web:6e3e07a810167c97bb8c5c",
-            measurementId: "G-D48XD4ZT6Q"
         };
 
-        // 3. Menghidupkan Firebase di web ini
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
-        // 4. Mencari tombol dan teks di HTML agar bisa dikendalikan oleh JavaScript
-        const loginBtn = document.getElementById("login-btn");
-        const logoutBtn = document.getElementById("logout-btn");
-        const playerInfo = document.getElementById("player-info");
-        const playerName = document.getElementById("player-name");
-        const playerEmail = document.getElementById("player-email");
+        // Element Selector
+        const loginScreen = document.getElementById("login-screen");
+        const lobbyScreen = document.getElementById("lobby-screen");
+        const gameCanvas = document.getElementById("game-canvas");
+        const playersContainer = document.getElementById("players-container");
+        const ctx = gameCanvas.getContext("2d");
 
-        // 5. Perintah saat tombol Login diklik
-        loginBtn.addEventListener("click", () => {
-            // signInWithPopup memunculkan jendela kecil (popup) akun Google
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    console.log("Login sukses!");
-                })
-                .catch((error) => {
-                    alert("Gagal login: " + error.message);
-                });
-        });
+        let myId = null;
+        let allPlayers = {};
 
-        // 6. Perintah saat tombol Logout diklik
-        logoutBtn.addEventListener("click", () => {
-            signOut(auth);
-        });
-
-        // 7. Pengawas Status (Memantau apakah ada yang sedang login atau tidak)
+        // --- SISTEM AUTH ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Jika ADA user yang login: sembunyikan tombol login, tampilkan info
-                loginBtn.style.display = "none";
-                playerInfo.style.display = "block";
-                playerName.innerText = user.displayName; // Mengambil nama dari Google
-                playerEmail.innerText = user.email;      // Mengambil email dari Google
+                myId = user.uid;
+                loginScreen.style.display = "none";
+                lobbyScreen.style.display = "block";
+                
+                // 1. Simpan data pemain ke Database saat login
+                const playerRef = ref(db, 'players/' + myId);
+                set(playerRef, {
+                    id: myId,
+                    name: user.displayName,
+                    x: Math.random() * 700,
+                    y: Math.random() * 400,
+                    color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                    isReady: false
+                });
+
+                // 2. Jika pemain tutup tab/DC, hapus dari database secara otomatis
+                onDisconnect(playerRef).remove();
+
             } else {
-                // Jika TIDAK ADA user: tampilkan tombol login, sembunyikan info
-                loginBtn.style.display = "inline-block";
-                playerInfo.style.display = "none";
+                loginScreen.style.display = "block";
+                lobbyScreen.style.display = "none";
+                gameCanvas.style.display = "none";
             }
         });
+
+        // --- SISTEM LOBBY REALTIME ---
+        const playersRef = ref(db, 'players');
+        onValue(playersRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            allPlayers = data;
+            
+            // Update daftar nama di Lobby
+            playersContainer.innerHTML = "";
+            Object.values(data).forEach(player => {
+                const div = document.createElement("div");
+                div.className = "player-item";
+                div.innerHTML = `<span>${player.name}</span> <span class="${player.isReady ? 'status-ready' : ''}">${player.isReady ? 'READY' : 'Waiting...'}</span>`;
+                playersContainer.appendChild(div);
+            });
+
+            // Gambar ulang game jika sedang di arena
+            drawGame();
+        });
+
+        // --- SISTEM GERAK & GAMEPLAY ---
+        document.getElementById("start-btn").addEventListener("click", () => {
+            update(ref(db, 'players/' + myId), { isReady: true });
+            lobbyScreen.style.display = "none";
+            gameCanvas.style.display = "block";
+        });
+
+        window.addEventListener("keydown", (e) => {
+            if (!myId || !allPlayers[myId]) return;
+            let { x, y } = allPlayers[myId];
+            const speed = 10;
+
+            if (e.key === "w") y -= speed;
+            if (e.key === "s") y += speed;
+            if (e.key === "a") x -= speed;
+            if (e.key === "d") x += speed;
+
+            // Update posisi ke Firebase agar pemain lain bisa lihat
+            update(ref(db, 'players/' + myId), { x, y });
+        });
+
+        function drawGame() {
+            if (gameCanvas.style.display === "none") return;
+            
+            // Hapus layar lama
+            ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+            // Gambar semua pemain yang ada di database
+            Object.values(allPlayers).forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, 30, 30); // Gambar kotak pemain
+                ctx.fillStyle = "white";
+                ctx.fillText(p.name, p.x, p.y - 5); // Gambar nama di atas kotak
+            });
+        }
+
+        // Fungsi Tombol Login/Logout
+        document.getElementById("login-btn").onclick = () => signInWithPopup(auth, provider);
+        document.getElementById("logout-btn").onclick = () => {
+            remove(ref(db, 'players/' + myId));
+            signOut(auth);
+        };
+
     </script>
 </body>
 </html>
