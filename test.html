@@ -3,463 +3,1501 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MLBB HARIAN</title>
+<title>MLBB TRACKER ID</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Oxanium:wght@300;400;600;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --gold:#f5c842;--gold2:#e8a020;--cyan:#00e5ff;--cyan2:#0097a7;
-  --red:#ff3d57;--green:#00e676;
-  --bg:#07090f;--bg2:#0d1120;--bg3:#111828;
-  --border:rgba(245,200,66,0.15);--border2:rgba(0,229,255,0.12);
-  --text:#e8eaf0;--muted:#6b7a99;
-  --card:rgba(13,17,32,0.97);
-  --glow-gold:0 0 20px rgba(245,200,66,0.3);
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM
+═══════════════════════════════════════════════ */
+:root {
+  --c0: #060810;
+  --c1: #0b0f1e;
+  --c2: #111827;
+  --c3: #1a2235;
+  --c4: #243048;
+  --gold: #f0b429;
+  --gold2: #d4930a;
+  --gold3: rgba(240,180,41,0.12);
+  --cyan: #22d3ee;
+  --cyan2: #0891b2;
+  --cyan3: rgba(34,211,238,0.1);
+  --green: #10b981;
+  --green2: rgba(16,185,129,0.12);
+  --red: #ef4444;
+  --red2: rgba(239,68,68,0.12);
+  --purple: #8b5cf6;
+  --purple2: rgba(139,92,246,0.12);
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #475569;
+  --border: rgba(240,180,41,0.12);
+  --border2: rgba(34,211,238,0.1);
+  --border3: rgba(255,255,255,0.06);
+  --shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.5);
+  --glow-gold: 0 0 30px rgba(240,180,41,0.25), 0 0 60px rgba(240,180,41,0.08);
+  --glow-cyan: 0 0 30px rgba(34,211,238,0.2);
+  --r: 14px;
+  --r-sm: 8px;
+  --r-lg: 20px;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'Outfit', sans-serif;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:
-  radial-gradient(ellipse 80% 60% at 50% -10%,rgba(245,200,66,0.06) 0%,transparent 60%),
-  radial-gradient(ellipse 60% 40% at 100% 100%,rgba(0,229,255,0.04) 0%,transparent 50%),
-  repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(255,255,255,0.012) 60px,rgba(255,255,255,0.012) 61px),
-  repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,0.012) 60px,rgba(255,255,255,0.012) 61px);
-  pointer-events:none;z-index:0;}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--c0);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 15px;
+  line-height: 1.6;
+}
 
-/* HEADER */
-header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;}
-.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px;}
-.logo{display:flex;align-items:center;gap:12px;}
-.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#07090f;font-family:'Orbitron',sans-serif;box-shadow:var(--glow-gold);flex-shrink:0;}
-.logo-text{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;color:var(--gold);line-height:1.1;letter-spacing:1px;}
-.logo-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-.header-mmr{display:flex;align-items:center;gap:8px;background:rgba(245,200,66,0.08);border:1px solid var(--border);border-radius:10px;padding:8px 14px;cursor:pointer;transition:all 0.2s;}
-.header-mmr:hover{background:rgba(245,200,66,0.14);border-color:rgba(245,200,66,0.3);box-shadow:var(--glow-gold);}
-.mmr-label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-family:'Oxanium',sans-serif;}
-.mmr-value{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:700;color:var(--gold);}
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--c1); }
+::-webkit-scrollbar-thumb { background: var(--c4); border-radius: 4px; }
 
-/* LAST UPDATE BAR */
-.lu-bar{background:rgba(0,229,255,0.03);border-bottom:1px solid rgba(0,229,255,0.07);padding:5px 24px;}
-.lu-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.lu-pulse{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:lpulse 2s infinite;flex-shrink:0;}
-@keyframes lpulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--green);}50%{opacity:0.3;box-shadow:0 0 2px var(--green);}}
-.lu-lbl{font-family:'Oxanium',sans-serif;font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
-.lu-ts{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:0.5px;}
-.lu-act{font-size:11px;color:var(--muted);font-family:'Rajdhani',sans-serif;}
-.lu-live{font-family:'Oxanium',sans-serif;font-size:10px;color:var(--green);letter-spacing:1px;margin-left:auto;display:flex;align-items:center;gap:5px;}
-.lu-live span{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--cyan);}
+/* GRID BG */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 100% 50% at 20% -10%, rgba(240,180,41,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 40% at 90% 110%, rgba(34,211,238,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 30% at 50% 50%, rgba(139,92,246,0.02) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(255,255,255,0.008) 80px, rgba(255,255,255,0.008) 81px),
+    repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(255,255,255,0.008) 80px, rgba(255,255,255,0.008) 81px);
+  pointer-events: none;
+}
 
-/* SECTION */
-.section-wrap{max-width:1400px;margin:20px auto 0;padding:0 24px;position:relative;z-index:1;}
-.sec-title{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
-.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
-.sec-badge{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;color:var(--cyan);background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.15);border-radius:20px;padding:2px 10px;white-space:nowrap;flex-shrink:0;}
+/* ═══════════════════════════════════════════════
+   LAYOUT SYSTEM
+═══════════════════════════════════════════════ */
+.app { position: relative; z-index: 1; min-height: 100vh; }
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.container-sm { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+.container-xs { max-width: 480px; margin: 0 auto; padding: 0 24px; }
 
-/* DAILY COUNTERS */
-.daily-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-.dcounter{background:var(--card);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:all 0.25s;}
-.dcounter::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.25s;pointer-events:none;}
-.dcounter:hover::before{opacity:1;}
-.dcounter:hover{transform:translateY(-2px);}
-.win-dc{border:1px solid rgba(0,230,118,0.22);}
-.win-dc::before{background:radial-gradient(ellipse at top left,rgba(0,230,118,0.09),transparent 65%);}
-.win-dc:hover{box-shadow:0 8px 30px rgba(0,230,118,0.12);}
-.lose-dc{border:1px solid rgba(255,61,87,0.22);}
-.lose-dc::before{background:radial-gradient(ellipse at top left,rgba(255,61,87,0.09),transparent 65%);}
-.lose-dc:hover{box-shadow:0 8px 30px rgba(255,61,87,0.12);}
-.mmr-dc{border:1px solid rgba(245,200,66,0.28);}
-.mmr-dc::before{background:radial-gradient(ellipse at top left,rgba(245,200,66,0.09),transparent 65%);}
-.mmr-dc:hover{box-shadow:0 8px 30px rgba(245,200,66,0.15);}
+/* ═══════════════════════════════════════════════
+   TYPOGRAPHY
+═══════════════════════════════════════════════ */
+.display { font-family: var(--font-display); font-weight: 800; }
+.mono { font-family: var(--font-mono); }
+.label {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--text3);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text3);
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px;
+}
+.section-title::after { content:''; flex:1; height:1px; background: linear-gradient(90deg, var(--border3), transparent); }
+.section-title .stag {
+  font-family: var(--font-body);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.5px; text-transform: none;
+  color: var(--cyan);
+  background: var(--cyan3);
+  border: 1px solid var(--border2);
+  border-radius: 20px; padding: 1px 8px;
+}
 
-.dc-head{display:flex;align-items:center;gap:8px;}
-.dc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.win-dc .dc-dot{background:var(--green);box-shadow:0 0 8px var(--green);}
-.lose-dc .dc-dot{background:var(--red);box-shadow:0 0 8px var(--red);}
-.mmr-dc .dc-dot{background:var(--gold);box-shadow:0 0 8px var(--gold);}
-.dc-lbl{font-family:'Oxanium',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);flex:1;}
-.dc-tag{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;flex-shrink:0;}
-.win-dc .dc-tag{background:rgba(0,230,118,0.1);color:var(--green);}
-.lose-dc .dc-tag{background:rgba(255,61,87,0.1);color:var(--red);}
-.mmr-dc .dc-tag{background:rgba(245,200,66,0.1);color:var(--gold);}
+/* ═══════════════════════════════════════════════
+   CARDS & SURFACES
+═══════════════════════════════════════════════ */
+.card {
+  background: var(--c1);
+  border: 1px solid var(--border3);
+  border-radius: var(--r);
+  var(--shadow);
+}
+.card-gold {
+  background: linear-gradient(135deg, rgba(240,180,41,0.06) 0%, var(--c1) 60%);
+  border-color: var(--border);
+}
+.card-hover { transition: all 0.22s; }
+.card-hover:hover {
+  border-color: rgba(240,180,41,0.2);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-gold);
+}
 
-.dc-main{display:flex;align-items:center;justify-content:space-between;}
-.dc-num{font-family:'Orbitron',sans-serif;font-size:48px;font-weight:900;line-height:1;}
-.dc-num.bump{animation:nbump 0.2s ease;}
-@keyframes nbump{0%{transform:scale(1);}50%{transform:scale(1.18);}100%{transform:scale(1);}}
-.win-dc .dc-num{color:var(--green);}
-.lose-dc .dc-num{color:var(--red);}
-.mmr-dc .dc-num{color:var(--gold);font-size:36px;}
+/* ═══════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 22px;
+  border-radius: var(--r-sm); border: none;
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer; transition: all 0.18s;
+  text-decoration: none; white-space: nowrap;
+}
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #07090f;
+  box-shadow: 0 2px 12px rgba(240,180,41,0.3);
+}
+.btn-gold:hover { filter: brightness(1.08); box-shadow: var(--glow-gold); transform: translateY(-1px); }
+.btn-ghost {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border3);
+  color: var(--text2);
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.09); color: var(--text); }
+.btn-cyan {
+  background: rgba(34,211,238,0.1);
+  border: 1px solid rgba(34,211,238,0.2);
+  color: var(--cyan);
+}
+.btn-cyan:hover { background: rgba(34,211,238,0.18); box-shadow: var(--glow-cyan); }
+.btn-danger {
+  background: var(--red2);
+  border: 1px solid rgba(239,68,68,0.2);
+  color: var(--red);
+}
+.btn-danger:hover { background: rgba(239,68,68,0.2); }
+.btn-full { width: 100%; }
+.btn-sm { padding: 7px 14px; font-size: 12px; }
+.btn-lg { padding: 14px 28px; font-size: 15px; }
+.btn-icon { width: 38px; height: 38px; padding: 0; border-radius: var(--r-sm); }
+.btn:disabled { opacity: 0.45; pointer-events: none; }
 
-.dc-btns{display:flex;flex-direction:column;gap:6px;}
-.dc-btn{width:44px;height:44px;border:none;border-radius:10px;cursor:pointer;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all 0.14s;font-family:'Orbitron',sans-serif;line-height:1;}
-.dc-btn:active{transform:scale(0.86)!important;}
-.dc-p{background:rgba(255,255,255,0.06);color:var(--text);}
-.dc-m{background:rgba(255,255,255,0.04);color:var(--muted);}
-.dc-m:hover{background:rgba(255,255,255,0.1);color:var(--text);transform:scale(1.08);}
-.win-dc .dc-p:hover{background:rgba(0,230,118,0.22);color:var(--green);box-shadow:0 0 14px rgba(0,230,118,0.4);transform:scale(1.1);}
-.lose-dc .dc-p:hover{background:rgba(255,61,87,0.22);color:var(--red);box-shadow:0 0 14px rgba(255,61,87,0.4);transform:scale(1.1);}
-.mmr-dc .dc-p:hover{background:rgba(245,200,66,0.22);color:var(--gold);box-shadow:0 0 14px rgba(245,200,66,0.4);transform:scale(1.1);}
+/* ═══════════════════════════════════════════════
+   FORM ELEMENTS
+═══════════════════════════════════════════════ */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 7px;
+}
+.form-input, .form-select {
+  width: 100%;
+  background: var(--c2);
+  border: 1px solid var(--border3);
+  border-radius: var(--r-sm);
+  padding: 11px 14px;
+  font-family: var(--font-body); font-size: 15px; font-weight: 500;
+  color: var(--text); outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  -webkit-appearance: none;
+}
+.form-input:focus, .form-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(240,180,41,0.1);
+}
+.form-input::placeholder { color: var(--text3); }
+.form-select option { background: var(--c2); }
+.form-hint { font-size: 12px; color: var(--text3); margin-top: 5px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-.dc-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.05);padding-top:10px;gap:6px;flex-wrap:wrap;}
-.dc-stat{font-family:'Oxanium',sans-serif;font-size:12px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px;}
-.dc-stat em{font-style:normal;}
-.win-dc .dc-stat em{color:var(--green);}
-.lose-dc .dc-stat em{color:var(--red);}
-.mmr-dc .dc-stat em{color:var(--gold);}
-.dc-countdown{font-family:'Oxanium',sans-serif;font-size:10px;color:var(--muted);text-align:right;line-height:1.4;flex-shrink:0;}
-.dc-countdown span{color:var(--cyan);font-weight:700;font-family:'Orbitron',sans-serif;font-size:11px;}
-.mmr-inline{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:4px 10px;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--text);outline:none;width:86px;text-align:center;cursor:pointer;transition:all 0.2s;}
-.mmr-inline:focus{border-color:var(--gold);background:rgba(245,200,66,0.06);box-shadow:0 0 0 3px rgba(245,200,66,0.1);}
+/* TOGGLE */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--c2);
+  border: 1px solid var(--border3);
+  border-radius: var(--r-sm);
+  margin-bottom: 8px;
+  transition: all 0.18s;
+}
+.toggle-row:hover { border-color: var(--border); }
+.toggle-info { flex: 1; }
+.toggle-title { font-weight: 600; font-size: 14px; }
+.toggle-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.toggle-switch {
+  position: relative; width: 42px; height: 24px;
+  flex-shrink: 0; margin-left: 12px;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0;
+  background: var(--c3);
+  border-radius: 24px;
+  border: 1px solid var(--border3);
+  cursor: pointer; transition: all 0.2s;
+}
+.toggle-track::after {
+  content: '';
+  position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  background: var(--text3);
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+input:checked + .toggle-track {
+  background: rgba(240,180,41,0.2);
+  border-color: var(--gold);
+}
+input:checked + .toggle-track::after {
+  left: calc(100% - 19px);
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(240,180,41,0.5);
+}
 
-/* HISTORY */
-.hist-list{display:flex;flex-direction:column;gap:8px;}
-.hist-empty{font-family:'Oxanium',sans-serif;font-size:12px;color:var(--muted);letter-spacing:1px;padding:20px 0;text-align:center;}
-.hist-row{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;transition:all 0.2s;position:relative;overflow:hidden;}
-.hist-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;}
-.hist-row.hr-good::before{background:var(--green);}
-.hist-row.hr-ok::before{background:var(--gold);}
-.hist-row.hr-bad::before{background:var(--red);}
-.hist-row:hover{border-color:rgba(245,200,66,0.18);transform:translateX(2px);}
-.hist-date{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--muted);min-width:90px;flex-shrink:0;}
-.hist-chips{display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap;}
-.hchip{font-family:'Oxanium',sans-serif;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;}
-.hchip.w{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.2);}
-.hchip.l{background:rgba(255,61,87,0.1);color:var(--red);border:1px solid rgba(255,61,87,0.2);}
-.hchip.g{background:rgba(0,229,255,0.07);color:var(--cyan);border:1px solid rgba(0,229,255,0.15);}
-.hist-wr{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;min-width:42px;text-align:right;flex-shrink:0;}
-.hist-mmr-grp{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
-.hist-mmr-info{text-align:right;}
-.hist-mmr-lbl{font-family:'Oxanium',sans-serif;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-.hist-mmr-v{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--gold);}
-.hist-delta{font-family:'Oxanium',sans-serif;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
-.hist-delta.p{background:rgba(0,230,118,0.12);color:var(--green);border:1px solid rgba(0,230,118,0.2);}
-.hist-delta.n{background:rgba(255,61,87,0.12);color:var(--red);border:1px solid rgba(255,61,87,0.2);}
-.hist-delta.z{background:rgba(255,255,255,0.05);color:var(--muted);}
+/* ═══════════════════════════════════════════════
+   HEADER / NAV
+═══════════════════════════════════════════════ */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(6,8,16,0.88);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-bottom: 1px solid var(--border3);
+}
+.topbar-inner {
+  display: flex; align-items: center;
+  height: 62px; gap: 12px;
+}
+.topbar-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; flex-shrink: 0;
+}
+.brand-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 14px; font-weight: 800;
+  color: #07090f;
+  box-shadow: 0 2px 12px rgba(240,180,41,0.4);
+}
+.brand-name {
+  font-family: var(--font-display); font-size: 15px; font-weight: 800;
+  color: var(--text); letter-spacing: 1px;
+}
+.brand-name span { color: var(--gold); }
+.topbar-nav { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.nav-btn {
+  padding: 7px 14px;
+  border-radius: var(--r-sm);
+  border: none; background: transparent;
+  font-family: var(--font-display); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--text3); cursor: pointer; transition: all 0.18s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.nav-btn:hover, .nav-btn.active {
+  background: rgba(255,255,255,0.07);
+  color: var(--text);
+}
+.nav-btn.active { color: var(--gold); }
+.topbar-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.avatar-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--c3);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; overflow: hidden;
+  font-size: 15px; font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--gold);
+  transition: all 0.18s;
+}
+.avatar-btn:hover { border-color: var(--gold); box-shadow: var(--glow-gold); }
+.avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-/* STATS BAR */
-.stats-bar{max-width:1400px;margin:14px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;transition:all 0.2s;}
-.stat-card:hover{border-color:rgba(245,200,66,0.3);box-shadow:var(--glow-gold);}
-.stat-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-.si-gold{background:rgba(245,200,66,0.15);}
-.si-green{background:rgba(0,230,118,0.15);}
-.si-red{background:rgba(255,61,87,0.15);}
-.si-cyan{background:rgba(0,229,255,0.15);}
-.slbl{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-family:'Oxanium',sans-serif;}
-.sval{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;line-height:1.2;margin-top:2px;}
-.sval.gold{color:var(--gold);}
-.sval.green{color:var(--green);}
-.sval.red{color:var(--red);}
-.sval.cyan{color:var(--cyan);}
+/* UPDATE BAR */
+.update-bar {
+  background: rgba(34,211,238,0.03);
+  border-bottom: 1px solid rgba(34,211,238,0.06);
+  padding: 4px 24px;
+}
+.update-bar-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: livepulse 2s infinite;
+  flex-shrink: 0;
+}
+@keyframes livepulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.update-label { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); }
+.update-ts { font-family: var(--font-mono); font-size: 11px; color: var(--cyan); }
+.update-action { font-size: 12px; color: var(--text3); }
+.live-clock { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--green); margin-left: auto; }
 
-/* TOOLBAR */
-.toolbar{max-width:1400px;margin:16px auto 0;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
-.search-box{position:relative;flex:1;min-width:200px;max-width:360px;}
-.search-box input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:10px 16px 10px 40px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;color:var(--text);outline:none;transition:all 0.2s;}
-.search-box input:focus{border-color:var(--cyan2);box-shadow:0 0 0 3px rgba(0,229,255,0.08);}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;}
-.filter-btns{display:flex;gap:6px;flex-wrap:wrap;}
-.filter-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-family:'Oxanium',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
-.filter-btn:hover,.filter-btn.active{background:rgba(0,229,255,0.1);border-color:var(--cyan2);color:var(--cyan);}
-.filter-btn.wf.active{background:rgba(0,230,118,0.1);border-color:var(--green);color:var(--green);}
+/* ═══════════════════════════════════════════════
+   AUTH PAGE
+═══════════════════════════════════════════════ */
+.auth-page {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 24px;
+}
+.auth-card {
+  background: var(--c1);
+  border: 1px solid var(--border3);
+  border-radius: var(--r-lg);
+  padding: 40px;
+  width: 100%; max-width: 440px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 24px 80px rgba(0,0,0,0.6);
+  animation: slideUp 0.4s ease;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+.auth-logo {
+  text-align: center; margin-bottom: 32px;
+}
+.auth-logo-icon {
+  width: 60px; height: 60px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  border-radius: 16px; margin: 0 auto 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 22px; font-weight: 800;
+  color: #07090f;
+  box-shadow: var(--glow-gold);
+}
+.auth-logo-name {
+  font-family: var(--font-display); font-size: 20px; font-weight: 800;
+  letter-spacing: 2px; color: var(--text);
+}
+.auth-logo-name span { color: var(--gold); }
+.auth-logo-sub { font-size: 13px; color: var(--text3); margin-top: 4px; }
+.auth-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0;
+}
+.auth-divider::before, .auth-divider::after { content:''; flex:1; height:1px; background: var(--border3); }
+.auth-divider span { font-size: 12px; color: var(--text3); white-space: nowrap; }
+.google-btn {
+  width: 100%; padding: 13px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border3);
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-family: var(--font-body); font-size: 15px; font-weight: 600;
+  color: var(--text); cursor: pointer; transition: all 0.18s;
+}
+.google-btn:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.12); }
+.google-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+/* SETUP STEPPER */
+.stepper { display: flex; align-items: center; gap: 0; margin-bottom: 32px; }
+.step-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.step-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--c3);
+  border: 2px solid var(--border3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 12px; font-weight: 800;
+  color: var(--text3); transition: all 0.25s;
+}
+.step-dot.active { background: var(--gold); border-color: var(--gold); color: #07090f; box-shadow: 0 0 14px rgba(240,180,41,0.5); }
+.step-dot.done { background: var(--green); border-color: var(--green); color: #fff; }
+.step-label { font-size: 10px; color: var(--text3); letter-spacing: 0.5px; text-align: center; }
+.step-line { flex: 1; height: 1px; background: var(--border3); margin-bottom: 18px; }
+.step-line.done { background: var(--green); }
+.setup-step { display: none; }
+.setup-step.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+
+/* ═══════════════════════════════════════════════
+   HOME PAGE
+═══════════════════════════════════════════════ */
+.home-hero {
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border3);
+}
+.home-hero-grid {
+  display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start;
+}
+.home-welcome { }
+.home-welcome-greeting { font-size: 13px; color: var(--text3); margin-bottom: 6px; }
+.home-welcome-name {
+  font-family: var(--font-display); font-size: 28px; font-weight: 800;
+  color: var(--text); line-height: 1.1; margin-bottom: 8px;
+}
+.home-welcome-name span { color: var(--gold); }
+.home-welcome-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.meta-chip {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text3);
+  background: var(--c2); border: 1px solid var(--border3);
+  border-radius: 20px; padding: 3px 10px;
+}
+.meta-chip .chip-icon { font-size: 12px; }
+.home-quick-stats {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+}
+.qstat {
+  background: var(--c2); border: 1px solid var(--border3);
+  border-radius: var(--r-sm); padding: 12px 14px;
+  transition: all 0.18s;
+}
+.qstat:hover { border-color: var(--border); }
+.qstat-val {
+  font-family: var(--font-mono); font-size: 24px; font-weight: 700;
+  line-height: 1;
+}
+.qstat-lbl { font-size: 11px; color: var(--text3); margin-top: 4px; letter-spacing: 0.5px; }
+.qstat.win .qstat-val { color: var(--green); }
+.qstat.lose .qstat-val { color: var(--red); }
+.qstat.mmr .qstat-val { color: var(--gold); }
+
+.home-daily-card {
+  background: var(--c1);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px;
+  position: relative; overflow: hidden;
+}
+.home-daily-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(240,180,41,0.08), transparent 65%);
+  pointer-events: none;
+}
+.daily-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.daily-title { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); }
+.daily-reset { font-family: var(--font-mono); font-size: 10px; color: var(--cyan); }
+.daily-counters { display: flex; flex-direction: column; gap: 10px; }
+.dc-item {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--c2); border-radius: var(--r-sm);
+  padding: 10px 14px; border: 1px solid var(--border3);
+}
+.dc-left { display: flex; align-items: center; gap: 8px; }
+.dc-dot2 { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dc-name { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); }
+.dc-right { display: flex; align-items: center; gap: 8px; }
+.dc-count { font-family: var(--font-mono); font-size: 22px; font-weight: 700; min-width: 36px; text-align: center; }
+.dc-item.win-item .dc-dot2 { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.dc-item.win-item .dc-count { color: var(--green); }
+.dc-item.lose-item .dc-dot2 { background: var(--red); box-shadow: 0 0 8px var(--red); }
+.dc-item.lose-item .dc-count { color: var(--red); }
+.dc-item.mmr-item .dc-dot2 { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.dc-item.mmr-item .dc-count { color: var(--gold); font-size: 18px; }
+.dc-bump { animation: dcbump 0.2s ease; }
+@keyframes dcbump { 0%{transform:scale(1);} 50%{transform:scale(1.22);} 100%{transform:scale(1);} }
+.dc-btn2 {
+  width: 28px; height: 28px;
+  border: none; border-radius: 7px; cursor: pointer;
+  font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.14s; background: var(--c3); color: var(--text3);
+  font-family: var(--font-mono);
+}
+.dc-btn2:hover { color: var(--text); background: var(--c4); transform: scale(1.1); }
+.dc-btn2:active { transform: scale(0.88); }
+.win-item .dc-btn2.plus:hover { background: var(--green2); color: var(--green); box-shadow: 0 0 10px rgba(16,185,129,0.3); }
+.lose-item .dc-btn2.plus:hover { background: var(--red2); color: var(--red); box-shadow: 0 0 10px rgba(239,68,68,0.3); }
+.mmr-item .dc-btn2.plus:hover { background: var(--gold3); color: var(--gold); box-shadow: 0 0 10px rgba(240,180,41,0.3); }
+
+.mmr-manual-row { display: flex; gap: 6px; margin-top: 6px; }
+.mmr-manual-inp {
+  flex: 1;
+  background: var(--c2); border: 1px solid var(--border3);
+  border-radius: var(--r-sm); padding: 7px 12px;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+  color: var(--text); outline: none;
+  transition: border-color 0.18s;
+}
+.mmr-manual-inp:focus { border-color: var(--gold); }
+.mmr-manual-inp::placeholder { color: var(--text3); }
+
+/* WR BAR IN DAILY */
+.wr-bar-mini { height: 3px; background: var(--c3); border-radius: 10px; overflow: hidden; margin-top: 8px; }
+.wr-bar-mini-fill { height: 100%; background: linear-gradient(90deg, var(--green), #059669); border-radius: 10px; transition: width 0.4s ease; }
+
+/* HOME CONTENT GRID */
+.home-content { padding: 28px 0 60px; }
+.home-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+
+/* HISTORY PANEL */
+.hist-panel { }
+.hist-items { display: flex; flex-direction: column; gap: 8px; }
+.hist-item {
+  background: var(--c1);
+  border: 1px solid var(--border3);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  transition: all 0.18s;
+  position: relative; overflow: hidden;
+  cursor: default;
+}
+.hist-item::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
+.hist-item.good::before { background: var(--green); }
+.hist-item.ok::before { background: var(--gold); }
+.hist-item.bad::before { background: var(--red); }
+.hist-item:hover { border-color: var(--border); transform: translateX(3px); }
+.hist-date { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); min-width: 80px; flex-shrink: 0; }
+.hist-chips { display: flex; align-items: center; gap: 6px; flex: 1; flex-wrap: wrap; }
+.chip {
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+}
+.chip-w { background: var(--green2); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+.chip-l { background: var(--red2); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+.chip-g { background: var(--cyan3); color: var(--cyan); border: 1px solid var(--border2); }
+.hist-wr { font-family: var(--font-mono); font-size: 13px; font-weight: 700; min-width: 40px; text-align: right; flex-shrink: 0; }
+.hist-mmr-grp { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.hist-mmr-val { font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--gold); }
+.hist-delta { font-family: var(--font-display); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+.hist-delta.p { background: var(--green2); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+.hist-delta.n { background: var(--red2); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+.hist-delta.z { background: rgba(255,255,255,0.04); color: var(--text3); }
+.hist-empty { text-align: center; padding: 40px 20px; color: var(--text3); }
+.hist-empty-icon { font-size: 36px; margin-bottom: 10px; }
+.hist-empty-text { font-size: 13px; letter-spacing: 0.5px; }
+
+/* HERO PANEL */
+.hero-panel { }
+.hero-stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 20px; }
+.hstat {
+  background: var(--c1); border: 1px solid var(--border3);
+  border-radius: var(--r-sm); padding: 10px 12px;
+}
+.hstat-val { font-family: var(--font-mono); font-size: 18px; font-weight: 700; line-height: 1; }
+.hstat-lbl { font-size: 10px; color: var(--text3); margin-top: 3px; letter-spacing: 0.5px; }
+.hstat.hg .hstat-val { color: var(--gold); }
+.hstat.hgr .hstat-val { color: var(--green); }
+.hstat.hr { } .hstat.hr .hstat-val { color: var(--red); }
+.hstat.hc .hstat-val { color: var(--cyan); }
+
+/* HERO TOOLBAR */
+.hero-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+.htool-search { position: relative; flex: 1; min-width: 160px; }
+.htool-search input {
+  width: 100%;
+  background: var(--c2); border: 1px solid var(--border3);
+  border-radius: var(--r-sm); padding: 9px 14px 9px 36px;
+  font-family: var(--font-body); font-size: 14px; color: var(--text);
+  outline: none; transition: border-color 0.18s;
+}
+.htool-search input:focus { border-color: var(--cyan2); }
+.htool-search::before { content:'🔍'; position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:14px; }
+.role-filters { display: flex; gap: 4px; flex-wrap: wrap; }
+.rf { padding: 6px 11px; border-radius: 7px; border: 1px solid var(--border3); background: var(--c2); color: var(--text3); font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.18s; text-transform: uppercase; }
+.rf:hover, .rf.on { background: var(--cyan3); border-color: var(--cyan2); color: var(--cyan); }
+.rf.wr-f.on { background: var(--green2); border-color: rgba(16,185,129,0.3); color: var(--green); }
 
 /* HERO GRID */
-main{max-width:1400px;margin:16px auto 40px;padding:0 24px;position:relative;z-index:1;}
-.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-.sec-header-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
-.sec-header-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
-.hero-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
-
-/* HERO CARD */
-.hero-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.25s;animation:cardIn 0.4s ease both;}
-@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-.hero-card:hover{border-color:rgba(245,200,66,0.25);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.4),var(--glow-gold);}
-.hero-card.is-main{border-color:rgba(245,200,66,0.4);background:linear-gradient(135deg,rgba(245,200,66,0.05),var(--card));}
-.main-badge{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#07090f;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:900;padding:3px 8px;border-radius:4px;letter-spacing:1px;z-index:2;}
-.card-top{padding:16px 16px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.05);position:relative;}
-.hero-avatar{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-.hero-info{flex:1;min-width:0;}
-.hero-name{font-family:'Oxanium',sans-serif;font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.hero-role-lbl{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
-.hero-wr-box{text-align:right;flex-shrink:0;}
-.wr-val{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;line-height:1;}
-.wr-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
-.card-body{padding:14px 16px;}
-.wl-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
-.cbox{background:var(--bg2);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;border:1px solid transparent;transition:all 0.2s;}
-.cbox:hover{background:var(--bg3);}
-.cbox.wb{border-color:rgba(0,230,118,0.15);}
-.cbox.lb{border-color:rgba(255,61,87,0.15);}
-.cbox-left{display:flex;align-items:center;gap:7px;}
-.cdot{width:8px;height:8px;border-radius:50%;}
-.wb .cdot{background:var(--green);box-shadow:0 0 6px var(--green);}
-.lb .cdot{background:var(--red);box-shadow:0 0 6px var(--red);}
-.clbl{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-family:'Oxanium',sans-serif;}
-.cnum{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:700;}
-.wb .cnum{color:var(--green);}
-.lb .cnum{color:var(--red);}
-.cbtn{width:28px;height:28px;border:none;border-radius:7px;cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all 0.15s;line-height:1;}
-.cbtn-wp{background:rgba(0,230,118,0.15);color:var(--green);}
-.cbtn-wp:hover{background:rgba(0,230,118,0.3);transform:scale(1.1);}
-.cbtn-lp{background:rgba(255,61,87,0.15);color:var(--red);}
-.cbtn-lp:hover{background:rgba(255,61,87,0.3);transform:scale(1.1);}
-.cbtn-m{background:rgba(255,255,255,0.06);color:var(--muted);}
-.cbtn-m:hover{background:rgba(255,255,255,0.12);color:var(--text);transform:scale(1.1);}
-.wr-bar-wrap{margin-top:2px;}
-.wr-bar-lbls{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
-.wr-track{height:6px;border-radius:10px;background:rgba(255,61,87,0.3);overflow:hidden;}
-.wr-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),#00bfa5);transition:width 0.4s cubic-bezier(.4,0,.2,1);}
-.games-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.12);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--cyan);font-family:'Oxanium',sans-serif;font-weight:600;margin-top:10px;}
-.card-actions{display:flex;gap:6px;padding:0 16px 14px;}
-.btn-edit{flex:1;padding:7px;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.12);border-radius:8px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:11px;font-weight:600;color:var(--cyan);transition:all 0.2s;text-transform:uppercase;}
-.btn-edit:hover{background:rgba(0,229,255,0.14);border-color:var(--cyan2);}
-.btn-del{padding:7px 12px;background:rgba(255,61,87,0.07);border:1px solid rgba(255,61,87,0.12);border-radius:8px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:11px;font-weight:600;color:var(--red);transition:all 0.2s;}
-.btn-del:hover{background:rgba(255,61,87,0.2);}
-
-/* EMPTY */
-.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
-.empty-icon{font-size:48px;margin-bottom:12px;}
-.empty-text{font-family:'Oxanium',sans-serif;font-size:15px;letter-spacing:1px;}
+.hero-grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 12px; }
+.hcard {
+  background: var(--c1);
+  border: 1px solid var(--border3);
+  border-radius: var(--r);
+  overflow: hidden; transition: all 0.22s;
+  animation: cardIn 0.35s ease both;
+}
+@keyframes cardIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+.hcard:hover { border-color: rgba(240,180,41,0.2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(240,180,41,0.1); }
+.hcard.main-card { border-color: var(--border); background: linear-gradient(135deg, rgba(240,180,41,0.05), var(--c1)); }
+.hcard-top { padding: 14px 16px 12px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border3); position: relative; }
+.main-badge2 {
+  position: absolute; top: 10px; right: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #07090f; font-family: var(--font-display); font-size: 8px; font-weight: 800;
+  padding: 2px 7px; border-radius: 4px; letter-spacing: 1px;
+}
+.hcard-avatar { width: 44px; height: 44px; border-radius: 10px; background: var(--c2); border: 1px solid var(--border3); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.hcard-info { flex: 1; min-width: 0; }
+.hcard-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hcard-role { font-size: 11px; color: var(--text3); letter-spacing: 0.5px; margin-top: 2px; }
+.hcard-wr { text-align: right; flex-shrink: 0; }
+.hcard-wr-val { font-family: var(--font-mono); font-size: 18px; font-weight: 700; line-height: 1; }
+.hcard-wr-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.hcard-body { padding: 12px 16px; }
+.hcard-wl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.wl-box { background: var(--c2); border-radius: var(--r-sm); padding: 9px 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid transparent; transition: all 0.18s; }
+.wl-box:hover { background: var(--c3); }
+.wl-box.wb { border-color: rgba(16,185,129,0.12); }
+.wl-box.lb { border-color: rgba(239,68,68,0.12); }
+.wl-left { display: flex; align-items: center; gap: 6px; }
+.wl-dot { width: 7px; height: 7px; border-radius: 50%; }
+.wb .wl-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.lb .wl-dot { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.wl-lbl2 { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text3); }
+.wl-num { font-family: var(--font-mono); font-size: 20px; font-weight: 700; }
+.wb .wl-num { color: var(--green); }
+.lb .wl-num { color: var(--red); }
+.wl-btns { display: flex; align-items: center; gap: 3px; }
+.wl-btn { width: 26px; height: 26px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all 0.14s; background: var(--c3); color: var(--text3); }
+.wl-btn:active { transform: scale(0.86); }
+.wb .wl-btn.plus:hover { background: var(--green2); color: var(--green); }
+.lb .wl-btn.plus:hover { background: var(--red2); color: var(--red); }
+.wl-btn.minus:hover { background: var(--c4); color: var(--text); }
+.wr-track2 { height: 5px; border-radius: 10px; background: rgba(239,68,68,0.2); overflow: hidden; margin-bottom: 8px; }
+.wr-fill2 { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--green), #059669); transition: width 0.4s ease; }
+.hcard-foot { display: flex; align-items: center; justify-content: space-between; }
+.hcard-pill { display: inline-flex; align-items: center; gap: 4px; background: var(--cyan3); border: 1px solid var(--border2); border-radius: 20px; padding: 2px 9px; font-family: var(--font-display); font-size: 10px; font-weight: 600; color: var(--cyan); letter-spacing: 0.5px; }
+.hcard-actions { display: flex; gap: 6px; padding: 0 16px 12px; }
+.hbtn { flex: 1; padding: 7px; background: var(--cyan3); border: 1px solid var(--border2); border-radius: 7px; cursor: pointer; font-family: var(--font-display); font-size: 11px; font-weight: 700; color: var(--cyan); transition: all 0.18s; text-transform: uppercase; letter-spacing: 0.5px; }
+.hbtn:hover { background: rgba(34,211,238,0.18); }
+.hbtn.del { background: var(--red2); border-color: rgba(239,68,68,0.15); color: var(--red); padding: 7px 10px; flex: 0; }
+.hbtn.del:hover { background: rgba(239,68,68,0.2); }
 
 /* FAB */
-.fab{position:fixed;bottom:28px;right:28px;z-index:90;width:58px;height:58px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:50%;cursor:pointer;font-size:26px;font-weight:700;color:#07090f;box-shadow:var(--glow-gold),0 4px 20px rgba(0,0,0,0.5);transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
-.fab:hover{transform:scale(1.1) rotate(90deg);box-shadow:0 0 30px rgba(245,200,66,0.5),0 6px 24px rgba(0,0,0,0.5);}
+.fab2 {
+  position: fixed; bottom: 28px; right: 28px; z-index: 90;
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  border: none; border-radius: 50%;
+  cursor: pointer; font-size: 24px; font-weight: 700; color: #07090f;
+  box-shadow: var(--glow-gold), 0 4px 20px rgba(0,0,0,0.5);
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.fab2:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 0 40px rgba(240,180,41,0.5); }
 
-/* TOAST */
-.toast-wrap{position:fixed;top:80px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
-.toast{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-family:'Oxanium',sans-serif;font-size:13px;font-weight:600;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,0.5);animation:tin 0.3s ease,tout 0.3s ease 2.2s forwards;display:flex;align-items:center;gap:8px;}
-.toast.s{border-color:rgba(0,230,118,0.3);}
-.toast.e{border-color:rgba(255,61,87,0.3);}
-@keyframes tin{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
-@keyframes tout{from{opacity:1;}to{opacity:0;transform:translateX(20px);}}
+/* ═══════════════════════════════════════════════
+   PROFILE PAGE
+═══════════════════════════════════════════════ */
+.profile-page { padding: 32px 0 60px; }
+.profile-header {
+  background: var(--c1);
+  border: 1px solid var(--border3);
+  border-radius: var(--r-lg);
+  padding: 28px 32px;
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.profile-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at top left, rgba(240,180,41,0.07), transparent 60%);
+  pointer-events: none;
+}
+.profile-avatar {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--c3), var(--c4));
+  border: 3px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 28px; font-weight: 800;
+  color: var(--gold); flex-shrink: 0; overflow: hidden;
+  box-shadow: var(--glow-gold);
+}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.profile-info { flex: 1; min-width: 0; }
+.profile-username {
+  font-family: var(--font-display); font-size: 26px; font-weight: 800;
+  color: var(--text); line-height: 1.1;
+}
+.profile-mlid { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+.profile-mlid-badge {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  color: var(--cyan); background: var(--cyan3);
+  border: 1px solid var(--border2); border-radius: 6px; padding: 2px 8px;
+}
+.profile-mlid-label { font-size: 12px; color: var(--text3); }
+.profile-badges { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.profile-badge {
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 20px;
+}
+.badge-gold { background: var(--gold3); color: var(--gold); border: 1px solid rgba(240,180,41,0.2); }
+.badge-cyan { background: var(--cyan3); color: var(--cyan); border: 1px solid var(--border2); }
+.badge-purple { background: var(--purple2); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); }
+.profile-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.pstat {
+  background: var(--c2); border: 1px solid var(--border3);
+  border-radius: var(--r-sm); padding: 14px 16px; text-align: center;
+}
+.pstat-val { font-family: var(--font-mono); font-size: 22px; font-weight: 700; }
+.pstat-lbl { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* PROFILE TABS */
+.profile-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border3); padding-bottom: 0; }
+.ptab {
+  padding: 10px 18px;
+  border: none; background: transparent;
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--text3); cursor: pointer; transition: all 0.18s;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  display: flex; align-items: center; gap: 6px;
+}
+.ptab:hover { color: var(--text); }
+.ptab.on { color: var(--gold); border-bottom-color: var(--gold); }
+.ptab-panel { display: none; }
+.ptab-panel.on { display: block; animation: fadeIn 0.25s ease; }
+
+/* SETTINGS PAGE */
+.settings-page { padding: 32px 0 60px; }
+.settings-grid { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; }
+.settings-nav { position: sticky; top: 90px; }
+.settings-nav-list { list-style: none; }
+.snav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--r-sm);
+  cursor: pointer; transition: all 0.18s;
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  color: var(--text3); margin-bottom: 2px;
+}
+.snav-item:hover, .snav-item.on { background: var(--c2); color: var(--text); }
+.snav-item.on { color: var(--gold); border-left: 2px solid var(--gold); padding-left: 12px; }
+.snav-icon { font-size: 16px; }
+.settings-section { background: var(--c1); border: 1px solid var(--border3); border-radius: var(--r); padding: 24px; margin-bottom: 16px; }
+.settings-section-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.settings-section-title .icon { font-size: 18px; }
+
+/* SEARCH / EXPLORE PAGE */
+.explore-page { padding: 32px 0 60px; }
+.explore-search-wrap { position: relative; max-width: 500px; margin: 0 auto 32px; }
+.explore-search-inp {
+  width: 100%;
+  background: var(--c1); border: 1px solid var(--border3);
+  border-radius: 50px;
+  padding: 14px 20px 14px 48px;
+  font-family: var(--font-body); font-size: 15px; color: var(--text);
+  outline: none; transition: all 0.18s;
+}
+.explore-search-inp:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(240,180,41,0.1); }
+.explore-search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; }
+.explore-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 12px; }
+.user-card {
+  background: var(--c1); border: 1px solid var(--border3);
+  border-radius: var(--r); padding: 18px 20px;
+  cursor: pointer; transition: all 0.22s;
+  display: flex; align-items: center; gap: 14px;
+}
+.user-card:hover { border-color: var(--border); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.user-card-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--c3); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 18px; font-weight: 800;
+  color: var(--gold); flex-shrink: 0; overflow: hidden;
+}
+.user-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-card-info { flex: 1; min-width: 0; }
+.user-card-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+.user-card-id { font-family: var(--font-mono); font-size: 12px; color: var(--text3); margin-top: 3px; }
+.user-card-stats { display: flex; gap: 8px; margin-top: 6px; }
+.ucs { font-size: 11px; font-family: var(--font-display); font-weight: 600; }
+.ucs.g { color: var(--green); }
+.ucs.r { color: var(--red); }
+.ucs.cy { color: var(--cyan); }
+.private-badge { font-size: 10px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
+
+/* PUBLIC PROFILE VIEW */
+.public-profile { padding: 32px 0 60px; }
+
+/* ═══════════════════════════════════════════════
+   OBS OVERLAY LINK
+═══════════════════════════════════════════════ */
+.obs-section { margin-top: 20px; }
+.obs-preview-link {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--c2); border: 1px solid var(--border3);
+  border-radius: var(--r-sm); padding: 10px 14px;
+  margin-bottom: 10px;
+}
+.obs-link-url { font-family: var(--font-mono); font-size: 12px; color: var(--cyan); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ═══════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(6,8,16,0.85);
+  backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  padding: 20px;
+}
+.modal-overlay.on { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--c1); border: 1px solid var(--border3);
+  border-radius: var(--r-lg); padding: 28px;
+  width: 100%; max-width: 440px;
+  transform: scale(0.95) translateY(12px); transition: transform 0.22s;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), var(--glow-gold);
+}
+.modal-overlay.on .modal-box { transform: scale(1) translateY(0); }
+.modal-title { font-family: var(--font-display); font-size: 15px; font-weight: 800; color: var(--gold); letter-spacing: 0.5px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.modal-actions .btn { flex: 1; }
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+.toast-dock { position: fixed; top: 78px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+.toast2 {
+  background: var(--c2); border: 1px solid var(--border3);
+  border-radius: var(--r-sm); padding: 11px 16px;
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  color: var(--text); box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  display: flex; align-items: center; gap: 8px; min-width: 240px;
+  animation: tin2 0.3s ease, tout2 0.3s ease 2.3s forwards;
+  letter-spacing: 0.3px;
+}
+.toast2.ok { border-color: rgba(16,185,129,0.3); }
+.toast2.err { border-color: rgba(239,68,68,0.3); }
+.toast2.info { border-color: var(--border2); }
+@keyframes tin2 { from{opacity:0;transform:translateX(20px);} to{opacity:1;transform:translateX(0);} }
+@keyframes tout2 { from{opacity:1;} to{opacity:0;transform:translateX(20px);} }
 
 /* LOADING */
-.loading-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity 0.5s;}
+.loading-screen { position:fixed;inset:0;z-index:9999;background:var(--c0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity 0.5s; }
 .loading-screen.hide{opacity:0;pointer-events:none;}
-.ll{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:var(--gold);letter-spacing:4px;animation:lp 1.5s infinite;}
-@keyframes lp{0%,100%{opacity:1;}50%{opacity:0.4;}}
-.lb2{width:200px;height:3px;background:var(--bg3);border-radius:10px;overflow:hidden;}
-.lb2-f{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--cyan));border-radius:10px;animation:lf 1.8s ease forwards;}
-@keyframes lf{to{width:100%;}}
+.loading-logo { font-family:var(--font-display);font-size:30px;font-weight:800;color:var(--gold);letter-spacing:4px;animation:lp2 1.4s infinite; }
+.loading-logo span { color: var(--text); }
+@keyframes lp2{0%,100%{opacity:1;}50%{opacity:0.35;}}
+.loading-bar-wrap { width:200px;height:3px;background:var(--c3);border-radius:10px;overflow:hidden; }
+.loading-bar-fill { height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--cyan));border-radius:10px;animation:lfill 2s ease forwards; }
+@keyframes lfill{to{width:100%;}}
+.loading-sub { font-family:var(--font-mono);font-size:11px;color:var(--text3);letter-spacing:2px; }
 
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(7,9,15,0.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;padding:20px;}
-.modal-overlay.active{opacity:1;pointer-events:all;}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:28px;width:100%;max-width:420px;transform:scale(0.95) translateY(10px);transition:transform 0.2s;box-shadow:0 20px 60px rgba(0,0,0,0.6),var(--glow-gold);}
-.modal-overlay.active .modal{transform:scale(1) translateY(0);}
-.modal-title{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
-.mf{margin-bottom:14px;}
-.mf label{display:block;font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-family:'Oxanium',sans-serif;}
-.mf input,.mf select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:600;color:var(--text);outline:none;transition:border-color 0.2s;}
-.mf input:focus,.mf select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,200,66,0.1);}
-.mf select option{background:var(--bg3);}
-.mactions{display:flex;gap:10px;margin-top:20px;}
-.btn-p{flex:1;padding:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#07090f;border:none;border-radius:10px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;}
-.btn-p:hover{filter:brightness(1.1);box-shadow:var(--glow-gold);}
-.btn-s{flex:1;padding:12px;background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;}
-.btn-s:hover{background:rgba(255,255,255,0.08);color:var(--text);}
-.btn-d{padding:12px 16px;background:rgba(255,61,87,0.1);color:var(--red);border:1px solid rgba(255,61,87,0.2);border-radius:10px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:12px;font-weight:700;transition:all 0.2s;}
-.btn-d:hover{background:rgba(255,61,87,0.2);}
-
-/* RESPONSIVE */
-@media(max-width:900px)and(min-width:641px){
-  .daily-grid{grid-template-columns:1fr 1fr;}
-  .mmr-dc{grid-column:span 2;}
+/* DROPDOWN */
+.dropdown-wrap { position: relative; }
+.dropdown-menu {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: var(--c1); border: 1px solid var(--border3);
+  border-radius: var(--r); padding: 6px;
+  min-width: 200px; box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+  opacity: 0; pointer-events: none; transform: translateY(-6px);
+  transition: all 0.18s; z-index: 300;
 }
-@media(max-width:640px){
-  .daily-grid{grid-template-columns:1fr;}
-  .dc-num{font-size:40px;}.mmr-dc .dc-num{font-size:32px;}
-  .section-wrap,.toolbar,.stats-bar{padding:0 16px;}
-  header{padding:0 16px;}.lu-bar{padding:5px 16px;}
-  main{padding:0 16px;}
-  .logo-text{font-size:13px;}.mmr-value{font-size:14px;}
-  .fab{bottom:20px;right:20px;width:52px;height:52px;font-size:22px;}
-  .hero-grid{grid-template-columns:1fr;}
-  .hist-row{flex-direction:column;align-items:flex-start;gap:8px;}
-  .hist-mmr-grp{margin-left:0;}
-  .lu-live{display:none;}
+.dropdown-wrap.open .dropdown-menu { opacity: 1; pointer-events: all; transform: translateY(0); }
+.dditem {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--r-sm);
+  cursor: pointer; transition: all 0.15s;
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  color: var(--text3); letter-spacing: 0.3px;
+  text-decoration: none;
+}
+.dditem:hover { background: var(--c2); color: var(--text); }
+.dditem.danger { color: var(--red); }
+.dditem.danger:hover { background: var(--red2); }
+.dd-divider { height: 1px; background: var(--border3); margin: 4px 0; }
+.dd-header { padding: 8px 12px 4px; }
+.dd-header-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--text); }
+.dd-header-email { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* UTIL */
+.mt4 { margin-top: 4px; }
+.mt8 { margin-top: 8px; }
+.mt16 { margin-top: 16px; }
+.mt24 { margin-top: 24px; }
+.gap-8 { gap: 8px; }
+.flex { display: flex; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.justify-between { justify-content: space-between; }
+.align-center { align-items: center; }
+.text-gold { color: var(--gold); }
+.text-cyan { color: var(--cyan); }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.text-muted { color: var(--text3); }
+.text-center { text-align: center; }
+.fw-700 { font-weight: 700; }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .home-hero-grid { grid-template-columns: 1fr; }
+  .home-grid { grid-template-columns: 1fr; }
+  .settings-grid { grid-template-columns: 1fr; }
+  .settings-nav { position: static; }
+  .settings-nav-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  .snav-item { flex: 0 0 auto; border-left: none !important; padding-left: 14px !important; }
+  .snav-item.on { border-bottom: 2px solid var(--gold); }
+  .hero-stats-row { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 768px) {
+  .container, .container-sm { padding: 0 16px; }
+  .topbar-nav { display: none; }
+  .home-quick-stats { grid-template-columns: repeat(3,1fr); }
+  .profile-header { padding: 20px; gap: 16px; }
+  .profile-stats { grid-template-columns: repeat(3,1fr); }
+  .auth-card { padding: 28px 20px; }
+  .profile-page, .settings-page, .explore-page { padding: 20px 0 60px; }
+  .fab2 { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 22px; }
+  .hero-grid2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .home-quick-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .form-row { grid-template-columns: 1fr; }
+  .hcard-wl { grid-template-columns: 1fr; }
+  .profile-stats { grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .modal-box { padding: 20px; }
+  .hist-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .hist-mmr-grp { margin-left: 0; }
 }
 </style>
 </head>
 <body>
 
+<!-- LOADING -->
 <div class="loading-screen" id="loadingScreen">
-  <div class="ll">MLBB TRACKER</div>
-  <div style="color:var(--muted);font-family:'Oxanium';font-size:12px;letter-spacing:3px">CONNECTING TO DATABASE...</div>
-  <div class="lb2"><div class="lb2-f"></div></div>
+  <div class="loading-logo">MLBB<span> TRACKER</span> ID</div>
+  <div class="loading-sub">CONNECTING DATABASE...</div>
+  <div class="loading-bar-wrap"><div class="loading-bar-fill"></div></div>
 </div>
 
-<header>
-  <div class="header-inner">
-    <div class="logo">
-      <div class="logo-icon">ML</div>
-      <div>
-        <div class="logo-text">MLBB TRACKER</div>
-        <div class="logo-sub">Miya Main</div>
+<div class="app" id="app" style="display:none">
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="container">
+    <div class="topbar-inner">
+      <a class="topbar-brand" onclick="goPage('home')">
+        <div class="brand-icon">ML</div>
+        <div class="brand-name">MLBB TRACKER <span>ID</span></div>
+      </a>
+      <nav class="topbar-nav" id="mainNav">
+        <button class="nav-btn active" data-page="home" onclick="goPage('home')">🏠 Home</button>
+        <button class="nav-btn" data-page="explore" onclick="goPage('explore')">🔍 Explore</button>
+        <button class="nav-btn" data-page="profile" onclick="goPage('profile')">👤 Profil</button>
+        <button class="nav-btn" data-page="settings" onclick="goPage('settings')">⚙️ Settings</button>
+        <button class="nav-btn" onclick="goPage('overlay')" title="OBS Overlay">🎥 OBS</button>
+      </nav>
+      <div class="topbar-actions">
+        <div class="dropdown-wrap" id="avatarDrop">
+          <div class="avatar-btn" id="avatarBtn" onclick="toggleDrop()">?</div>
+          <div class="dropdown-menu" id="dropMenu">
+            <div class="dd-header">
+              <div class="dd-header-name" id="ddName">—</div>
+              <div class="dd-header-email" id="ddEmail">—</div>
+            </div>
+            <div class="dd-divider"></div>
+            <div class="dditem" onclick="goPage('profile');toggleDrop()">👤 Profil Saya</div>
+            <div class="dditem" onclick="goPage('settings');toggleDrop()">⚙️ Settings</div>
+            <div class="dditem" onclick="goPage('overlay');toggleDrop()">🎥 OBS Overlay</div>
+            <div class="dd-divider"></div>
+            <div class="dditem danger" onclick="signOut()">🚪 Keluar</div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="header-mmr" onclick="openMMRModal()">
-      <div>
-        <div class="mmr-label">MMR</div>
-        <div class="mmr-value" id="headerMMR">—</div>
-      </div>
-      <span style="color:var(--gold);font-size:12px;margin-left:4px;">✎</span>
     </div>
   </div>
 </header>
 
-<!-- LAST UPDATE BAR — realtime detik per detik -->
-<div class="lu-bar">
-  <div class="lu-inner">
-    <div class="lu-pulse"></div>
-    <span class="lu-lbl">Terakhir Diubah</span>
-    <span class="lu-ts" id="luTS">—</span>
-    <span class="lu-act" id="luAct"></span>
-    <span class="lu-live">🟢 LIVE &nbsp;·&nbsp; <span id="luClock">—</span></span>
+<!-- UPDATE BAR -->
+<div class="update-bar" id="updateBar" style="display:none">
+  <div class="update-bar-inner">
+    <div class="live-dot"></div>
+    <span class="update-label">Terakhir Diubah</span>
+    <span class="update-ts" id="luTS">—</span>
+    <span class="update-action" id="luAct"></span>
+    <span class="live-clock" id="liveClock">—</span>
   </div>
 </div>
 
-<!-- DAILY WIN/LOSE + MMR PANEL -->
-<div class="section-wrap">
-  <div class="sec-title">
-    📅 Hari Ini
-    <span class="sec-badge">Reset 00:00 · <span id="resetCD">—</span></span>
-  </div>
-  <div class="daily-grid">
-
-    <div class="dcounter win-dc">
-      <div class="dc-head">
-        <div class="dc-dot"></div>
-        <div class="dc-lbl">Win Hari Ini</div>
-        <div class="dc-tag" id="dWinDate">—</div>
+<!-- ══ AUTH PAGE ══ -->
+<div class="page active" id="page-auth">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">ML</div>
+        <div class="auth-logo-name">MLBB TRACKER <span>ID</span></div>
+        <div class="auth-logo-sub">Track your ranked journey</div>
       </div>
-      <div class="dc-main">
-        <div class="dc-num" id="dWinNum">0</div>
-        <div class="dc-btns">
-          <button class="dc-btn dc-p" onclick="changeDaily('win',1)">+</button>
-          <button class="dc-btn dc-m" onclick="changeDaily('win',-1)">−</button>
-        </div>
-      </div>
-      <div class="dc-foot">
-        <div class="dc-stat">WR Hari Ini <em id="dWR">0%</em></div>
-        <div class="dc-countdown">Reset <span id="cd1">—</span></div>
+      <button class="google-btn" onclick="loginGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Masuk dengan Google
+      </button>
+      <div class="auth-divider"><span>Privat & Aman</span></div>
+      <div style="text-align:center;font-size:13px;color:var(--text3);line-height:1.6;">
+        Login otomatis membuat akun.<br>Data tersimpan di Firebase Realtime Database.
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="dcounter lose-dc">
-      <div class="dc-head">
-        <div class="dc-dot"></div>
-        <div class="dc-lbl">Lose Hari Ini</div>
-        <div class="dc-tag" id="dLoseDate">—</div>
+<!-- ══ SETUP PAGE ══ -->
+<div class="page" id="page-setup">
+  <div class="auth-page">
+    <div class="auth-card" style="max-width:500px">
+      <div class="auth-logo" style="margin-bottom:24px">
+        <div class="auth-logo-name">Setup Akun <span>Baru</span></div>
+        <div class="auth-logo-sub">Lengkapi profil MLBB Tracker ID kamu</div>
       </div>
-      <div class="dc-main">
-        <div class="dc-num" id="dLoseNum">0</div>
-        <div class="dc-btns">
-          <button class="dc-btn dc-p" onclick="changeDaily('lose',1)">+</button>
-          <button class="dc-btn dc-m" onclick="changeDaily('lose',-1)">−</button>
+
+      <!-- STEPPER -->
+      <div class="stepper">
+        <div class="step-item">
+          <div class="step-dot active" id="sdot1">1</div>
+          <div class="step-label">Profil</div>
+        </div>
+        <div class="step-line" id="sline1"></div>
+        <div class="step-item">
+          <div class="step-dot" id="sdot2">2</div>
+          <div class="step-label">ID ML</div>
+        </div>
+        <div class="step-line" id="sline2"></div>
+        <div class="step-item">
+          <div class="step-dot" id="sdot3">3</div>
+          <div class="step-label">Password</div>
         </div>
       </div>
-      <div class="dc-foot">
-        <div class="dc-stat">Total Games <em id="dTotal">0</em></div>
-        <div class="dc-countdown">Reset <span id="cd2">—</span></div>
-      </div>
-    </div>
 
-    <div class="dcounter mmr-dc">
-      <div class="dc-head">
-        <div class="dc-dot"></div>
-        <div class="dc-lbl">MMR Sekarang</div>
-        <div class="dc-tag" id="dMMRDelta">—</div>
-      </div>
-      <div class="dc-main">
-        <div class="dc-num" id="dMMRNum">—</div>
-        <div class="dc-btns">
-          <button class="dc-btn dc-p" onclick="changeMMR(1)">+</button>
-          <button class="dc-btn dc-m" onclick="changeMMR(-1)">−</button>
+      <!-- STEP 1: Username -->
+      <div class="setup-step active" id="sstep1">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-input" id="setupUsername" placeholder="cth: miyamain99" maxlength="24">
+          <div class="form-hint">Huruf, angka, underscore. Maks 24 karakter.</div>
+        </div>
+        <div class="mt16">
+          <button class="btn btn-gold btn-full btn-lg" onclick="setupNext(1)">Lanjut →</button>
         </div>
       </div>
-      <div class="dc-foot">
-        <div class="dc-stat">
-          Set Manual:
-          <input class="mmr-inline" type="number" id="mmrInline" placeholder="1000" onkeydown="if(event.key==='Enter')doSetMMR()">
+
+      <!-- STEP 2: ML ID -->
+      <div class="setup-step" id="sstep2">
+        <div class="form-group">
+          <label class="form-label">ID Mobile Legends</label>
+          <input class="form-input" id="setupMLID" placeholder="cth: 123456789 (1234)" maxlength="30" type="text">
+          <div class="form-hint">Bisa dilihat di profil in-game kamu.</div>
         </div>
-        <div class="dc-countdown">Ketik lalu <span>Enter</span></div>
+        <div class="form-row mt16">
+          <button class="btn btn-ghost" onclick="setupBack(2)">← Kembali</button>
+          <button class="btn btn-gold" onclick="setupNext(2)">Lanjut →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Password (untuk ganti username) -->
+      <div class="setup-step" id="sstep3">
+        <div style="background:var(--gold3);border:1px solid rgba(240,180,41,0.2);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text2);">
+          🔐 Password ini hanya digunakan untuk <strong style="color:var(--gold)">mengubah username</strong> kamu di masa depan.
+        </div>
+        <div class="form-group">
+          <label class="form-label">Buat Password</label>
+          <input class="form-input" id="setupPass" type="password" placeholder="Min. 6 karakter">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Konfirmasi Password</label>
+          <input class="form-input" id="setupPassConf" type="password" placeholder="Ulangi password">
+        </div>
+        <div class="form-row mt16">
+          <button class="btn btn-ghost" onclick="setupBack(3)">← Kembali</button>
+          <button class="btn btn-gold" onclick="finishSetup()" id="setupFinishBtn">✓ Selesai</button>
+        </div>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- HISTORY PANEL -->
-<div class="section-wrap" style="margin-top:20px;">
-  <div class="sec-title">📜 History Harian <span class="sec-badge" id="histCount">0 entri</span></div>
-  <div class="hist-list" id="histList">
-    <div class="hist-empty">Belum ada history. Tersimpan otomatis saat reset 00:00.</div>
-  </div>
-</div>
+<!-- ══ HOME PAGE ══ -->
+<div class="page" id="page-home">
+  <!-- HERO SECTION -->
+  <div class="home-hero">
+    <div class="container">
+      <div class="home-hero-grid">
+        <!-- LEFT: Welcome + Today Stats -->
+        <div class="home-welcome">
+          <div class="home-welcome-greeting">Selamat datang kembali,</div>
+          <div class="home-welcome-name"><span id="hwUsername">—</span></div>
+          <div class="home-welcome-meta">
+            <div class="meta-chip"><span class="chip-icon">🎮</span><span id="hwMLID">—</span></div>
+            <div class="meta-chip"><span class="chip-icon">🏅</span><span id="hwMMR">— MMR</span></div>
+            <div class="meta-chip"><span class="chip-icon">📅</span><span id="hwDate">—</span></div>
+          </div>
+          <div class="home-quick-stats">
+            <div class="qstat win">
+              <div class="qstat-val" id="qWin">0</div>
+              <div class="qstat-lbl">Win Hari Ini</div>
+            </div>
+            <div class="qstat lose">
+              <div class="qstat-val" id="qLose">0</div>
+              <div class="qstat-lbl">Lose Hari Ini</div>
+            </div>
+            <div class="qstat mmr">
+              <div class="qstat-val" id="qMMR">—</div>
+              <div class="qstat-lbl">MMR</div>
+            </div>
+          </div>
+        </div>
 
-<!-- HERO STATS BAR -->
-<div class="stats-bar">
-  <div class="stat-card">
-    <div class="stat-icon si-gold">🎮</div>
-    <div class="stat-info"><div class="slbl">Games Hero</div><div class="sval gold" id="stTotal">0</div></div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon si-green">🏆</div>
-    <div class="stat-info"><div class="slbl">Win Hero</div><div class="sval green" id="stWin">0</div></div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon si-red">💀</div>
-    <div class="stat-info"><div class="slbl">Lose Hero</div><div class="sval red" id="stLose">0</div></div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon si-cyan">📊</div>
-    <div class="stat-info"><div class="slbl">Overall WR</div><div class="sval cyan" id="stWR">0%</div></div>
-  </div>
-</div>
-
-<!-- TOOLBAR -->
-<div class="toolbar">
-  <div class="search-box">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Cari hero..." oninput="filterHeroes()">
-  </div>
-  <div class="filter-btns">
-    <button class="filter-btn active" onclick="setRole(this,'all')">All</button>
-    <button class="filter-btn" onclick="setRole(this,'Marksman')">Marksman</button>
-    <button class="filter-btn" onclick="setRole(this,'Assassin')">Assassin</button>
-    <button class="filter-btn" onclick="setRole(this,'Mage')">Mage</button>
-    <button class="filter-btn" onclick="setRole(this,'Tank')">Tank</button>
-    <button class="filter-btn" onclick="setRole(this,'Fighter')">Fighter</button>
-    <button class="filter-btn" onclick="setRole(this,'Support')">Support</button>
-    <button class="filter-btn wf" onclick="setRole(this,'win')">🏆 WR ≥60%</button>
-  </div>
-</div>
-
-<main>
-  <div class="sec-header">
-    <span class="sec-header-title">Hero List</span>
-    <div class="sec-header-line"></div>
-    <span style="font-size:12px;color:var(--muted);font-family:'Oxanium';" id="heroCount">0 heroes</span>
-  </div>
-  <div class="hero-grid" id="heroGrid">
-    <div class="empty-state" id="emptyState">
-      <div class="empty-icon">⚔️</div>
-      <div class="empty-text">Belum ada hero. Tekan + untuk menambah.</div>
+        <!-- RIGHT: Daily Counter Card -->
+        <div class="home-daily-card">
+          <div class="daily-header">
+            <div class="daily-title">📅 Hari Ini</div>
+            <div class="daily-reset" id="dailyReset">Reset <span id="cdTimer">—</span></div>
+          </div>
+          <div class="daily-counters">
+            <div class="dc-item win-item">
+              <div class="dc-left">
+                <div class="dc-dot2"></div>
+                <div class="dc-name">Win</div>
+              </div>
+              <div class="dc-right">
+                <button class="dc-btn2" onclick="changeDaily('win',-1)">−</button>
+                <div class="dc-count" id="dcWin">0</div>
+                <button class="dc-btn2 plus" onclick="changeDaily('win',1)">+</button>
+              </div>
+            </div>
+            <div class="dc-item lose-item">
+              <div class="dc-left">
+                <div class="dc-dot2"></div>
+                <div class="dc-name">Lose</div>
+              </div>
+              <div class="dc-right">
+                <button class="dc-btn2" onclick="changeDaily('lose',-1)">−</button>
+                <div class="dc-count" id="dcLose">0</div>
+                <button class="dc-btn2 plus" onclick="changeDaily('lose',1)">+</button>
+              </div>
+            </div>
+            <div class="wr-bar-mini"><div class="wr-bar-mini-fill" id="wrBarMini" style="width:0%"></div></div>
+            <div class="dc-item mmr-item">
+              <div class="dc-left">
+                <div class="dc-dot2"></div>
+                <div class="dc-name">MMR <span id="mmrDeltaTag" style="font-size:10px;opacity:0.7;"></span></div>
+              </div>
+              <div class="dc-right">
+                <button class="dc-btn2" onclick="changeMMR(-1)">−</button>
+                <div class="dc-count" id="dcMMR">—</div>
+                <button class="dc-btn2 plus" onclick="changeMMR(1)">+</button>
+              </div>
+            </div>
+            <div class="mmr-manual-row">
+              <input class="mmr-manual-inp" type="number" id="mmrManual" placeholder="Set MMR manual..." onkeydown="if(event.key==='Enter')doSetMMR()">
+              <button class="btn btn-gold btn-sm" onclick="doSetMMR()">Set</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</main>
 
-<button class="fab" onclick="openAddModal()">+</button>
-<div class="toast-wrap" id="toastWrap"></div>
+  <!-- MAIN CONTENT -->
+  <div class="home-content">
+    <div class="container">
+      <div class="home-grid">
+
+        <!-- LEFT: History -->
+        <div class="hero-panel">
+          <!-- Hero Stats -->
+          <div class="section-title">
+            ⚔️ Hero Stats
+            <span class="stag" id="heroCountTag">0 hero</span>
+          </div>
+          <div class="hero-stats-row">
+            <div class="hstat hg"><div class="hstat-val" id="hsTotal">0</div><div class="hstat-lbl">Total Games</div></div>
+            <div class="hstat hgr"><div class="hstat-val" id="hsWin">0</div><div class="hstat-lbl">Total Win</div></div>
+            <div class="hstat hr"><div class="hstat-val" id="hsLose">0</div><div class="hstat-lbl">Total Lose</div></div>
+            <div class="hstat hc"><div class="hstat-val" id="hsWR">0%</div><div class="hstat-lbl">Win Rate</div></div>
+          </div>
+
+          <!-- Hero Toolbar -->
+          <div class="hero-toolbar">
+            <div class="htool-search">
+              <input type="text" placeholder="Cari hero..." id="heroSearch" oninput="filterHeroes()">
+            </div>
+            <div class="role-filters">
+              <button class="rf on" onclick="setRole(this,'all')">All</button>
+              <button class="rf" onclick="setRole(this,'Marksman')">MM</button>
+              <button class="rf" onclick="setRole(this,'Assassin')">Ass</button>
+              <button class="rf" onclick="setRole(this,'Mage')">Mage</button>
+              <button class="rf" onclick="setRole(this,'Tank')">Tank</button>
+              <button class="rf" onclick="setRole(this,'Fighter')">Fighter</button>
+              <button class="rf" onclick="setRole(this,'Support')">Supp</button>
+              <button class="rf wr-f" onclick="setRole(this,'wr60')">🏆 ≥60%</button>
+            </div>
+          </div>
+
+          <!-- Hero Grid -->
+          <div class="hero-grid2" id="heroGrid">
+            <div class="hist-empty" id="heroEmpty">
+              <div class="hist-empty-icon">⚔️</div>
+              <div class="hist-empty-text">Belum ada hero. Tekan + untuk menambah.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: History -->
+        <div class="hist-panel">
+          <div class="section-title">
+            📜 History Harian
+            <span class="stag" id="histCountTag">0 entri</span>
+          </div>
+          <div class="hist-items" id="histList">
+            <div class="hist-empty">
+              <div class="hist-empty-icon">📅</div>
+              <div class="hist-empty-text">Belum ada history.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab2" id="fabBtn" onclick="openHeroModal()" style="display:none">+</button>
+
+<!-- ══ EXPLORE PAGE ══ -->
+<div class="page" id="page-explore">
+  <div class="explore-page">
+    <div class="container-sm">
+      <div class="section-title" style="margin-bottom:24px">🔍 Explore Players</div>
+      <div class="explore-search-wrap">
+        <span class="explore-search-icon">🔍</span>
+        <input class="explore-search-inp" type="text" id="exploreSearch" placeholder="Cari username..." oninput="searchUsers()">
+      </div>
+      <div id="exploreResults" class="explore-results"></div>
+      <div id="explorePublicList" class="explore-results" style="margin-top:0"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PUBLIC PROFILE VIEW ══ -->
+<div class="page" id="page-public">
+  <div class="public-profile">
+    <div class="container-sm">
+      <div style="margin-bottom:16px">
+        <button class="btn btn-ghost btn-sm" onclick="goBack()">← Kembali</button>
+      </div>
+      <div id="publicProfileContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROFILE PAGE ══ -->
+<div class="page" id="page-profile">
+  <div class="profile-page">
+    <div class="container-sm">
+
+      <div class="profile-header" id="myProfileHeader">
+        <div class="profile-avatar" id="profAvatar">?</div>
+        <div class="profile-info">
+          <div class="profile-username" id="profUsername">—</div>
+          <div class="profile-mlid">
+            <div class="profile-mlid-badge" id="profMLID">—</div>
+            <div class="profile-mlid-label">ID Mobile Legends</div>
+          </div>
+          <div class="profile-badges" id="profBadges"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;">
+          <button class="btn btn-gold btn-sm" onclick="goPage('settings')">⚙️ Edit Profil</button>
+          <button class="btn btn-ghost btn-sm" onclick="copyOBSLink()">🎥 OBS Link</button>
+        </div>
+      </div>
+
+      <!-- Profile Stats -->
+      <div class="profile-stats" style="margin-bottom:24px">
+        <div class="pstat"><div class="pstat-val text-gold" id="profMMR">—</div><div class="pstat-lbl">MMR Sekarang</div></div>
+        <div class="pstat"><div class="pstat-val text-green" id="profWinToday">0</div><div class="pstat-lbl">Win Hari Ini</div></div>
+        <div class="pstat"><div class="pstat-val text-red" id="profLoseToday">0</div><div class="pstat-lbl">Lose Hari Ini</div></div>
+      </div>
+
+      <!-- Profile Tabs -->
+      <div class="profile-tabs">
+        <button class="ptab on" onclick="setPTab(this,'pthero')">⚔️ Heroes</button>
+        <button class="ptab" onclick="setPTab(this,'pthistory')">📜 History</button>
+      </div>
+
+      <div class="ptab-panel on" id="pthero">
+        <div class="hero-grid2" id="profHeroGrid"></div>
+      </div>
+      <div class="ptab-panel" id="pthistory">
+        <div class="hist-items" id="profHistList"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS PAGE ══ -->
+<div class="page" id="page-settings">
+  <div class="settings-page">
+    <div class="container">
+      <div class="section-title" style="margin-bottom:20px">⚙️ Pengaturan</div>
+      <div class="settings-grid">
+
+        <!-- Left: Nav -->
+        <div class="settings-nav">
+          <ul class="settings-nav-list">
+            <li class="snav-item on" onclick="setSnav(this,'sprof')"><span class="snav-icon">👤</span>Profil</li>
+            <li class="snav-item" onclick="setSnav(this,'sprivacy')"><span class="snav-icon">🔒</span>Privasi</li>
+            <li class="snav-item" onclick="setSnav(this,'sobs')"><span class="snav-icon">🎥</span>OBS Overlay</li>
+            <li class="snav-item" onclick="setSnav(this,'saccount')"><span class="snav-icon">🔑</span>Akun</li>
+          </ul>
+        </div>
+
+        <!-- Right: Panels -->
+        <div>
+          <!-- PROFIL PANEL -->
+          <div class="settings-section" id="sprof">
+            <div class="settings-section-title"><span class="icon">👤</span>Informasi Profil</div>
+            <div class="form-group">
+              <label class="form-label">Username</label>
+              <input class="form-input" id="sUsername" placeholder="username kamu">
+              <div class="form-hint">Ubah username memerlukan password.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ID Mobile Legends</label>
+              <input class="form-input" id="sMLID" placeholder="ID ML kamu">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password (untuk ubah username)</label>
+              <input class="form-input" type="password" id="sPassConfirm" placeholder="Masukkan password kamu">
+            </div>
+            <button class="btn btn-gold" onclick="saveProfile()">💾 Simpan Perubahan</button>
+          </div>
+
+          <!-- PRIVACY PANEL -->
+          <div class="settings-section" id="sprivacy" style="display:none">
+            <div class="settings-section-title"><span class="icon">🔒</span>Pengaturan Privasi</div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Tampilkan Profil ke Publik</div>
+                <div class="toggle-desc">Orang lain bisa menemukan akun kamu di Explore</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="privPublic" onchange="savePrivacy()">
+                <div class="toggle-track"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Tampilkan MMR</div>
+                <div class="toggle-desc">MMR kamu terlihat di profil publik</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="privMMR" onchange="savePrivacy()">
+                <div class="toggle-track"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Tampilkan Win/Lose Harian</div>
+                <div class="toggle-desc">Win/lose hari ini terlihat di profil publik</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="privWL" onchange="savePrivacy()">
+                <div class="toggle-track"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Tampilkan History</div>
+                <div class="toggle-desc">History harian terlihat di profil publik</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="privHist" onchange="savePrivacy()">
+                <div class="toggle-track"></div>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">Tampilkan Hero List</div>
+                <div class="toggle-desc">Daftar hero dan statistiknya terlihat di publik</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="privHeroes" onchange="savePrivacy()">
+                <div class="toggle-track"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- OBS PANEL -->
+          <div class="settings-section" id="sobs" style="display:none">
+            <div class="settings-section-title"><span class="icon">🎥</span>OBS Overlay</div>
+            <div style="font-size:14px;color:var(--text3);margin-bottom:16px;line-height:1.6;">
+              Gunakan link di bawah sebagai <strong style="color:var(--text)">Browser Source</strong> di OBS Studio.
+              Overlay menampilkan Win/Lose hari ini dan MMR secara realtime.
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ukuran Overlay</label>
+              <select class="form-select" id="obsSize" onchange="updateOBSLink()">
+                <option value="banner">Banner Lebar (1920×120) — untuk bawah layar</option>
+                <option value="sidebar">Sidebar (300×500) — untuk samping layar</option>
+                <option value="widget">Widget Kotak (400×280)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tema Overlay</label>
+              <select class="form-select" id="obsTheme" onchange="updateOBSLink()">
+                <option value="dark">Dark Gold (Default)</option>
+                <option value="darkblue">Dark Blue</option>
+                <option value="minimal">Minimal Transparan</option>
+              </select>
+            </div>
+            <div class="obs-section">
+              <label class="form-label">Link Browser Source OBS</label>
+              <div class="obs-preview-link">
+                <span class="obs-link-url" id="obsLinkDisplay">—</span>
+                <button class="btn btn-cyan btn-sm" onclick="copyOBSLink()">📋 Copy</button>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="openOBSPreview()">👁 Preview Overlay</button>
+            </div>
+            <div style="margin-top:16px;font-size:12px;color:var(--text3);background:var(--c2);border-radius:var(--r-sm);padding:12px;">
+              <strong style="color:var(--text)">Cara pasang di OBS:</strong><br>
+              1. Buka OBS → Sources → + → Browser<br>
+              2. Paste link di atas ke kolom URL<br>
+              3. Atur Width & Height sesuai ukuran yang dipilih<br>
+              4. Centang "Refresh browser when scene becomes active"
+            </div>
+          </div>
+
+          <!-- ACCOUNT PANEL -->
+          <div class="settings-section" id="saccount" style="display:none">
+            <div class="settings-section-title"><span class="icon">🔑</span>Keamanan Akun</div>
+            <div class="form-group">
+              <label class="form-label">Password Saat Ini</label>
+              <input class="form-input" type="password" id="saOld" placeholder="Password lama">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password Baru</label>
+              <input class="form-input" type="password" id="saNew" placeholder="Password baru (min. 6 karakter)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Konfirmasi Password Baru</label>
+              <input class="form-input" type="password" id="saConf" placeholder="Ulangi password baru">
+            </div>
+            <button class="btn btn-cyan" onclick="changePassword()">🔑 Ubah Password</button>
+            <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border3);">
+              <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:8px;">Zona Berbahaya</div>
+              <button class="btn btn-danger" onclick="signOut()">🚪 Logout dari Akun Ini</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ OBS OVERLAY PAGE ══ -->
+<div class="page" id="page-overlay">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;">
+    <div style="max-width:600px;width:100%;text-align:center">
+      <div style="font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:20px;">OBS Overlay Preview</div>
+      <div id="obsPreviewWrap" style="margin-bottom:24px;"></div>
+      <button class="btn btn-ghost" onclick="goPage('settings');setSnav(document.querySelector('.snav-item:nth-child(3)'),'sobs')">⚙️ Pengaturan Overlay</button>
+      <div style="margin-top:12px;font-size:12px;color:var(--text3)">Halaman ini bisa dibuka langsung sebagai Browser Source OBS</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- TOAST DOCK -->
+<div class="toast-dock" id="toastDock"></div>
 
 <!-- HERO MODAL -->
 <div class="modal-overlay" id="heroModal">
-  <div class="modal">
-    <div class="modal-title">⚔️ <span id="modalTitle">Tambah Hero</span></div>
+  <div class="modal-box">
+    <div class="modal-title">⚔️ <span id="heroModalTitle">Tambah Hero</span></div>
     <input type="hidden" id="editHeroId">
-    <div class="mf"><label>Nama Hero</label><input type="text" id="hName" placeholder="cth: Miya..."></div>
-    <div class="mf"><label>Role</label>
-      <select id="hRole">
+    <div class="form-group"><label class="form-label">Nama Hero</label><input class="form-input" id="hName" placeholder="cth: Miya, Layla..."></div>
+    <div class="form-group"><label class="form-label">Role</label>
+      <select class="form-select" id="hRole">
         <option value="Marksman">🏹 Marksman</option>
         <option value="Assassin">🗡️ Assassin</option>
         <option value="Mage">🔮 Mage</option>
@@ -468,39 +1506,32 @@ main{max-width:1400px;margin:16px auto 40px;padding:0 24px;position:relative;z-i
         <option value="Support">💊 Support</option>
       </select>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div class="mf" style="margin:0"><label>Win</label><input type="number" id="hWin" placeholder="0" min="0" value="0"></div>
-      <div class="mf" style="margin:0"><label>Lose</label><input type="number" id="hLose" placeholder="0" min="0" value="0"></div>
+    <div class="form-row">
+      <div class="form-group" style="margin:0"><label class="form-label">Win</label><input class="form-input" type="number" id="hWin" min="0" value="0"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Lose</label><input class="form-input" type="number" id="hLose" min="0" value="0"></div>
     </div>
-    <div class="mf" style="margin-top:14px"><label>Main Hero?</label>
-      <select id="hMain">
+    <div class="form-group mt8"><label class="form-label">Main Hero?</label>
+      <select class="form-select" id="hMain">
         <option value="false">Bukan Main</option>
         <option value="true">★ Main Hero</option>
       </select>
     </div>
-    <div class="mactions">
-      <button class="btn-s" onclick="closeModal()">Batal</button>
-      <button class="btn-d" id="deleteBtn" onclick="deleteHero()" style="display:none">Hapus</button>
-      <button class="btn-p" onclick="saveHero()">Simpan</button>
-    </div>
-  </div>
-</div>
-
-<!-- MMR MODAL -->
-<div class="modal-overlay" id="mmrModal">
-  <div class="modal">
-    <div class="modal-title">🏅 Edit MMR</div>
-    <div class="mf"><label>MMR Saat Ini</label><input type="number" id="mmrModalVal" placeholder="cth: 1050" min="0"></div>
-    <div class="mactions">
-      <button class="btn-s" onclick="document.getElementById('mmrModal').classList.remove('active')">Batal</button>
-      <button class="btn-p" onclick="saveMMRModal()">Simpan</button>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('heroModal')">Batal</button>
+      <button class="btn btn-danger btn-sm" id="heroDelBtn" onclick="deleteHero()" style="display:none;flex:0;padding:11px 16px;">🗑</button>
+      <button class="btn btn-gold" onclick="saveHero()">💾 Simpan</button>
     </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import {
+  getDatabase, ref, onValue, set, push, remove, update, get, query, orderByChild, equalTo
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import {
+  getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut as fbSignOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyBZs-qSS8Zj7wLs_TdUyYb03xviy81ew_Y",
@@ -513,15 +1544,20 @@ const app = initializeApp({
   databaseURL: "https://winlose-mlbb-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 const db = getDatabase(app);
+const auth = getAuth(app);
 
-let heroesData = {}, currentRole = 'all', currentSearch = '';
-let dailyData = {win:0,lose:0,date:''};
+// ═══ STATE ═══
+let currentUser = null, userProfile = null;
+let heroesData = {}, dailyData = {win:0,lose:0,date:''}, historyData = {};
 let currentMMR = null, currentMMRStart = null;
-let historyData = {};
+let currentRole = 'all', currentSearch = '';
+let lastCheckedDate = todayStr();
+let obsUnsubscribes = [];
 
-const ROLE_EMOJI = {Marksman:'🏹',Assassin:'🗡️',Mage:'🔮',Tank:'🛡️',Fighter:'⚔️',Support:'💊'};
 const MONTHS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const ROLE_EMOJI = {Marksman:'🏹',Assassin:'🗡️',Mage:'🔮',Tank:'🛡️',Fighter:'⚔️',Support:'💊'};
 
+// ═══ UTILS ═══
 function todayStr() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -536,376 +1572,893 @@ function fmtTS(ts) {
   const d = new Date(ts), p = n => String(n).padStart(2,'0');
   return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
 }
-function escH(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function bump(id){ const e=document.getElementById(id); if(!e)return; e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump'); }
+function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function bumpEl(id) { const e=document.getElementById(id); if(!e)return; e.classList.remove('dc-bump'); void e.offsetWidth; e.classList.add('dc-bump'); }
 
-window.showToast = (msg, type='s') => {
-  const w=document.getElementById('toastWrap'), t=document.createElement('div');
-  t.className=`toast ${type}`;
-  t.innerHTML=(type==='s'?'✅':'❌')+' '+msg;
-  w.appendChild(t); setTimeout(()=>t.remove(),2700);
+window.showToast = (msg, type='ok') => {
+  const dock = document.getElementById('toastDock');
+  const t = document.createElement('div');
+  t.className = `toast2 ${type}`;
+  const icon = type==='ok'?'✅':type==='err'?'❌':'ℹ️';
+  t.innerHTML = `${icon} ${msg}`;
+  dock.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
 };
 
-// ── Live clock detik per detik di lu-bar ──
-function tickClock() {
-  const el = document.getElementById('luClock');
-  if (!el) return;
-  const n = new Date(), p = v => String(v).padStart(2,'0');
-  el.textContent = `${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
-}
-setInterval(tickClock, 1000); tickClock();
-
-// ── Last update: tulis ke DB, update UI realtime dari DB ──
-function recordUpdate(label) {
-  set(ref(db,'lastUpdate'), {ts: Date.now(), label});
-}
-onValue(ref(db,'lastUpdate'), snap => {
-  const v = snap.val();
-  document.getElementById('luTS').textContent = v ? fmtTS(v.ts) : '—';
-  document.getElementById('luAct').textContent = v?.label ? `· ${v.label}` : '';
-});
-
-// ── Countdown reset + auto-reset harian ──
-let lastCheckedDate = todayStr();
-
-function updateCountdown() {
+// ═══ CLOCK & COUNTDOWN ═══
+setInterval(() => {
+  const el = document.getElementById('liveClock');
+  if (el) { const n=new Date(),p=v=>String(v).padStart(2,'0'); el.textContent=`${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}⠀`; }
+  if (!currentUser) return;
   const now = new Date();
   const mid = new Date(now); mid.setHours(24,0,0,0);
   const diff = mid - now;
-  const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
-  const str = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  ['resetCD','cd1','cd2'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=str; });
+  const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+  const str=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const el2=document.getElementById('cdTimer'); if(el2) el2.textContent=str;
+  const hwDate = document.getElementById('hwDate');
+  if (hwDate) hwDate.textContent = fmtDate(todayStr());
   const today = todayStr();
   if (today !== lastCheckedDate) { lastCheckedDate = today; performDailyReset(today); }
-}
-setInterval(updateCountdown, 1000); updateCountdown();
+}, 1000);
 
-async function performDailyReset(today) {
-  const dSnap = await get(ref(db,'daily'));
-  const d = dSnap.val() || {win:0,lose:0,date:''};
-  const mSnap = await get(ref(db,'mmr'));
-  const mmrNow = mSnap.val() ?? null;
-
-  if (d.date && d.date !== today) {
-    const msSnap = await get(ref(db,`history/${d.date}/mmr_start`));
-    const mmrStart = msSnap.val() ?? mmrNow;
-    await set(ref(db,`history/${d.date}`), {
-      win: d.win||0, lose: d.lose||0,
-      mmr_start: mmrStart, mmr_end: mmrNow, date: d.date
-    });
+// ═══ AUTH ═══
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    currentUser = user;
+    const snap = await get(ref(db, `users/${user.uid}/profile`));
+    if (!snap.exists()) {
+      showPage('setup');
+    } else {
+      userProfile = snap.val();
+      initApp();
+    }
+  } else {
+    currentUser = null; userProfile = null;
+    showPage('auth');
+    document.getElementById('loadingScreen').classList.add('hide');
   }
-  await set(ref(db,'daily'), {win:0, lose:0, date:today});
-  await set(ref(db,`history/${today}/mmr_start`), mmrNow);
-  recordUpdate('🌙 Reset Harian 00:00');
-  showToast('🌙 Reset harian! Data kemarin masuk history.','s');
-}
-
-// ── Daily listener ──
-onValue(ref(db,'daily'), snap => {
-  dailyData = snap.val() || {win:0,lose:0,date:todayStr()};
-  if (!dailyData.date) set(ref(db,'daily'),{...dailyData,date:todayStr()});
-  renderDaily();
 });
 
-function renderDaily() {
+window.loginGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  } catch(e) { showToast('Login gagal: ' + e.message, 'err'); }
+};
+
+window.signOut = async () => {
+  obsUnsubscribes.forEach(fn => fn());
+  obsUnsubscribes = [];
+  await fbSignOut(auth);
+  showPage('auth');
+  document.getElementById('app').style.display = 'none';
+};
+
+// ═══ SETUP ═══
+let setupData = {};
+
+window.setupNext = (step) => {
+  if (step === 1) {
+    const u = document.getElementById('setupUsername').value.trim();
+    if (!u || !/^[a-zA-Z0-9_]{3,24}$/.test(u)) { showToast('Username harus 3-24 karakter (huruf, angka, _)','err'); return; }
+    setupData.username = u;
+    activateStep(2);
+  } else if (step === 2) {
+    const id = document.getElementById('setupMLID').value.trim();
+    if (!id) { showToast('ID ML tidak boleh kosong','err'); return; }
+    setupData.mlid = id;
+    activateStep(3);
+  }
+};
+window.setupBack = (step) => { activateStep(step - 1); };
+
+function activateStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById(`sstep${i}`).classList.toggle('active', i===n);
+    const dot = document.getElementById(`sdot${i}`);
+    dot.classList.toggle('active', i===n);
+    dot.classList.toggle('done', i<n);
+  });
+  if (n > 1) document.getElementById('sline1').classList.toggle('done', n>1);
+  if (n > 2) document.getElementById('sline2').classList.toggle('done', n>2);
+}
+
+window.finishSetup = async () => {
+  const pass = document.getElementById('setupPass').value;
+  const conf = document.getElementById('setupPassConf').value;
+  if (pass.length < 6) { showToast('Password min. 6 karakter','err'); return; }
+  if (pass !== conf) { showToast('Password tidak cocok','err'); return; }
+
+  // simple hashing (bcrypt not available in browser, use SHA-256 via WebCrypto)
+  const passHash = await sha256(pass);
+  const btn = document.getElementById('setupFinishBtn');
+  btn.disabled = true; btn.textContent = 'Menyimpan...';
+
+  const uid = currentUser.uid;
+  const profile = {
+    username: setupData.username,
+    mlid: setupData.mlid,
+    passHash,
+    email: currentUser.email,
+    photoURL: currentUser.photoURL || '',
+    createdAt: Date.now(),
+    privacy: { public: true, mmr: true, wl: true, history: true, heroes: true }
+  };
+
+  try {
+    await set(ref(db, `users/${uid}/profile`), profile);
+    await set(ref(db, `usernames/${setupData.username.toLowerCase()}`), uid);
+    userProfile = profile;
+    initApp();
+    showToast('🎉 Akun berhasil dibuat!','ok');
+  } catch(e) {
+    showToast('Gagal menyimpan: ' + e.message,'err');
+    btn.disabled = false; btn.textContent = '✓ Selesai';
+  }
+};
+
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// ═══ APP INIT ═══
+function initApp() {
+  const app = document.getElementById('app');
+  app.style.display = 'block';
+  document.getElementById('loadingScreen').classList.add('hide');
+
+  // topbar
+  updateTopbar();
+  document.getElementById('updateBar').style.display = 'block';
+  document.getElementById('fabBtn').style.display = 'flex';
+
+  // subscribe to user data
+  subscribeUserData();
+  subscribeLastUpdate();
+  loadOBSLink();
+
+  showPage('home');
+}
+
+function updateTopbar() {
+  if (!currentUser || !userProfile) return;
+  const ab = document.getElementById('avatarBtn');
+  if (currentUser.photoURL) {
+    ab.innerHTML = `<img src="${currentUser.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    ab.textContent = (userProfile.username||'?')[0].toUpperCase();
+  }
+  document.getElementById('ddName').textContent = userProfile.username || '—';
+  document.getElementById('ddEmail').textContent = currentUser.email || '—';
+  document.getElementById('hwUsername').textContent = userProfile.username || '—';
+  document.getElementById('hwMLID').textContent = userProfile.mlid || '—';
+}
+
+// ═══ SUBSCRIPTIONS ═══
+function subscribeUserData() {
+  const uid = currentUser.uid;
+  obsUnsubscribes.forEach(fn => fn());
+  obsUnsubscribes = [];
+
+  // MMR
+  const mmrUnsub = onValue(ref(db,`users/${uid}/mmr`), snap => {
+    currentMMR = snap.val();
+    const d = currentMMR !== null ? currentMMR : '—';
+    setEl('dcMMR', d); setEl('qMMR', d); setEl('hwMMR', (currentMMR!==null?currentMMR:'—')+' MMR');
+    setEl('profMMR', d);
+    updateMMRDelta();
+  });
+
+  // MMR start today
+  const mmrSUnsub = onValue(ref(db,`users/${uid}/history/${todayStr()}/mmr_start`), snap => {
+    currentMMRStart = snap.val();
+    updateMMRDelta();
+  });
+
+  // Daily
+  const dailyUnsub = onValue(ref(db,`users/${uid}/daily`), snap => {
+    dailyData = snap.val() || {win:0,lose:0,date:todayStr()};
+    if (!dailyData.date) set(ref(db,`users/${uid}/daily`), {...dailyData, date:todayStr()});
+    renderDailyUI();
+  });
+
+  // History
+  const histUnsub = onValue(ref(db,`users/${uid}/history`), snap => {
+    historyData = snap.val() || {};
+    renderHistory();
+    renderProfileHistory();
+  });
+
+  // Heroes
+  const heroUnsub = onValue(ref(db,`users/${uid}/heroes`), snap => {
+    heroesData = snap.val() || {};
+    renderHeroes();
+    renderHeroStats();
+    renderProfileHeroes();
+  });
+
+  obsUnsubscribes = [mmrUnsub, mmrSUnsub, dailyUnsub, histUnsub, heroUnsub];
+}
+
+function subscribeLastUpdate() {
+  const uid = currentUser.uid;
+  onValue(ref(db,`users/${uid}/lastUpdate`), snap => {
+    const v = snap.val();
+    setEl('luTS', v ? fmtTS(v.ts) : '—');
+    setEl('luAct', v?.label ? `· ${v.label}` : '');
+  });
+}
+
+function recordUpdate(label) {
+  if (!currentUser) return;
+  set(ref(db,`users/${currentUser.uid}/lastUpdate`), {ts: Date.now(), label});
+}
+
+function setEl(id, val) { const e=document.getElementById(id); if(e) e.textContent=val; }
+
+// ═══ DAILY RENDER ═══
+function renderDailyUI() {
   const w=dailyData.win||0, l=dailyData.lose||0, t=w+l;
   const wr = t>0 ? Math.round(w/t*100) : 0;
-  document.getElementById('dWinNum').textContent = w;
-  document.getElementById('dLoseNum').textContent = l;
-  document.getElementById('dTotal').textContent = t;
-  document.getElementById('dWR').textContent = wr+'%';
-  const dlbl = fmtDate(dailyData.date||todayStr());
-  document.getElementById('dWinDate').textContent = dlbl;
-  document.getElementById('dLoseDate').textContent = dlbl;
+  setEl('dcWin', w); setEl('dcLose', l); setEl('qWin', w); setEl('qLose', l);
+  setEl('profWinToday', w); setEl('profLoseToday', l);
+  const bar = document.getElementById('wrBarMini'); if(bar) bar.style.width=wr+'%';
+}
+
+function updateMMRDelta() {
+  const tag = document.getElementById('mmrDeltaTag');
+  if (!tag || currentMMR===null) return;
+  if (currentMMRStart===null) { tag.textContent=''; return; }
+  const d = currentMMR - currentMMRStart;
+  tag.textContent = d>0 ? `(+${d})` : d<0 ? `(${d})` : '(±0)';
+  tag.style.color = d>0 ? 'var(--green)' : d<0 ? 'var(--red)' : 'var(--text3)';
 }
 
 window.changeDaily = (field, delta) => {
+  if (!currentUser) return;
   const next = Math.max(0,(dailyData[field]||0)+delta);
-  update(ref(db,'daily'),{[field]:next,date:todayStr()}).then(()=>{
-    bump(field==='win'?'dWinNum':'dLoseNum');
-    recordUpdate(`${field==='win'?'Win':'Lose'} ${delta>0?'+1':'-1'}`);
-  });
+  update(ref(db,`users/${currentUser.uid}/daily`), {[field]:next, date:todayStr()});
+  bumpEl(field==='win'?'dcWin':'dcLose');
+  recordUpdate(`${field==='win'?'Win':'Lose'} ${delta>0?'+1':'-1'}`);
 };
 
-// ── MMR ──
-onValue(ref(db,'mmr'), snap => {
-  currentMMR = snap.val();
-  const d = currentMMR!==null ? currentMMR : '—';
-  document.getElementById('headerMMR').textContent = d;
-  document.getElementById('dMMRNum').textContent = d;
-  updateMMRDeltaTag();
-});
-
-// listen to today's mmr_start for delta badge in MMR card
-onValue(ref(db,`history/${todayStr()}/mmr_start`), snap => {
-  currentMMRStart = snap.val();
-  updateMMRDeltaTag();
-});
-
-function updateMMRDeltaTag() {
-  const tag = document.getElementById('dMMRDelta');
-  if (!tag) return;
-  if (currentMMR===null) { tag.textContent='—'; return; }
-  if (currentMMRStart===null) { tag.textContent=`${currentMMR} pts`; return; }
-  const delta = currentMMR - currentMMRStart;
-  if (delta > 0) tag.textContent = `+${delta} hari ini`;
-  else if (delta < 0) tag.textContent = `${delta} hari ini`;
-  else tag.textContent = `±0 hari ini`;
-}
-
 window.changeMMR = async (delta) => {
+  if (!currentUser) return;
   const cur = currentMMR!==null ? currentMMR : 0;
   const next = Math.max(0, cur+delta);
-  await set(ref(db,'mmr'), next);
-  await set(ref(db,`history/${todayStr()}/mmr_end`), next);
-  bump('dMMRNum');
+  await set(ref(db,`users/${currentUser.uid}/mmr`), next);
+  await set(ref(db,`users/${currentUser.uid}/history/${todayStr()}/mmr_end`), next);
+  bumpEl('dcMMR');
   recordUpdate(`MMR ${delta>0?'+1':'-1'} → ${next}`);
 };
 
 window.doSetMMR = async () => {
-  const v = parseInt(document.getElementById('mmrInline').value);
-  if (isNaN(v)||v<0){ showToast('MMR tidak valid','e'); return; }
-  await set(ref(db,'mmr'), v);
-  await set(ref(db,`history/${todayStr()}/mmr_end`), v);
-  document.getElementById('mmrInline').value = '';
-  bump('dMMRNum');
+  if (!currentUser) return;
+  const v = parseInt(document.getElementById('mmrManual').value);
+  if (isNaN(v)||v<0) { showToast('MMR tidak valid','err'); return; }
+  await set(ref(db,`users/${currentUser.uid}/mmr`), v);
+  await set(ref(db,`users/${currentUser.uid}/history/${todayStr()}/mmr_end`), v);
+  document.getElementById('mmrManual').value='';
+  bumpEl('dcMMR');
   recordUpdate(`Set MMR → ${v}`);
-  showToast(`MMR diset ke ${v} 🏅`);
+  showToast(`MMR → ${v} 🏅`);
 };
 
-window.openMMRModal = () => {
-  document.getElementById('mmrModalVal').value = currentMMR!==null ? currentMMR : '';
-  document.getElementById('mmrModal').classList.add('active');
-  setTimeout(()=>document.getElementById('mmrModalVal').focus(),200);
-};
-window.saveMMRModal = async () => {
-  const v = parseInt(document.getElementById('mmrModalVal').value);
-  if (isNaN(v)||v<0){ showToast('MMR tidak valid','e'); return; }
-  await set(ref(db,'mmr'), v);
-  await set(ref(db,`history/${todayStr()}/mmr_end`), v);
-  document.getElementById('mmrModal').classList.remove('active');
-  recordUpdate(`Set MMR → ${v}`);
-  showToast(`MMR diperbarui: ${v} 🏅`);
-};
+// ═══ DAILY RESET ═══
+async function performDailyReset(today) {
+  if (!currentUser) return;
+  const uid = currentUser.uid;
+  const dSnap = await get(ref(db,`users/${uid}/daily`));
+  const d = dSnap.val() || {win:0,lose:0,date:''};
+  const mSnap = await get(ref(db,`users/${uid}/mmr`));
+  const mmrNow = mSnap.val() ?? null;
 
-// ── History listener ──
-onValue(ref(db,'history'), snap => {
-  historyData = snap.val() || {};
-  renderHistory();
-});
+  if (d.date && d.date !== today) {
+    const msSnap = await get(ref(db,`users/${uid}/history/${d.date}/mmr_start`));
+    const mmrStart = msSnap.val() ?? mmrNow;
+    await set(ref(db,`users/${uid}/history/${d.date}`), {
+      win:d.win||0, lose:d.lose||0, mmr_start:mmrStart, mmr_end:mmrNow, date:d.date
+    });
+  }
+  await set(ref(db,`users/${uid}/daily`), {win:0,lose:0,date:today});
+  await set(ref(db,`users/${uid}/history/${today}/mmr_start`), mmrNow);
+  recordUpdate('🌙 Reset Harian 00:00');
+  showToast('🌙 Reset harian! Data kemarin tersimpan di history.');
+}
 
+// ═══ HISTORY ═══
 function renderHistory() {
-  const container = document.getElementById('histList');
+  const el = document.getElementById('histList');
+  if (!el) return;
   const today = todayStr();
   const entries = Object.entries(historyData)
-    .filter(([date,v]) => date!==today && v && v.win!==undefined && v.lose!==undefined)
-    .sort((a,b) => b[0].localeCompare(a[0]))
-    .slice(0,60);
-
-  document.getElementById('histCount').textContent = `${entries.length} entri`;
+    .filter(([d,v]) => d!==today && v && v.win!==undefined && v.lose!==undefined)
+    .sort((a,b) => b[0].localeCompare(a[0])).slice(0,60);
+  setEl('histCountTag', `${entries.length} entri`);
   if (!entries.length) {
-    container.innerHTML='<div class="hist-empty">Belum ada history. Tersimpan otomatis saat reset jam 00:00.</div>';
+    el.innerHTML = '<div class="hist-empty"><div class="hist-empty-icon">📅</div><div class="hist-empty-text">Belum ada history. Tersimpan saat reset 00:00.</div></div>';
     return;
   }
-  container.innerHTML='';
-  entries.forEach(([date,v]) => {
-    const w=v.win||0, l=v.lose||0, total=w+l;
-    const wr = total>0 ? Math.round(w/total*100) : 0;
-    const wrColor = wr>=60?'var(--green)':wr>=50?'var(--gold)':'var(--red)';
-    const rowCls = wr>=60?'hr-good':wr>=50?'hr-ok':'hr-bad';
-    const mmrE = v.mmr_end??null, mmrS = v.mmr_start??null;
-    const delta = (mmrE!==null && mmrS!==null) ? mmrE-mmrS : null;
-    const dCls = delta===null?'z':delta>0?'p':delta<0?'n':'z';
-    const dStr = delta===null?'±?':delta>0?`+${delta}`:delta===0?`±0`:`${delta}`;
-    const row = document.createElement('div');
-    row.className=`hist-row ${rowCls}`;
-    row.innerHTML=`
-      <div class="hist-date">${fmtDate(date)}</div>
-      <div class="hist-chips">
-        <span class="hchip w">W ${w}</span>
-        <span class="hchip l">L ${l}</span>
-        <span class="hchip g">🎮 ${total}</span>
+  el.innerHTML = '';
+  entries.forEach(([date,v]) => el.appendChild(buildHistRow(date,v)));
+}
+
+function buildHistRow(date, v) {
+  const w=v.win||0,l=v.lose||0,total=w+l;
+  const wr=total>0?Math.round(w/total*100):0;
+  const wrC=wr>=60?'var(--green)':wr>=50?'var(--gold)':'var(--red)';
+  const cls=wr>=60?'good':wr>=50?'ok':'bad';
+  const mmrE=v.mmr_end??null,mmrS=v.mmr_start??null;
+  const delta=(mmrE!==null&&mmrS!==null)?mmrE-mmrS:null;
+  const dCls=delta===null?'z':delta>0?'p':delta<0?'n':'z';
+  const dStr=delta===null?'±?':delta>0?`+${delta}`:delta===0?'±0':`${delta}`;
+  const row = document.createElement('div');
+  row.className=`hist-item ${cls}`;
+  row.innerHTML=`
+    <div class="hist-date">${fmtDate(date)}</div>
+    <div class="hist-chips">
+      <span class="chip chip-w">W ${w}</span>
+      <span class="chip chip-l">L ${l}</span>
+      <span class="chip chip-g">🎮 ${total}</span>
+    </div>
+    <div class="hist-wr" style="color:${wrC}">${wr}%</div>
+    <div class="hist-mmr-grp">
+      <div style="text-align:right">
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-display);letter-spacing:0.5px;">MMR</div>
+        <div class="hist-mmr-val">${mmrE!==null?mmrE:'—'}</div>
       </div>
-      <div class="hist-wr" style="color:${wrColor}">${wr}%</div>
-      <div class="hist-mmr-grp">
-        <div class="hist-mmr-info">
-          <div class="hist-mmr-lbl">MMR Akhir</div>
-          <div class="hist-mmr-v">${mmrE!==null?mmrE:'—'}</div>
-        </div>
-        <span class="hist-delta ${dCls}">${dStr}</span>
-      </div>`;
-    container.appendChild(row);
-  });
+      <span class="hist-delta ${dCls}">${dStr}</span>
+    </div>`;
+  return row;
 }
 
-// ── Heroes ──
-onValue(ref(db,'heroes'), snap => {
-  heroesData = snap.val()||{};
-  renderHeroes(); updateStats(); hideLoading();
-});
-
-function hideLoading(){
-  const ls=document.getElementById('loadingScreen');
-  if(ls){ls.classList.add('hide');setTimeout(()=>ls.remove(),600);}
-}
-
+// ═══ HEROES ═══
 function renderHeroes() {
-  const grid=document.getElementById('heroGrid');
-  const empty=document.getElementById('emptyState');
+  const grid = document.getElementById('heroGrid');
+  const empty = document.getElementById('heroEmpty');
+  if (!grid) return;
   let entries = Object.entries(heroesData);
-  entries.sort((a,b)=>{
-    if(b[1].main&&!a[1].main)return 1;
-    if(a[1].main&&!b[1].main)return -1;
+  entries.sort((a,b) => {
+    if(b[1].main&&!a[1].main) return 1;
+    if(a[1].main&&!b[1].main) return -1;
     return a[1].name.localeCompare(b[1].name);
   });
-  if(currentRole!=='all'&&currentRole!=='win') entries=entries.filter(([,h])=>h.role===currentRole);
-  else if(currentRole==='win') entries=entries.filter(([,h])=>{const t=(h.win||0)+(h.lose||0);return t>0&&(h.win||0)/t>=0.6;});
-  if(currentSearch) entries=entries.filter(([,h])=>h.name.toLowerCase().includes(currentSearch.toLowerCase()));
-  [...grid.querySelectorAll('.hero-card')].forEach(c=>c.remove());
-  document.getElementById('heroCount').textContent=`${entries.length} hero${entries.length!==1?'s':''}`;
-  if(!entries.length){empty.style.display='block';return;}
+  if (currentRole!=='all'&&currentRole!=='wr60') entries=entries.filter(([,h])=>h.role===currentRole);
+  else if (currentRole==='wr60') entries=entries.filter(([,h])=>{const t=(h.win||0)+(h.lose||0);return t>0&&(h.win||0)/t>=0.6;});
+  if (currentSearch) entries=entries.filter(([,h])=>h.name.toLowerCase().includes(currentSearch.toLowerCase()));
+  [...grid.querySelectorAll('.hcard')].forEach(c=>c.remove());
+  setEl('heroCountTag', `${entries.length} hero`);
+  if (!entries.length) { empty.style.display='block'; return; }
   empty.style.display='none';
-  entries.forEach(([id,h],i)=>{
-    const win=h.win||0,lose=h.lose||0,total=win+lose;
-    const wr=total>0?Math.round(win/total*100):0;
-    const wrC=wr>=60?'var(--green)':wr>=50?'var(--gold)':'var(--red)';
-    const emoji=ROLE_EMOJI[h.role]||'⚔️';
-    const card=document.createElement('div');
-    card.className=`hero-card${h.main?' is-main':''}`;
-    card.style.animationDelay=`${i*0.04}s`;
-    card.innerHTML=`
-      <div class="card-top">
-        ${h.main?'<div class="main-badge">★ MAIN</div>':''}
-        <div class="hero-avatar">${emoji}</div>
-        <div class="hero-info">
-          <div class="hero-name">${escH(h.name)}</div>
-          <div class="hero-role-lbl">${h.role||'Unknown'}</div>
-        </div>
-        <div class="hero-wr-box">
-          <div class="wr-val" style="color:${wrC}">${wr}%</div>
-          <div class="wr-lbl">Win Rate</div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="wl-row">
-          <div class="cbox wb">
-            <div class="cbox-left"><div class="cdot"></div><span class="clbl">Win</span></div>
-            <div style="display:flex;align-items:center;gap:5px">
-              <button class="cbtn cbtn-m" onclick="chHero('${id}','win',-1)">−</button>
-              <div class="cnum">${win}</div>
-              <button class="cbtn cbtn-wp" onclick="chHero('${id}','win',1)">+</button>
-            </div>
-          </div>
-          <div class="cbox lb">
-            <div class="cbox-left"><div class="cdot"></div><span class="clbl">Lose</span></div>
-            <div style="display:flex;align-items:center;gap:5px">
-              <button class="cbtn cbtn-m" onclick="chHero('${id}','lose',-1)">−</button>
-              <div class="cnum">${lose}</div>
-              <button class="cbtn cbtn-lp" onclick="chHero('${id}','lose',1)">+</button>
-            </div>
-          </div>
-        </div>
-        <div class="wr-bar-wrap">
-          <div class="wr-bar-lbls"><span>Win ${win}</span><span>${total} games</span><span>Lose ${lose}</span></div>
-          <div class="wr-track"><div class="wr-fill" style="width:${wr}%"></div></div>
-        </div>
-        <div class="games-pill">🎮 ${total} total games played</div>
-      </div>
-      <div class="card-actions">
-        <button class="btn-edit" onclick="openEditModal('${id}')">✎ Edit</button>
-        <button class="btn-del" onclick="openEditModal('${id}')">🗑</button>
-      </div>`;
+  entries.forEach(([id,h],i) => {
+    const card = buildHeroCard(id, h, i, true);
     grid.appendChild(card);
   });
 }
 
-function updateStats(){
-  const vals=Object.values(heroesData);
+function buildHeroCard(id, h, i, editable) {
+  const win=h.win||0,lose=h.lose||0,total=win+lose;
+  const wr=total>0?Math.round(win/total*100):0;
+  const wrC=wr>=60?'var(--green)':wr>=50?'var(--gold)':'var(--red)';
+  const emoji=ROLE_EMOJI[h.role]||'⚔️';
+  const card=document.createElement('div');
+  card.className=`hcard${h.main?' main-card':''}`;
+  card.style.animationDelay=`${(i||0)*0.04}s`;
+  card.innerHTML=`
+    <div class="hcard-top">
+      ${h.main?'<div class="main-badge2">★ MAIN</div>':''}
+      <div class="hcard-avatar">${emoji}</div>
+      <div class="hcard-info">
+        <div class="hcard-name">${escH(h.name)}</div>
+        <div class="hcard-role">${h.role||'Unknown'}</div>
+      </div>
+      <div class="hcard-wr">
+        <div class="hcard-wr-val" style="color:${wrC}">${wr}%</div>
+        <div class="hcard-wr-lbl">Win Rate</div>
+      </div>
+    </div>
+    <div class="hcard-body">
+      <div class="hcard-wl">
+        <div class="wl-box wb">
+          <div class="wl-left"><div class="wl-dot"></div><div class="wl-lbl2">Win</div></div>
+          <div style="display:flex;align-items:center;gap:4px">
+            ${editable?`<button class="wl-btn minus" onclick="chHero('${id}','win',-1)">−</button>`:''}
+            <div class="wl-num">${win}</div>
+            ${editable?`<button class="wl-btn plus" onclick="chHero('${id}','win',1)">+</button>`:''}
+          </div>
+        </div>
+        <div class="wl-box lb">
+          <div class="wl-left"><div class="wl-dot"></div><div class="wl-lbl2">Lose</div></div>
+          <div style="display:flex;align-items:center;gap:4px">
+            ${editable?`<button class="wl-btn minus" onclick="chHero('${id}','lose',-1)">−</button>`:''}
+            <div class="wl-num">${lose}</div>
+            ${editable?`<button class="wl-btn plus" onclick="chHero('${id}','lose',1)">+</button>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="wr-track2"><div class="wr-fill2" style="width:${wr}%"></div></div>
+      <div class="hcard-foot" style="margin-top:8px">
+        <span class="hcard-pill">🎮 ${total} games</span>
+        <span style="font-size:11px;color:var(--text3);font-family:var(--font-display);">${total>0?`${wr}% WR`:''}</span>
+      </div>
+    </div>
+    ${editable?`<div class="hcard-actions">
+      <button class="hbtn" onclick="openEditHero('${id}')">✎ Edit</button>
+      <button class="hbtn del" onclick="openEditHero('${id}')">🗑</button>
+    </div>`:''}`;
+  return card;
+}
+
+function renderHeroStats() {
+  const vals = Object.values(heroesData);
   const w=vals.reduce((s,h)=>s+(h.win||0),0), l=vals.reduce((s,h)=>s+(h.lose||0),0), t=w+l;
-  document.getElementById('stTotal').textContent=t;
-  document.getElementById('stWin').textContent=w;
-  document.getElementById('stLose').textContent=l;
-  document.getElementById('stWR').textContent=(t>0?Math.round(w/t*100):0)+'%';
+  setEl('hsTotal',t); setEl('hsWin',w); setEl('hsLose',l);
+  setEl('hsWR',(t>0?Math.round(w/t*100):0)+'%');
 }
 
 window.chHero = (id,field,delta) => {
+  if(!currentUser) return;
   const h=heroesData[id]; if(!h)return;
   const next=Math.max(0,(h[field]||0)+delta);
-  update(ref(db,`heroes/${id}`),{[field]:next});
+  update(ref(db,`users/${currentUser.uid}/heroes/${id}`),{[field]:next});
   recordUpdate(`${h.name} ${field}${delta>0?' +1':' -1'}`);
 };
 
-window.setRole=(btn,role)=>{
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); currentRole=role; renderHeroes();
+window.setRole = (btn,role) => {
+  document.querySelectorAll('.rf').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); currentRole=role; renderHeroes();
 };
-window.filterHeroes=()=>{ currentSearch=document.getElementById('searchInput').value; renderHeroes(); };
+window.filterHeroes = () => { currentSearch=document.getElementById('heroSearch').value; renderHeroes(); };
 
-window.openAddModal=()=>{
-  document.getElementById('modalTitle').textContent='Tambah Hero';
-  ['editHeroId','hName'].forEach(id=>document.getElementById(id).value='');
+// ═══ HERO MODAL ═══
+window.openHeroModal = () => {
+  document.getElementById('heroModalTitle').textContent='Tambah Hero';
+  document.getElementById('editHeroId').value='';
+  document.getElementById('hName').value='';
   document.getElementById('hRole').value='Marksman';
   document.getElementById('hWin').value='0';
   document.getElementById('hLose').value='0';
   document.getElementById('hMain').value='false';
-  document.getElementById('deleteBtn').style.display='none';
-  document.getElementById('heroModal').classList.add('active');
+  document.getElementById('heroDelBtn').style.display='none';
+  openModal('heroModal');
   setTimeout(()=>document.getElementById('hName').focus(),200);
 };
-window.openEditModal=(id)=>{
+window.openEditHero = (id) => {
   const h=heroesData[id]; if(!h)return;
-  document.getElementById('modalTitle').textContent='Edit Hero';
+  document.getElementById('heroModalTitle').textContent='Edit Hero';
   document.getElementById('editHeroId').value=id;
   document.getElementById('hName').value=h.name;
   document.getElementById('hRole').value=h.role||'Marksman';
   document.getElementById('hWin').value=h.win||0;
   document.getElementById('hLose').value=h.lose||0;
   document.getElementById('hMain').value=h.main?'true':'false';
-  document.getElementById('deleteBtn').style.display='block';
-  document.getElementById('heroModal').classList.add('active');
+  document.getElementById('heroDelBtn').style.display='inline-flex';
+  openModal('heroModal');
 };
-window.closeModal=()=>document.getElementById('heroModal').classList.remove('active');
-window.saveHero=()=>{
+window.saveHero = () => {
+  if(!currentUser)return;
   const name=document.getElementById('hName').value.trim();
-  if(!name){showToast('Nama hero tidak boleh kosong','e');return;}
+  if(!name){showToast('Nama hero tidak boleh kosong','err');return;}
   const role=document.getElementById('hRole').value;
   const win=parseInt(document.getElementById('hWin').value)||0;
   const lose=parseInt(document.getElementById('hLose').value)||0;
   const main=document.getElementById('hMain').value==='true';
   const editId=document.getElementById('editHeroId').value;
   const data={name,role,win,lose,main};
+  const uid=currentUser.uid;
   if(editId){
-    update(ref(db,`heroes/${editId}`),data).then(()=>{showToast(`${name} diupdate!`);closeModal();recordUpdate(`Edit ${name}`);});
+    update(ref(db,`users/${uid}/heroes/${editId}`),data).then(()=>{showToast(`${name} diupdate!`);closeModal('heroModal');recordUpdate(`Edit ${name}`);});
   } else {
-    push(ref(db,'heroes'),data).then(()=>{showToast(`${name} ditambahkan! 🎉`);closeModal();recordUpdate(`Tambah ${name}`);});
+    push(ref(db,`users/${uid}/heroes`),data).then(()=>{showToast(`${name} ditambahkan 🎉`);closeModal('heroModal');recordUpdate(`Tambah ${name}`);});
   }
 };
-window.deleteHero=()=>{
+window.deleteHero = () => {
+  if(!currentUser)return;
   const id=document.getElementById('editHeroId').value; if(!id)return;
   const name=heroesData[id]?.name||'Hero';
-  remove(ref(db,`heroes/${id}`)).then(()=>{showToast(`${name} dihapus`);closeModal();recordUpdate(`Hapus ${name}`);});
+  remove(ref(db,`users/${currentUser.uid}/heroes/${id}`)).then(()=>{showToast(`${name} dihapus`);closeModal('heroModal');recordUpdate(`Hapus ${name}`);});
 };
 
-document.querySelectorAll('.modal-overlay').forEach(m=>{
-  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('active'); });
-});
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('active')); });
+// ═══ SETTINGS ═══
+function loadSettings() {
+  if (!userProfile) return;
+  setVal('sUsername', userProfile.username||'');
+  setVal('sMLID', userProfile.mlid||'');
+  const p = userProfile.privacy || {};
+  setChk('privPublic', p.public!==false);
+  setChk('privMMR', p.mmr!==false);
+  setChk('privWL', p.wl!==false);
+  setChk('privHist', p.history!==false);
+  setChk('privHeroes', p.heroes!==false);
+}
+function setVal(id,v){const e=document.getElementById(id);if(e)e.value=v;}
+function setChk(id,v){const e=document.getElementById(id);if(e)e.checked=v;}
 
-setTimeout(async()=>{
-  if(!Object.keys(heroesData).length){
-    const defs=[
-      {name:'Miya',role:'Marksman',win:0,lose:0,main:true},
-      {name:'Layla',role:'Marksman',win:0,lose:0,main:false},
-      {name:'Tigreal',role:'Tank',win:0,lose:0,main:false},
-      {name:'Alucard',role:'Fighter',win:0,lose:0,main:false},
-      {name:'Eudora',role:'Mage',win:0,lose:0,main:false},
-      {name:'Natalia',role:'Assassin',win:0,lose:0,main:false},
-      {name:'Estes',role:'Support',win:0,lose:0,main:false},
-    ];
-    for(const h of defs) await push(ref(db,'heroes'),h);
+window.saveProfile = async () => {
+  if (!currentUser||!userProfile) return;
+  const newUsername = document.getElementById('sUsername').value.trim();
+  const newMLID = document.getElementById('sMLID').value.trim();
+  const passInput = document.getElementById('sPassConfirm').value;
+
+  if (!newMLID) { showToast('ID ML tidak boleh kosong','err'); return; }
+
+  // If changing username, require password
+  if (newUsername !== userProfile.username) {
+    if (!passInput) { showToast('Masukkan password untuk ubah username','err'); return; }
+    if (!/^[a-zA-Z0-9_]{3,24}$/.test(newUsername)) { showToast('Username tidak valid','err'); return; }
+    const passHash = await sha256(passInput);
+    if (passHash !== userProfile.passHash) { showToast('Password salah','err'); return; }
+    // Remove old username mapping
+    await remove(ref(db, `usernames/${userProfile.username.toLowerCase()}`));
+    await set(ref(db, `usernames/${newUsername.toLowerCase()}`), currentUser.uid);
   }
-  hideLoading();
-},4000);
+
+  const updates = { username: newUsername||userProfile.username, mlid: newMLID };
+  await update(ref(db,`users/${currentUser.uid}/profile`), updates);
+  userProfile = {...userProfile, ...updates};
+  updateTopbar();
+  document.getElementById('sPassConfirm').value='';
+  recordUpdate('Update profil');
+  showToast('Profil disimpan ✅');
+};
+
+window.savePrivacy = async () => {
+  if(!currentUser) return;
+  const p = {
+    public: document.getElementById('privPublic').checked,
+    mmr: document.getElementById('privMMR').checked,
+    wl: document.getElementById('privWL').checked,
+    history: document.getElementById('privHist').checked,
+    heroes: document.getElementById('privHeroes').checked,
+  };
+  await update(ref(db,`users/${currentUser.uid}/profile`), {privacy: p});
+  userProfile = {...userProfile, privacy: p};
+  showToast('Pengaturan privasi disimpan');
+};
+
+window.changePassword = async () => {
+  if(!currentUser||!userProfile) return;
+  const old=document.getElementById('saOld').value;
+  const nw=document.getElementById('saNew').value;
+  const conf=document.getElementById('saConf').value;
+  if (!old||!nw) { showToast('Isi semua kolom','err'); return; }
+  if (nw.length<6) { showToast('Password baru min. 6 karakter','err'); return; }
+  if (nw!==conf) { showToast('Password baru tidak cocok','err'); return; }
+  const oldHash=await sha256(old);
+  if (oldHash!==userProfile.passHash) { showToast('Password lama salah','err'); return; }
+  const newHash=await sha256(nw);
+  await update(ref(db,`users/${currentUser.uid}/profile`), {passHash:newHash});
+  userProfile={...userProfile,passHash:newHash};
+  ['saOld','saNew','saConf'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  showToast('Password berhasil diubah 🔐');
+};
+
+// ═══ PROFILE PAGE ═══
+function loadProfilePage() {
+  if (!userProfile) return;
+  const av = document.getElementById('profAvatar');
+  if (currentUser.photoURL) av.innerHTML=`<img src="${currentUser.photoURL}">`;
+  else av.textContent=(userProfile.username||'?')[0].toUpperCase();
+  setEl('profUsername', userProfile.username||'—');
+  setEl('profMLID', userProfile.mlid||'—');
+
+  // Badges
+  const vals=Object.values(heroesData);
+  const total=vals.reduce((s,h)=>s+(h.win||0)+(h.lose||0),0);
+  const badges=[];
+  if(total>=100) badges.push({cls:'badge-gold',label:'100+ Games'});
+  if(total>=500) badges.push({cls:'badge-gold',label:'500+ Games'});
+  const wr=vals.reduce((s,h)=>s+(h.win||0),0);
+  const wrPct=total>0?Math.round(wr/total*100):0;
+  if(wrPct>=60) badges.push({cls:'badge-cyan',label:'60%+ WR'});
+  if(currentMMR&&currentMMR>=1000) badges.push({cls:'badge-purple',label:'1000+ MMR'});
+  const bc=document.getElementById('profBadges');
+  if(bc) bc.innerHTML=badges.map(b=>`<span class="profile-badge ${b.cls}">${b.label}</span>`).join('');
+}
+
+function renderProfileHistory() {
+  const el=document.getElementById('profHistList');
+  if(!el) return;
+  const today=todayStr();
+  const entries=Object.entries(historyData).filter(([d,v])=>d!==today&&v&&v.win!==undefined&&v.lose!==undefined).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,30);
+  if(!entries.length){el.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Belum ada history.</div></div>';return;}
+  el.innerHTML='';
+  entries.forEach(([date,v])=>el.appendChild(buildHistRow(date,v)));
+}
+
+function renderProfileHeroes() {
+  const el=document.getElementById('profHeroGrid');
+  if(!el) return;
+  el.innerHTML='';
+  const entries=Object.entries(heroesData).sort((a,b)=>{
+    if(b[1].main&&!a[1].main)return 1;if(a[1].main&&!b[1].main)return -1;
+    return a[1].name.localeCompare(b[1].name);
+  });
+  if(!entries.length){el.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Belum ada hero.</div></div>';return;}
+  entries.forEach(([id,h],i)=>el.appendChild(buildHeroCard(id,h,i,false)));
+}
+
+// ═══ EXPLORE ═══
+let searchDebounce;
+window.searchUsers = () => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(async () => {
+    const q = document.getElementById('exploreSearch').value.trim().toLowerCase();
+    const resEl = document.getElementById('exploreResults');
+    const listEl = document.getElementById('explorePublicList');
+    if (!q) { resEl.innerHTML=''; loadPublicUsers(listEl); return; }
+    listEl.innerHTML='';
+    resEl.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Mencari...</div></div>';
+    try {
+      const snap = await get(ref(db,`usernames/${q}`));
+      if (snap.exists()) {
+        const uid = snap.val();
+        const uSnap = await get(ref(db,`users/${uid}/profile`));
+        if (uSnap.exists()) {
+          const p=uSnap.val();
+          if (p.privacy?.public!==false) {
+            resEl.innerHTML='';
+            resEl.appendChild(buildUserCard(uid, p));
+            return;
+          }
+        }
+      }
+      resEl.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Pengguna tidak ditemukan.</div></div>';
+    } catch(e) { resEl.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Error pencarian.</div></div>'; }
+  }, 400);
+};
+
+async function loadPublicUsers(el) {
+  if (!el) return;
+  el.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Memuat players...</div></div>';
+  try {
+    const snap = await get(ref(db,'users'));
+    if (!snap.exists()) { el.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Belum ada pengguna.</div></div>'; return; }
+    el.innerHTML='';
+    const users = Object.entries(snap.val()||{});
+    let count=0;
+    for (const [uid,u] of users) {
+      if (!u.profile || u.profile.privacy?.public===false) continue;
+      if (uid===currentUser?.uid) continue;
+      el.appendChild(buildUserCard(uid, u.profile, u));
+      if(++count>=30) break;
+    }
+    if (!count) el.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Belum ada player publik.</div></div>';
+  } catch(e) { el.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Gagal memuat.</div></div>'; }
+}
+
+function buildUserCard(uid, p, uData) {
+  const card=document.createElement('div');
+  card.className='user-card';
+  const initial=(p.username||'?')[0].toUpperCase();
+  const wins = Object.values(uData?.heroes||{}).reduce((s,h)=>s+(h.win||0),0);
+  const losses = Object.values(uData?.heroes||{}).reduce((s,h)=>s+(h.lose||0),0);
+  const total=wins+losses;
+  const wr=total>0?Math.round(wins/total*100):0;
+  const mmrShow = p.privacy?.mmr!==false ? (uData?.mmr??'—') : '🔒';
+  const wlShow = p.privacy?.wl!==false;
+  card.innerHTML=`
+    <div class="user-card-avatar">${p.photoURL?`<img src="${escH(p.photoURL)}">`:`${initial}`}</div>
+    <div class="user-card-info">
+      <div class="user-card-name">${escH(p.username||'—')}</div>
+      <div class="user-card-id">ID: ${escH(p.mlid||'—')}</div>
+      <div class="user-card-stats">
+        ${wlShow?`<span class="ucs g">W ${wins}</span><span class="ucs r">L ${losses}</span><span class="ucs cy">${wr}% WR</span>`:'<span class="private-badge">🔒 Stats tersembunyi</span>'}
+        <span class="ucs" style="color:var(--gold)">MMR: ${mmrShow}</span>
+      </div>
+    </div>`;
+  card.onclick=()=>openPublicProfile(uid, p.username);
+  return card;
+}
+
+window.openPublicProfile = async (uid, username) => {
+  const el=document.getElementById('publicProfileContent');
+  el.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Memuat profil...</div></div>';
+  goPage('public');
+  const snap = await get(ref(db,`users/${uid}`));
+  if (!snap.exists()) { el.innerHTML='<div class="hist-empty"><div class="hist-empty-text">Profil tidak ditemukan.</div></div>'; return; }
+  const u = snap.val();
+  const p = u.profile||{};
+  const priv = p.privacy||{};
+
+  const heroes=Object.values(u.heroes||{});
+  const wins=heroes.reduce((s,h)=>s+(h.win||0),0);
+  const losses=heroes.reduce((s,h)=>s+(h.lose||0),0);
+  const total=wins+losses;
+  const wr=total>0?Math.round(wins/total*100):0;
+  const wrC=wr>=60?'var(--green)':wr>=50?'var(--gold)':'var(--red)';
+  const mmr=priv.mmr!==false?u.mmr:'🔒';
+  const daily=u.daily||{};
+  const wl=priv.wl!==false;
+
+  let html=`
+    <div class="profile-header">
+      <div class="profile-avatar">${p.photoURL?`<img src="${escH(p.photoURL)}">`:(p.username||'?')[0].toUpperCase()}</div>
+      <div class="profile-info">
+        <div class="profile-username">${escH(p.username||'—')}</div>
+        <div class="profile-mlid"><div class="profile-mlid-badge">${escH(p.mlid||'—')}</div><div class="profile-mlid-label">ID Mobile Legends</div></div>
+      </div>
+    </div>
+    <div class="profile-stats" style="margin-bottom:24px">
+      <div class="pstat"><div class="pstat-val text-gold">${mmr!==null&&mmr!==undefined?mmr:'—'}</div><div class="pstat-lbl">MMR</div></div>
+      <div class="pstat"><div class="pstat-val text-green">${wl?daily.win||0:'🔒'}</div><div class="pstat-lbl">Win Hari Ini</div></div>
+      <div class="pstat"><div class="pstat-val text-red">${wl?daily.lose||0:'🔒'}</div><div class="pstat-lbl">Lose Hari Ini</div></div>
+    </div>`;
+
+  if (priv.heroes!==false && heroes.length) {
+    html+=`<div class="section-title">⚔️ Hero Stats</div>
+    <div class="hero-grid2" style="margin-bottom:24px">`;
+    Object.entries(u.heroes||{}).sort((a,b)=>{if(b[1].main&&!a[1].main)return 1;if(a[1].main&&!b[1].main)return -1;return a[1].name.localeCompare(b[1].name);})
+      .forEach(([id,h],i)=>{html+=buildHeroCardHTML(id,h,i);});
+    html+=`</div>`;
+  }
+
+  if (priv.history!==false) {
+    const today=todayStr();
+    const histEntries=Object.entries(u.history||{}).filter(([d,v])=>d!==today&&v&&v.win!==undefined&&v.lose!==undefined).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,20);
+    html+=`<div class="section-title">📜 History Harian <span class="stag">${histEntries.length} entri</span></div>
+    <div class="hist-items">`;
+    if(!histEntries.length) html+=`<div class="hist-empty"><div class="hist-empty-text">Belum ada history.</div></div>`;
+    else histEntries.forEach(([d,v])=>{
+      const w2=v.win||0,l2=v.lose||0,t2=w2+l2;
+      const wr2=t2>0?Math.round(w2/t2*100):0;
+      const wrC2=wr2>=60?'var(--green)':wr2>=50?'var(--gold)':'var(--red)';
+      const cls2=wr2>=60?'good':wr2>=50?'ok':'bad';
+      const mmrE=v.mmr_end??null,mmrS=v.mmr_start??null;
+      const delta2=(mmrE!==null&&mmrS!==null)?mmrE-mmrS:null;
+      const dCls2=delta2===null?'z':delta2>0?'p':delta2<0?'n':'z';
+      const dStr2=delta2===null?'±?':delta2>0?`+${delta2}`:delta2===0?'±0':`${delta2}`;
+      html+=`<div class="hist-item ${cls2}">
+        <div class="hist-date">${fmtDate(d)}</div>
+        <div class="hist-chips"><span class="chip chip-w">W ${w2}</span><span class="chip chip-l">L ${l2}</span><span class="chip chip-g">🎮 ${t2}</span></div>
+        <div class="hist-wr" style="color:${wrC2}">${wr2}%</div>
+        <div class="hist-mmr-grp"><div><div style="font-size:10px;color:var(--text3)">MMR</div><div class="hist-mmr-val">${mmrE!==null?mmrE:'—'}</div></div><span class="hist-delta ${dCls2}">${dStr2}</span></div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  if (priv.public===false) {
+    el.innerHTML='<div class="hist-empty"><div class="hist-empty-icon">🔒</div><div class="hist-empty-text">Profil ini privat.</div></div>';
+    return;
+  }
+  el.innerHTML=html;
+};
+
+function buildHeroCardHTML(id,h,i) {
+  const win=h.win||0,lose=h.lose||0,total=win+lose;
+  const wr=total>0?Math.round(win/total*100):0;
+  const wrC=wr>=60?'var(--green)':wr>=50?'var(--gold)':'var(--red)';
+  return `<div class="hcard${h.main?' main-card':''}" style="animation-delay:${i*0.04}s">
+    <div class="hcard-top">
+      ${h.main?'<div class="main-badge2">★ MAIN</div>':''}
+      <div class="hcard-avatar">${ROLE_EMOJI[h.role]||'⚔️'}</div>
+      <div class="hcard-info"><div class="hcard-name">${escH(h.name)}</div><div class="hcard-role">${h.role||'—'}</div></div>
+      <div class="hcard-wr"><div class="hcard-wr-val" style="color:${wrC}">${wr}%</div><div class="hcard-wr-lbl">Win Rate</div></div>
+    </div>
+    <div class="hcard-body">
+      <div class="hcard-wl">
+        <div class="wl-box wb"><div class="wl-left"><div class="wl-dot"></div><div class="wl-lbl2">Win</div></div><div class="wl-num">${win}</div></div>
+        <div class="wl-box lb"><div class="wl-left"><div class="wl-dot"></div><div class="wl-lbl2">Lose</div></div><div class="wl-num">${lose}</div></div>
+      </div>
+      <div class="wr-track2"><div class="wr-fill2" style="width:${wr}%"></div></div>
+      <div class="hcard-foot" style="margin-top:8px"><span class="hcard-pill">🎮 ${total} games</span></div>
+    </div>
+  </div>`;
+}
+
+// ═══ OBS OVERLAY ═══
+function getOBSURL() {
+  const uid = currentUser?.uid||'';
+  const size = document.getElementById('obsSize')?.value||'widget';
+  const theme = document.getElementById('obsTheme')?.value||'dark';
+  const base = window.location.origin + window.location.pathname.replace('index.html','');
+  return `${base}overlay.html?uid=${uid}&size=${size}&theme=${theme}`;
+}
+
+function loadOBSLink() {
+  const el=document.getElementById('obsLinkDisplay');
+  if(el) el.textContent=getOBSURL();
+}
+
+window.updateOBSLink = () => loadOBSLink();
+
+window.copyOBSLink = () => {
+  const url=getOBSURL();
+  navigator.clipboard.writeText(url).then(()=>showToast('Link OBS disalin! 📋','ok'));
+};
+
+window.openOBSPreview = () => goPage('overlay');
+
+function renderOBSPreview() {
+  const el=document.getElementById('obsPreviewWrap');
+  if(!el) return;
+  const w=dailyData.win||0,l=dailyData.lose||0,t=w+l;
+  const wr=t>0?Math.round(w/t*100):0;
+  const mmr=currentMMR!==null?currentMMR:'—';
+  el.innerHTML=`
+    <div style="background:#060810;border:1px solid rgba(240,180,41,0.2);border-radius:12px;padding:20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:center;box-shadow:0 0 40px rgba(240,180,41,0.15)">
+      <div style="text-align:center">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#475569;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">Win</div>
+        <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:#10b981;line-height:1">${w}</div>
+      </div>
+      <div style="width:1px;height:50px;background:rgba(255,255,255,0.06)"></div>
+      <div style="text-align:center">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#475569;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">Lose</div>
+        <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:#ef4444;line-height:1">${l}</div>
+      </div>
+      <div style="width:1px;height:50px;background:rgba(255,255,255,0.06)"></div>
+      <div style="text-align:center">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#475569;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">WR</div>
+        <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:${wr>=60?'#10b981':wr>=50?'#f0b429':'#ef4444'};line-height:1">${wr}%</div>
+      </div>
+      <div style="width:1px;height:50px;background:rgba(255,255,255,0.06)"></div>
+      <div style="text-align:center">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#475569;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">MMR</div>
+        <div style="font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:#f0b429;line-height:1">${mmr}</div>
+      </div>
+    </div>`;
+}
+
+// ═══ NAVIGATION ═══
+window.showPage = (name) => {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById(`page-${name}`);
+  if(p) p.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
+};
+
+window.goPage = (name) => {
+  if (!currentUser && !['auth','setup'].includes(name)) { showPage('auth'); return; }
+  showPage(name);
+  if (name==='explore') {
+    document.getElementById('exploreSearch').value='';
+    document.getElementById('exploreResults').innerHTML='';
+    loadPublicUsers(document.getElementById('explorePublicList'));
+  }
+  if (name==='profile') loadProfilePage();
+  if (name==='settings') loadSettings();
+  if (name==='overlay') renderOBSPreview();
+  window.scrollTo({top:0, behavior:'smooth'});
+};
+
+window.goBack = () => goPage('explore');
+
+window.toggleDrop = () => { document.getElementById('avatarDrop').classList.toggle('open'); };
+document.addEventListener('click', e => {
+  const d=document.getElementById('avatarDrop');
+  if(d&&!d.contains(e.target)) d.classList.remove('open');
+});
+
+window.setSnav = (el,panel) => {
+  document.querySelectorAll('.snav-item').forEach(i=>i.classList.remove('on'));
+  el.classList.add('on');
+  ['sprof','sprivacy','sobs','saccount'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
+  const target=document.getElementById(panel);
+  if(target) target.style.display='block';
+};
+
+window.setPTab = (btn,panel) => {
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.ptab-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  const p=document.getElementById(panel); if(p) p.classList.add('on');
+};
+
+window.openModal = (id) => document.getElementById(id)?.classList.add('on');
+window.closeModal = (id) => document.getElementById(id)?.classList.remove('on');
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('on'); });
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.on').forEach(m=>m.classList.remove('on')); });
+
+// Initial hide loading after 3s max
+setTimeout(()=>{
+  const ls=document.getElementById('loadingScreen');
+  if(ls&&!ls.classList.contains('hide')) ls.classList.add('hide');
+},3500);
 </script>
 </body>
 </html>
