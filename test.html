@@ -948,7 +948,7 @@ input:checked + .toggle-track::after {
   <div class="loading-bar-wrap"><div class="loading-bar-fill"></div></div>
 </div>
 
-<div class="app" id="app" style="display:none">
+<div class="app" id="app">
 
 <!-- ══ TOPBAR ══ -->
 <header class="topbar">
@@ -1606,19 +1606,30 @@ setInterval(() => {
 onAuthStateChanged(auth, async user => {
   if (user) {
     currentUser = user;
-    const snap = await get(ref(db, `users/${user.uid}/profile`));
-    if (!snap.exists()) {
-      showPage('setup');
-    } else {
-      userProfile = snap.val();
-      initApp();
+    try {
+      const snap = await get(ref(db, `users/${user.uid}/profile`));
+      if (!snap.exists()) {
+        hideLoading();
+        showPage('setup');      } else {
+        userProfile = snap.val();
+        initApp();
+      }
+    } catch(e) {
+      console.error('DB error:', e);
+      hideLoading();
+      showPage('auth');
     }
   } else {
     currentUser = null; userProfile = null;
+    hideLoading();
     showPage('auth');
-    document.getElementById('loadingScreen').classList.add('hide');
   }
 });
+
+function hideLoading() {
+  const ls = document.getElementById('loadingScreen');
+  if (ls) { ls.classList.add('hide'); setTimeout(()=>{ if(ls.parentNode) ls.parentNode.removeChild(ls); }, 600); }
+}
 
 window.loginGoogle = async () => {
   try {
@@ -1632,7 +1643,6 @@ window.signOut = async () => {
   obsUnsubscribes = [];
   await fbSignOut(auth);
   showPage('auth');
-  document.getElementById('app').style.display = 'none';
 };
 
 // ═══ SETUP ═══
@@ -1705,20 +1715,13 @@ async function sha256(msg) {
 
 // ═══ APP INIT ═══
 function initApp() {
-  const app = document.getElementById('app');
-  app.style.display = 'block';
-  document.getElementById('loadingScreen').classList.add('hide');
-
-  // topbar
+  hideLoading();
   updateTopbar();
   document.getElementById('updateBar').style.display = 'block';
   document.getElementById('fabBtn').style.display = 'flex';
-
-  // subscribe to user data
   subscribeUserData();
   subscribeLastUpdate();
   loadOBSLink();
-
   showPage('home');
 }
 
@@ -2408,6 +2411,12 @@ window.showPage = (name) => {
   const p=document.getElementById(`page-${name}`);
   if(p) p.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
+  // hide nav elements when on auth/setup
+  const isAuthPage = ['auth','setup'].includes(name);
+  const fab = document.getElementById('fabBtn');
+  const ubar = document.getElementById('updateBar');
+  if (fab) fab.style.display = isAuthPage ? 'none' : (currentUser ? 'flex' : 'none');
+  if (ubar) ubar.style.display = isAuthPage ? 'none' : (currentUser ? 'block' : 'none');
 };
 
 window.goPage = (name) => {
@@ -2454,11 +2463,13 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.on').forEach(m=>m.classList.remove('on')); });
 
-// Initial hide loading after 3s max
-setTimeout(()=>{
-  const ls=document.getElementById('loadingScreen');
-  if(ls&&!ls.classList.contains('hide')) ls.classList.add('hide');
-},3500);
+// ═══ SETUP PAGE show properly ═══
+function showSetupPage() {
+  document.getElementById('updateBar').style.display = 'none';
+  document.getElementById('fabBtn').style.display = 'none';
+  showPage('setup');
+}
+
 </script>
 </body>
 </html>
