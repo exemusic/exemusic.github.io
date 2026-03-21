@@ -3,1141 +3,442 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MLBB Tracker — Miya Main</title>
+<title>MLBB HARIAN</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Oxanium:wght@300;400;600;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-
 <style>
-  :root {
-    --gold: #f5c842;
-    --gold2: #e8a020;
-    --cyan: #00e5ff;
-    --cyan2: #0097a7;
-    --red: #ff3d57;
-    --green: #00e676;
-    --bg: #07090f;
-    --bg2: #0d1120;
-    --bg3: #111828;
-    --border: rgba(245,200,66,0.15);
-    --border2: rgba(0,229,255,0.12);
-    --text: #e8eaf0;
-    --muted: #6b7a99;
-    --card: rgba(13,17,32,0.95);
-    --glow-gold: 0 0 20px rgba(245,200,66,0.3);
-    --glow-cyan: 0 0 20px rgba(0,229,255,0.3);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Rajdhani', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* BACKGROUND */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(245,200,66,0.06) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(0,229,255,0.04) 0%, transparent 50%),
-      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(255,255,255,0.012) 60px, rgba(255,255,255,0.012) 61px),
-      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,0.012) 60px, rgba(255,255,255,0.012) 61px);
-    pointer-events: none; z-index: 0;
-  }
-
-  /* HEADER */
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(7,9,15,0.92);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-  }
-
-  .header-inner {
-    max-width: 1400px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 64px; gap: 16px;
-  }
-
-  .logo {
-    display: flex; align-items: center; gap: 12px;
-    text-decoration: none;
-  }
-
-  .logo-icon {
-    width: 38px; height: 38px;
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 900;
-    color: #07090f;
-    font-family: 'Orbitron', sans-serif;
-    box-shadow: var(--glow-gold);
-    flex-shrink: 0;
-  }
-
-  .logo-text {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 16px; font-weight: 700;
-    color: var(--gold);
-    line-height: 1.1;
-    letter-spacing: 1px;
-  }
-
-  .logo-sub {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 11px; font-weight: 400;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .header-mmr {
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(245,200,66,0.08);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .header-mmr:hover {
-    background: rgba(245,200,66,0.14);
-    border-color: rgba(245,200,66,0.3);
-    box-shadow: var(--glow-gold);
-  }
-
-  .mmr-label {
-    font-size: 11px; font-weight: 600;
-    color: var(--muted); letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-family: 'Oxanium', sans-serif;
-  }
-
-  .mmr-value {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 18px; font-weight: 700;
-    color: var(--gold);
-  }
-
-  .mmr-edit-btn {
-    width: 24px; height: 24px;
-    background: rgba(245,200,66,0.15);
-    border: none; border-radius: 5px;
-    color: var(--gold); font-size: 12px;
-    cursor: pointer; display: flex;
-    align-items: center; justify-content: center;
-    transition: all 0.2s;
-  }
-
-  .mmr-edit-btn:hover { background: rgba(245,200,66,0.3); }
-
-  /* MMR INPUT INLINE */
-  .mmr-input {
-    background: transparent;
-    border: none; outline: none;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 18px; font-weight: 700;
-    color: var(--gold);
-    width: 90px;
-    text-align: right;
-  }
-
-  /* GLOBAL PANEL */
-  .global-panel {
-    max-width: 1400px; margin: 20px auto 0;
-    padding: 0 24px;
-  }
-
-  .global-panel-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 11px; font-weight: 700;
-    color: var(--muted); letter-spacing: 2.5px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    display: flex; align-items: center; gap: 10px;
-  }
-
-  .global-panel-title::after {
-    content: ''; flex: 1; height: 1px;
-    background: linear-gradient(90deg, var(--border), transparent);
-  }
-
-  .global-counters {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-  }
-
-  .gcounter {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 18px 20px;
-    display: flex; flex-direction: column; gap: 10px;
-    position: relative; overflow: hidden;
-    transition: all 0.25s;
-  }
-
-  .gcounter::before {
-    content: '';
-    position: absolute; inset: 0;
-    opacity: 0; transition: opacity 0.25s;
-    pointer-events: none;
-  }
-
-  .gcounter.win-gc { border: 1px solid rgba(0,230,118,0.2); }
-  .gcounter.win-gc::before { background: radial-gradient(ellipse at top left, rgba(0,230,118,0.07), transparent 70%); }
-
-  .gcounter.lose-gc { border: 1px solid rgba(255,61,87,0.2); }
-  .gcounter.lose-gc::before { background: radial-gradient(ellipse at top left, rgba(255,61,87,0.07), transparent 70%); }
-
-  .gcounter.mmr-gc { border: 1px solid rgba(245,200,66,0.25); }
-  .gcounter.mmr-gc::before { background: radial-gradient(ellipse at top left, rgba(245,200,66,0.08), transparent 70%); }
-
-  .gcounter:hover::before { opacity: 1; }
-  .gcounter:hover { transform: translateY(-2px); }
-
-  .gcounter.win-gc:hover { box-shadow: 0 8px 30px rgba(0,230,118,0.12); }
-  .gcounter.lose-gc:hover { box-shadow: 0 8px 30px rgba(255,61,87,0.12); }
-  .gcounter.mmr-gc:hover { box-shadow: 0 8px 30px rgba(245,200,66,0.15); }
-
-  .gc-header {
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .gc-dot {
-    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-  }
-
-  .win-gc .gc-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
-  .lose-gc .gc-dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
-  .mmr-gc .gc-dot { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
-
-  .gc-label {
-    font-family: 'Oxanium', sans-serif;
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: var(--muted);
-    flex: 1;
-  }
-
-  .gc-badge {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 11px; font-weight: 600;
-    padding: 2px 8px; border-radius: 20px;
-    letter-spacing: 0.5px;
-  }
-
-  .win-gc .gc-badge { background: rgba(0,230,118,0.12); color: var(--green); }
-  .lose-gc .gc-badge { background: rgba(255,61,87,0.12); color: var(--red); }
-  .mmr-gc .gc-badge { background: rgba(245,200,66,0.12); color: var(--gold); }
-
-  .gc-main {
-    display: flex; align-items: center; justify-content: space-between;
-  }
-
-  .gc-number {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 40px; font-weight: 900;
-    line-height: 1;
-    transition: transform 0.1s;
-  }
-
-  .gc-number.bump { animation: numBump 0.18s ease; }
-  @keyframes numBump {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.18); }
-    100% { transform: scale(1); }
-  }
-
-  .win-gc .gc-number { color: var(--green); }
-  .lose-gc .gc-number { color: var(--red); }
-  .mmr-gc .gc-number { color: var(--gold); font-size: 36px; }
-
-  .gc-btns {
-    display: flex; flex-direction: column; gap: 6px;
-  }
-
-  .gc-btn {
-    width: 38px; height: 38px;
-    border: none; border-radius: 10px;
-    cursor: pointer; font-size: 20px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s; font-family: 'Orbitron', sans-serif;
-    line-height: 1;
-  }
-
-  .gc-btn-add { background: rgba(255,255,255,0.06); color: var(--text); }
-  .gc-btn-add:hover { transform: scale(1.12); }
-
-  .win-gc .gc-btn-add:hover { background: rgba(0,230,118,0.2); color: var(--green); box-shadow: 0 0 12px rgba(0,230,118,0.3); }
-  .lose-gc .gc-btn-add:hover { background: rgba(255,61,87,0.2); color: var(--red); box-shadow: 0 0 12px rgba(255,61,87,0.3); }
-  .mmr-gc .gc-btn-add:hover { background: rgba(245,200,66,0.2); color: var(--gold); box-shadow: 0 0 12px rgba(245,200,66,0.3); }
-
-  .gc-btn-sub { background: rgba(255,255,255,0.04); color: var(--muted); }
-  .gc-btn-sub:hover { background: rgba(255,255,255,0.1); color: var(--text); transform: scale(1.12); }
-
-  .gc-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    padding-top: 10px;
-    margin-top: 2px;
-  }
-
-  .gc-rate {
-    font-family: 'Oxanium', sans-serif;
-    font-size: 12px; font-weight: 600;
-    color: var(--muted);
-  }
-
-  .gc-rate span {
-    margin-left: 4px;
-  }
-
-  .win-gc .gc-rate span { color: var(--green); }
-  .lose-gc .gc-rate span { color: var(--red); }
-  .mmr-gc .gc-rate span { color: var(--gold); }
-
-  .gc-edit-inline {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px; padding: 4px 10px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 13px; font-weight: 700;
-    color: var(--text); outline: none;
-    width: 80px; text-align: center;
-    cursor: pointer; transition: all 0.2s;
-  }
-
-  .gc-edit-inline:focus {
-    border-color: var(--gold);
-    background: rgba(245,200,66,0.06);
-    box-shadow: 0 0 0 3px rgba(245,200,66,0.1);
-  }
-
-  @media (max-width: 640px) {
-    .global-counters { grid-template-columns: 1fr; }
-    .gc-number { font-size: 32px; }
-    .mmr-gc .gc-number { font-size: 28px; }
-    .global-panel { padding: 0 16px; }
-  }
-
-  @media (max-width: 900px) and (min-width: 641px) {
-    .global-counters { grid-template-columns: 1fr 1fr; }
-    .mmr-gc { grid-column: span 2; }
-  }
-
-  /* HERO FILTER & SEARCH */
-  .toolbar {
-    max-width: 1400px; margin: 0 auto;
-    padding: 20px 24px 0;
-    display: flex; gap: 12px; flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .search-box {
-    position: relative; flex: 1; min-width: 200px; max-width: 360px;
-  }
-
-  .search-box input {
-    width: 100%;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    padding: 10px 16px 10px 40px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 15px; font-weight: 500;
-    color: var(--text);
-    outline: none; transition: all 0.2s;
-  }
-
-  .search-box input:focus {
-    border-color: var(--cyan2);
-    box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
-  }
-
-  .search-box .icon {
-    position: absolute; left: 12px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted); font-size: 16px;
-  }
-
-  .filter-btns {
-    display: flex; gap: 6px; flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: 1px solid var(--border2);
-    background: var(--bg3);
-    color: var(--muted);
-    font-family: 'Oxanium', sans-serif;
-    font-size: 12px; font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer; transition: all 0.2s;
-    text-transform: uppercase;
-  }
-
-  .filter-btn:hover, .filter-btn.active {
-    background: rgba(0,229,255,0.1);
-    border-color: var(--cyan2);
-    color: var(--cyan);
-  }
-
-  .filter-btn.win-f.active {
-    background: rgba(0,230,118,0.1);
-    border-color: var(--green);
-    color: var(--green);
-  }
-
-  /* STATS BAR */
-  .stats-bar {
-    max-width: 1400px; margin: 16px auto 0;
-    padding: 0 24px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-  }
-
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 18px;
-    display: flex; align-items: center; gap: 12px;
-    transition: all 0.2s;
-  }
-
-  .stat-card:hover {
-    border-color: rgba(245,200,66,0.3);
-    box-shadow: var(--glow-gold);
-  }
-
-  .stat-icon {
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0;
-  }
-
-  .stat-icon.gold { background: rgba(245,200,66,0.15); }
-  .stat-icon.green { background: rgba(0,230,118,0.15); }
-  .stat-icon.red { background: rgba(255,61,87,0.15); }
-  .stat-icon.cyan { background: rgba(0,229,255,0.15); }
-
-  .stat-info .label {
-    font-size: 11px; color: var(--muted);
-    letter-spacing: 1.5px; text-transform: uppercase;
-    font-family: 'Oxanium', sans-serif;
-  }
-
-  .stat-info .value {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 20px; font-weight: 700;
-    line-height: 1.2; margin-top: 2px;
-  }
-
-  .stat-info .value.gold { color: var(--gold); }
-  .stat-info .value.green { color: var(--green); }
-  .stat-info .value.red { color: var(--red); }
-  .stat-info .value.cyan { color: var(--cyan); }
-
-  /* MAIN GRID */
-  main {
-    max-width: 1400px; margin: 20px auto 40px;
-    padding: 0 24px;
-    position: relative; z-index: 1;
-  }
-
-  .section-header {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 16px; margin-top: 8px;
-  }
-
-  .section-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 13px; font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-  }
-
-  .section-line {
-    flex: 1; height: 1px;
-    background: linear-gradient(90deg, var(--border), transparent);
-  }
-
-  .hero-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 14px;
-  }
-
-  /* HERO CARD */
-  .hero-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    transition: all 0.25s;
-    position: relative;
-    cursor: default;
-  }
-
-  .hero-card:hover {
-    border-color: rgba(245,200,66,0.25);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4), var(--glow-gold);
-  }
-
-  .hero-card.main-hero {
-    border-color: rgba(245,200,66,0.4);
-    background: linear-gradient(135deg, rgba(245,200,66,0.05), var(--card));
-  }
-
-  .hero-card.main-hero::before {
-    content: '★ MAIN';
-    position: absolute; top: 10px; right: 10px;
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    color: #07090f;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 9px; font-weight: 900;
-    padding: 3px 8px; border-radius: 4px;
-    letter-spacing: 1px; z-index: 2;
-  }
-
-  .card-top {
-    padding: 16px 16px 12px;
-    display: flex; align-items: center; gap: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-
-  .hero-avatar {
-    width: 48px; height: 48px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--bg3), var(--bg2));
-    border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; flex-shrink: 0;
-    position: relative; overflow: hidden;
-  }
-
-  .hero-avatar img {
-    width: 100%; height: 100%;
-    object-fit: cover; border-radius: 9px;
-  }
-
-  .hero-info { flex: 1; min-width: 0; }
-
-  .hero-name {
-    font-family: 'Oxanium', sans-serif;
-    font-size: 16px; font-weight: 700;
-    color: var(--text);
-    white-space: nowrap; overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .hero-role {
-    font-size: 11px; color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-top: 2px;
-    font-family: 'Rajdhani', sans-serif;
-  }
-
-  .hero-wr {
-    text-align: right; flex-shrink: 0;
-  }
-
-  .wr-value {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 18px; font-weight: 700;
-    line-height: 1;
-  }
-
-  .wr-label {
-    font-size: 10px; color: var(--muted);
-    letter-spacing: 1px; text-transform: uppercase;
-    margin-top: 2px; font-family: 'Rajdhani', sans-serif;
-  }
-
-  /* WIN/LOSE COUNTER AREA */
-  .card-body {
-    padding: 14px 16px;
-  }
-
-  .wl-row {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 12px;
-  }
-
-  .counter-box {
-    background: var(--bg2);
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex; align-items: center; justify-content: space-between;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-  }
-
-  .counter-box.win-box {
-    border-color: rgba(0,230,118,0.15);
-  }
-
-  .counter-box.lose-box {
-    border-color: rgba(255,61,87,0.15);
-  }
-
-  .counter-box:hover {
-    background: var(--bg3);
-  }
-
-  .counter-left { display: flex; align-items: center; gap: 8px; }
-
-  .counter-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-  }
-
-  .win-box .counter-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
-  .lose-box .counter-dot { background: var(--red); box-shadow: 0 0 6px var(--red); }
-
-  .counter-label {
-    font-size: 12px; font-weight: 600;
-    letter-spacing: 1px; text-transform: uppercase;
-    color: var(--muted);
-    font-family: 'Oxanium', sans-serif;
-  }
-
-  .counter-num {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 22px; font-weight: 700;
-  }
-
-  .win-box .counter-num { color: var(--green); }
-  .lose-box .counter-num { color: var(--red); }
-
-  /* BUTTONS */
-  .counter-btns {
-    display: flex; align-items: center; gap: 4px;
-  }
-
-  .btn-counter {
-    width: 28px; height: 28px;
-    border: none; border-radius: 7px;
-    cursor: pointer; font-size: 15px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s; font-family: 'Orbitron', sans-serif;
-    line-height: 1;
-  }
-
-  .btn-win-add { background: rgba(0,230,118,0.15); color: var(--green); }
-  .btn-win-add:hover { background: rgba(0,230,118,0.3); transform: scale(1.1); }
-
-  .btn-lose-add { background: rgba(255,61,87,0.15); color: var(--red); }
-  .btn-lose-add:hover { background: rgba(255,61,87,0.3); transform: scale(1.1); }
-
-  .btn-sub { background: rgba(255,255,255,0.06); color: var(--muted); }
-  .btn-sub:hover { background: rgba(255,255,255,0.12); color: var(--text); transform: scale(1.1); }
-
-  /* WIN RATE BAR */
-  .wr-bar-wrap {
-    margin-top: 2px;
-  }
-
-  .wr-bar-labels {
-    display: flex; justify-content: space-between;
-    font-size: 11px; color: var(--muted);
-    font-family: 'Rajdhani', sans-serif;
-    margin-bottom: 5px;
-  }
-
-  .wr-bar-track {
-    height: 6px; border-radius: 10px;
-    background: rgba(255,61,87,0.3);
-    overflow: hidden; position: relative;
-  }
-
-  .wr-bar-fill {
-    height: 100%; border-radius: 10px;
-    background: linear-gradient(90deg, var(--green), #00bfa5);
-    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
-    position: relative;
-  }
-
-  .wr-bar-fill::after {
-    content: '';
-    position: absolute; right: 0; top: 0; bottom: 0;
-    width: 6px;
-    background: rgba(255,255,255,0.5);
-    filter: blur(2px);
-  }
-
-  /* TOTAL GAMES PILL */
-  .games-pill {
-    display: inline-flex; align-items: center; gap: 5px;
-    background: rgba(0,229,255,0.07);
-    border: 1px solid rgba(0,229,255,0.12);
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-size: 11px;
-    color: var(--cyan);
-    font-family: 'Oxanium', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-top: 10px;
-  }
-
-  /* MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 1000;
-    background: rgba(7,9,15,0.85);
-    backdrop-filter: blur(10px);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s;
-    padding: 20px;
-  }
-
-  .modal-overlay.active {
-    opacity: 1; pointer-events: all;
-  }
-
-  .modal {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 28px;
-    width: 100%; max-width: 420px;
-    transform: scale(0.95) translateY(10px);
-    transition: transform 0.2s;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6), var(--glow-gold);
-  }
-
-  .modal-overlay.active .modal {
-    transform: scale(1) translateY(0);
-  }
-
-  .modal-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 14px; font-weight: 700;
-    color: var(--gold); letter-spacing: 1.5px;
-    text-transform: uppercase; margin-bottom: 20px;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .modal-field { margin-bottom: 14px; }
-
-  .modal-field label {
-    display: block; font-size: 12px;
-    color: var(--muted); letter-spacing: 1px;
-    text-transform: uppercase; margin-bottom: 6px;
-    font-family: 'Oxanium', sans-serif;
-  }
-
-  .modal-field input, .modal-field select {
-    width: 100%;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 11px 14px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 16px; font-weight: 600;
-    color: var(--text); outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .modal-field input:focus, .modal-field select:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(245,200,66,0.1);
-  }
-
-  .modal-field select option { background: var(--bg3); }
-
-  .modal-actions {
-    display: flex; gap: 10px; margin-top: 20px;
-  }
-
-  .btn-primary {
-    flex: 1; padding: 12px;
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    color: #07090f; border: none;
-    border-radius: 10px; cursor: pointer;
-    font-family: 'Oxanium', sans-serif;
-    font-size: 13px; font-weight: 700;
-    letter-spacing: 1px; text-transform: uppercase;
-    transition: all 0.2s;
-  }
-
-  .btn-primary:hover {
-    filter: brightness(1.1);
-    box-shadow: var(--glow-gold);
-  }
-
-  .btn-secondary {
-    flex: 1; padding: 12px;
-    background: rgba(255,255,255,0.05);
-    color: var(--muted); border: 1px solid var(--border);
-    border-radius: 10px; cursor: pointer;
-    font-family: 'Oxanium', sans-serif;
-    font-size: 13px; font-weight: 600;
-    letter-spacing: 1px; text-transform: uppercase;
-    transition: all 0.2s;
-  }
-
-  .btn-secondary:hover {
-    background: rgba(255,255,255,0.08);
-    color: var(--text);
-  }
-
-  .btn-danger {
-    padding: 12px 16px;
-    background: rgba(255,61,87,0.1);
-    color: var(--red); border: 1px solid rgba(255,61,87,0.2);
-    border-radius: 10px; cursor: pointer;
-    font-family: 'Oxanium', sans-serif;
-    font-size: 12px; font-weight: 700;
-    transition: all 0.2s;
-  }
-
-  .btn-danger:hover {
-    background: rgba(255,61,87,0.2);
-    box-shadow: 0 0 12px rgba(255,61,87,0.2);
-  }
-
-  /* ADD HERO FAB */
-  .fab {
-    position: fixed; bottom: 28px; right: 28px; z-index: 90;
-    width: 58px; height: 58px;
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    border: none; border-radius: 50%;
-    cursor: pointer; font-size: 26px; font-weight: 700;
-    color: #07090f;
-    box-shadow: var(--glow-gold), 0 4px 20px rgba(0,0,0,0.5);
-    transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  .fab:hover {
-    transform: scale(1.1) rotate(90deg);
-    box-shadow: 0 0 30px rgba(245,200,66,0.5), 0 6px 24px rgba(0,0,0,0.5);
-  }
-
-  /* TOAST */
-  .toast-wrap {
-    position: fixed; top: 80px; right: 20px; z-index: 9999;
-    display: flex; flex-direction: column; gap: 8px;
-  }
-
-  .toast {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 18px;
-    font-family: 'Oxanium', sans-serif;
-    font-size: 13px; font-weight: 600;
-    color: var(--text);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.2s forwards;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .toast.success { border-color: rgba(0,230,118,0.3); }
-  .toast.error { border-color: rgba(255,61,87,0.3); }
-
-  @keyframes toastIn {
-    from { opacity:0; transform: translateX(20px); }
-    to { opacity:1; transform: translateX(0); }
-  }
-
-  @keyframes toastOut {
-    from { opacity:1; transform: translateX(0); }
-    to { opacity:0; transform: translateX(20px); }
-  }
-
-  /* LOADING */
-  .loading-screen {
-    position: fixed; inset: 0; z-index: 9999;
-    background: var(--bg);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 20px;
-    transition: opacity 0.5s;
-  }
-
-  .loading-screen.hide { opacity: 0; pointer-events: none; }
-
-  .loading-logo {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 28px; font-weight: 900;
-    color: var(--gold);
-    letter-spacing: 4px;
-    animation: pulse 1.5s ease-in-out infinite;
-  }
-
-  .loading-bar {
-    width: 200px; height: 3px;
-    background: var(--bg3);
-    border-radius: 10px; overflow: hidden;
-  }
-
-  .loading-bar-fill {
-    height: 100%; width: 0%;
-    background: linear-gradient(90deg, var(--gold), var(--cyan));
-    border-radius: 10px;
-    animation: loadFill 1.5s ease forwards;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  @keyframes loadFill {
-    to { width: 100%; }
-  }
-
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center; padding: 60px 20px;
-    color: var(--muted);
-  }
-
-  .empty-icon { font-size: 48px; margin-bottom: 12px; }
-
-  .empty-text {
-    font-family: 'Oxanium', sans-serif;
-    font-size: 15px; letter-spacing: 1px;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .header-inner { padding: 0; }
-    header { padding: 0 16px; }
-    .toolbar { padding: 16px 16px 0; }
-    .stats-bar { padding: 0 16px; grid-template-columns: 1fr 1fr; }
-    main { padding: 0 16px; }
-    .hero-grid { grid-template-columns: 1fr; }
-    .logo-text { font-size: 13px; }
-    .mmr-value { font-size: 15px; }
-    .fab { bottom: 20px; right: 20px; width: 52px; height: 52px; font-size: 22px; }
-  }
-
-  @media (max-width: 480px) {
-    .stats-bar { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .stat-card { padding: 10px 12px; }
-    .stat-info .value { font-size: 16px; }
-    .filter-btns { gap: 4px; }
-    .filter-btn { font-size: 11px; padding: 6px 10px; }
-  }
-
-  /* Card entrance animation */
-  .hero-card {
-    animation: cardIn 0.4s ease both;
-  }
-
-  @keyframes cardIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* HERO CARD EDIT ACTIONS */
-  .card-actions {
-    display: flex; gap: 6px;
-    padding: 0 16px 14px;
-  }
-
-  .btn-edit-card {
-    flex: 1; padding: 7px;
-    background: rgba(0,229,255,0.07);
-    border: 1px solid rgba(0,229,255,0.12);
-    border-radius: 8px; cursor: pointer;
-    font-family: 'Oxanium', sans-serif;
-    font-size: 11px; font-weight: 600;
-    color: var(--cyan); letter-spacing: 0.5px;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-
-  .btn-edit-card:hover {
-    background: rgba(0,229,255,0.14);
-    border-color: var(--cyan2);
-  }
-
-  .btn-del-card {
-    padding: 7px 12px;
-    background: rgba(255,61,87,0.07);
-    border: 1px solid rgba(255,61,87,0.12);
-    border-radius: 8px; cursor: pointer;
-    font-family: 'Oxanium', sans-serif;
-    font-size: 11px; font-weight: 600;
-    color: var(--red);
-    transition: all 0.2s;
-  }
-
-  .btn-del-card:hover {
-    background: rgba(255,61,87,0.18);
-  }
+:root{
+  --gold:#f5c842;--gold2:#e8a020;--cyan:#00e5ff;--cyan2:#0097a7;
+  --red:#ff3d57;--green:#00e676;
+  --bg:#07090f;--bg2:#0d1120;--bg3:#111828;
+  --border:rgba(245,200,66,0.15);--border2:rgba(0,229,255,0.12);
+  --text:#e8eaf0;--muted:#6b7a99;
+  --card:rgba(13,17,32,0.97);
+  --glow-gold:0 0 20px rgba(245,200,66,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 80% 60% at 50% -10%,rgba(245,200,66,0.06) 0%,transparent 60%),
+  radial-gradient(ellipse 60% 40% at 100% 100%,rgba(0,229,255,0.04) 0%,transparent 50%),
+  repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(255,255,255,0.012) 60px,rgba(255,255,255,0.012) 61px),
+  repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,0.012) 60px,rgba(255,255,255,0.012) 61px);
+  pointer-events:none;z-index:0;}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;}
+.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#07090f;font-family:'Orbitron',sans-serif;box-shadow:var(--glow-gold);flex-shrink:0;}
+.logo-text{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;color:var(--gold);line-height:1.1;letter-spacing:1px;}
+.logo-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.header-mmr{display:flex;align-items:center;gap:8px;background:rgba(245,200,66,0.08);border:1px solid var(--border);border-radius:10px;padding:8px 14px;cursor:pointer;transition:all 0.2s;}
+.header-mmr:hover{background:rgba(245,200,66,0.14);border-color:rgba(245,200,66,0.3);box-shadow:var(--glow-gold);}
+.mmr-label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-family:'Oxanium',sans-serif;}
+.mmr-value{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:700;color:var(--gold);}
+
+/* LAST UPDATE BAR */
+.lu-bar{background:rgba(0,229,255,0.03);border-bottom:1px solid rgba(0,229,255,0.07);padding:5px 24px;}
+.lu-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.lu-pulse{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:lpulse 2s infinite;flex-shrink:0;}
+@keyframes lpulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--green);}50%{opacity:0.3;box-shadow:0 0 2px var(--green);}}
+.lu-lbl{font-family:'Oxanium',sans-serif;font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+.lu-ts{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:0.5px;}
+.lu-act{font-size:11px;color:var(--muted);font-family:'Rajdhani',sans-serif;}
+.lu-live{font-family:'Oxanium',sans-serif;font-size:10px;color:var(--green);letter-spacing:1px;margin-left:auto;display:flex;align-items:center;gap:5px;}
+.lu-live span{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--cyan);}
+
+/* SECTION */
+.section-wrap{max-width:1400px;margin:20px auto 0;padding:0 24px;position:relative;z-index:1;}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+.sec-badge{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;color:var(--cyan);background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.15);border-radius:20px;padding:2px 10px;white-space:nowrap;flex-shrink:0;}
+
+/* DAILY COUNTERS */
+.daily-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.dcounter{background:var(--card);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:all 0.25s;}
+.dcounter::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.25s;pointer-events:none;}
+.dcounter:hover::before{opacity:1;}
+.dcounter:hover{transform:translateY(-2px);}
+.win-dc{border:1px solid rgba(0,230,118,0.22);}
+.win-dc::before{background:radial-gradient(ellipse at top left,rgba(0,230,118,0.09),transparent 65%);}
+.win-dc:hover{box-shadow:0 8px 30px rgba(0,230,118,0.12);}
+.lose-dc{border:1px solid rgba(255,61,87,0.22);}
+.lose-dc::before{background:radial-gradient(ellipse at top left,rgba(255,61,87,0.09),transparent 65%);}
+.lose-dc:hover{box-shadow:0 8px 30px rgba(255,61,87,0.12);}
+.mmr-dc{border:1px solid rgba(245,200,66,0.28);}
+.mmr-dc::before{background:radial-gradient(ellipse at top left,rgba(245,200,66,0.09),transparent 65%);}
+.mmr-dc:hover{box-shadow:0 8px 30px rgba(245,200,66,0.15);}
+
+.dc-head{display:flex;align-items:center;gap:8px;}
+.dc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.win-dc .dc-dot{background:var(--green);box-shadow:0 0 8px var(--green);}
+.lose-dc .dc-dot{background:var(--red);box-shadow:0 0 8px var(--red);}
+.mmr-dc .dc-dot{background:var(--gold);box-shadow:0 0 8px var(--gold);}
+.dc-lbl{font-family:'Oxanium',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);flex:1;}
+.dc-tag{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;flex-shrink:0;}
+.win-dc .dc-tag{background:rgba(0,230,118,0.1);color:var(--green);}
+.lose-dc .dc-tag{background:rgba(255,61,87,0.1);color:var(--red);}
+.mmr-dc .dc-tag{background:rgba(245,200,66,0.1);color:var(--gold);}
+
+.dc-main{display:flex;align-items:center;justify-content:space-between;}
+.dc-num{font-family:'Orbitron',sans-serif;font-size:48px;font-weight:900;line-height:1;}
+.dc-num.bump{animation:nbump 0.2s ease;}
+@keyframes nbump{0%{transform:scale(1);}50%{transform:scale(1.18);}100%{transform:scale(1);}}
+.win-dc .dc-num{color:var(--green);}
+.lose-dc .dc-num{color:var(--red);}
+.mmr-dc .dc-num{color:var(--gold);font-size:36px;}
+
+.dc-btns{display:flex;flex-direction:column;gap:6px;}
+.dc-btn{width:44px;height:44px;border:none;border-radius:10px;cursor:pointer;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all 0.14s;font-family:'Orbitron',sans-serif;line-height:1;}
+.dc-btn:active{transform:scale(0.86)!important;}
+.dc-p{background:rgba(255,255,255,0.06);color:var(--text);}
+.dc-m{background:rgba(255,255,255,0.04);color:var(--muted);}
+.dc-m:hover{background:rgba(255,255,255,0.1);color:var(--text);transform:scale(1.08);}
+.win-dc .dc-p:hover{background:rgba(0,230,118,0.22);color:var(--green);box-shadow:0 0 14px rgba(0,230,118,0.4);transform:scale(1.1);}
+.lose-dc .dc-p:hover{background:rgba(255,61,87,0.22);color:var(--red);box-shadow:0 0 14px rgba(255,61,87,0.4);transform:scale(1.1);}
+.mmr-dc .dc-p:hover{background:rgba(245,200,66,0.22);color:var(--gold);box-shadow:0 0 14px rgba(245,200,66,0.4);transform:scale(1.1);}
+
+.dc-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.05);padding-top:10px;gap:6px;flex-wrap:wrap;}
+.dc-stat{font-family:'Oxanium',sans-serif;font-size:12px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.dc-stat em{font-style:normal;}
+.win-dc .dc-stat em{color:var(--green);}
+.lose-dc .dc-stat em{color:var(--red);}
+.mmr-dc .dc-stat em{color:var(--gold);}
+.dc-countdown{font-family:'Oxanium',sans-serif;font-size:10px;color:var(--muted);text-align:right;line-height:1.4;flex-shrink:0;}
+.dc-countdown span{color:var(--cyan);font-weight:700;font-family:'Orbitron',sans-serif;font-size:11px;}
+.mmr-inline{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:4px 10px;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--text);outline:none;width:86px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.mmr-inline:focus{border-color:var(--gold);background:rgba(245,200,66,0.06);box-shadow:0 0 0 3px rgba(245,200,66,0.1);}
+
+/* HISTORY */
+.hist-list{display:flex;flex-direction:column;gap:8px;}
+.hist-empty{font-family:'Oxanium',sans-serif;font-size:12px;color:var(--muted);letter-spacing:1px;padding:20px 0;text-align:center;}
+.hist-row{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;transition:all 0.2s;position:relative;overflow:hidden;}
+.hist-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;}
+.hist-row.hr-good::before{background:var(--green);}
+.hist-row.hr-ok::before{background:var(--gold);}
+.hist-row.hr-bad::before{background:var(--red);}
+.hist-row:hover{border-color:rgba(245,200,66,0.18);transform:translateX(2px);}
+.hist-date{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--muted);min-width:90px;flex-shrink:0;}
+.hist-chips{display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap;}
+.hchip{font-family:'Oxanium',sans-serif;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;}
+.hchip.w{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.2);}
+.hchip.l{background:rgba(255,61,87,0.1);color:var(--red);border:1px solid rgba(255,61,87,0.2);}
+.hchip.g{background:rgba(0,229,255,0.07);color:var(--cyan);border:1px solid rgba(0,229,255,0.15);}
+.hist-wr{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;min-width:42px;text-align:right;flex-shrink:0;}
+.hist-mmr-grp{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
+.hist-mmr-info{text-align:right;}
+.hist-mmr-lbl{font-family:'Oxanium',sans-serif;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.hist-mmr-v{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--gold);}
+.hist-delta{font-family:'Oxanium',sans-serif;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.hist-delta.p{background:rgba(0,230,118,0.12);color:var(--green);border:1px solid rgba(0,230,118,0.2);}
+.hist-delta.n{background:rgba(255,61,87,0.12);color:var(--red);border:1px solid rgba(255,61,87,0.2);}
+.hist-delta.z{background:rgba(255,255,255,0.05);color:var(--muted);}
+
+/* STATS BAR */
+.stats-bar{max-width:1400px;margin:14px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;transition:all 0.2s;}
+.stat-card:hover{border-color:rgba(245,200,66,0.3);box-shadow:var(--glow-gold);}
+.stat-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.si-gold{background:rgba(245,200,66,0.15);}
+.si-green{background:rgba(0,230,118,0.15);}
+.si-red{background:rgba(255,61,87,0.15);}
+.si-cyan{background:rgba(0,229,255,0.15);}
+.slbl{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-family:'Oxanium',sans-serif;}
+.sval{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;line-height:1.2;margin-top:2px;}
+.sval.gold{color:var(--gold);}
+.sval.green{color:var(--green);}
+.sval.red{color:var(--red);}
+.sval.cyan{color:var(--cyan);}
+
+/* TOOLBAR */
+.toolbar{max-width:1400px;margin:16px auto 0;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.search-box{position:relative;flex:1;min-width:200px;max-width:360px;}
+.search-box input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:10px 16px 10px 40px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;color:var(--text);outline:none;transition:all 0.2s;}
+.search-box input:focus{border-color:var(--cyan2);box-shadow:0 0 0 3px rgba(0,229,255,0.08);}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.filter-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-family:'Oxanium',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
+.filter-btn:hover,.filter-btn.active{background:rgba(0,229,255,0.1);border-color:var(--cyan2);color:var(--cyan);}
+.filter-btn.wf.active{background:rgba(0,230,118,0.1);border-color:var(--green);color:var(--green);}
+
+/* HERO GRID */
+main{max-width:1400px;margin:16px auto 40px;padding:0 24px;position:relative;z-index:1;}
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.sec-header-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+.sec-header-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+.hero-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+
+/* HERO CARD */
+.hero-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.25s;animation:cardIn 0.4s ease both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.hero-card:hover{border-color:rgba(245,200,66,0.25);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.4),var(--glow-gold);}
+.hero-card.is-main{border-color:rgba(245,200,66,0.4);background:linear-gradient(135deg,rgba(245,200,66,0.05),var(--card));}
+.main-badge{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#07090f;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:900;padding:3px 8px;border-radius:4px;letter-spacing:1px;z-index:2;}
+.card-top{padding:16px 16px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.05);position:relative;}
+.hero-avatar{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.hero-info{flex:1;min-width:0;}
+.hero-name{font-family:'Oxanium',sans-serif;font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hero-role-lbl{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.hero-wr-box{text-align:right;flex-shrink:0;}
+.wr-val{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;line-height:1;}
+.wr-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.card-body{padding:14px 16px;}
+.wl-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.cbox{background:var(--bg2);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;border:1px solid transparent;transition:all 0.2s;}
+.cbox:hover{background:var(--bg3);}
+.cbox.wb{border-color:rgba(0,230,118,0.15);}
+.cbox.lb{border-color:rgba(255,61,87,0.15);}
+.cbox-left{display:flex;align-items:center;gap:7px;}
+.cdot{width:8px;height:8px;border-radius:50%;}
+.wb .cdot{background:var(--green);box-shadow:0 0 6px var(--green);}
+.lb .cdot{background:var(--red);box-shadow:0 0 6px var(--red);}
+.clbl{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-family:'Oxanium',sans-serif;}
+.cnum{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:700;}
+.wb .cnum{color:var(--green);}
+.lb .cnum{color:var(--red);}
+.cbtn{width:28px;height:28px;border:none;border-radius:7px;cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all 0.15s;line-height:1;}
+.cbtn-wp{background:rgba(0,230,118,0.15);color:var(--green);}
+.cbtn-wp:hover{background:rgba(0,230,118,0.3);transform:scale(1.1);}
+.cbtn-lp{background:rgba(255,61,87,0.15);color:var(--red);}
+.cbtn-lp:hover{background:rgba(255,61,87,0.3);transform:scale(1.1);}
+.cbtn-m{background:rgba(255,255,255,0.06);color:var(--muted);}
+.cbtn-m:hover{background:rgba(255,255,255,0.12);color:var(--text);transform:scale(1.1);}
+.wr-bar-wrap{margin-top:2px;}
+.wr-bar-lbls{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
+.wr-track{height:6px;border-radius:10px;background:rgba(255,61,87,0.3);overflow:hidden;}
+.wr-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),#00bfa5);transition:width 0.4s cubic-bezier(.4,0,.2,1);}
+.games-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.12);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--cyan);font-family:'Oxanium',sans-serif;font-weight:600;margin-top:10px;}
+.card-actions{display:flex;gap:6px;padding:0 16px 14px;}
+.btn-edit{flex:1;padding:7px;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.12);border-radius:8px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:11px;font-weight:600;color:var(--cyan);transition:all 0.2s;text-transform:uppercase;}
+.btn-edit:hover{background:rgba(0,229,255,0.14);border-color:var(--cyan2);}
+.btn-del{padding:7px 12px;background:rgba(255,61,87,0.07);border:1px solid rgba(255,61,87,0.12);border-radius:8px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:11px;font-weight:600;color:var(--red);transition:all 0.2s;}
+.btn-del:hover{background:rgba(255,61,87,0.2);}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-icon{font-size:48px;margin-bottom:12px;}
+.empty-text{font-family:'Oxanium',sans-serif;font-size:15px;letter-spacing:1px;}
+
+/* FAB */
+.fab{position:fixed;bottom:28px;right:28px;z-index:90;width:58px;height:58px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:50%;cursor:pointer;font-size:26px;font-weight:700;color:#07090f;box-shadow:var(--glow-gold),0 4px 20px rgba(0,0,0,0.5);transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
+.fab:hover{transform:scale(1.1) rotate(90deg);box-shadow:0 0 30px rgba(245,200,66,0.5),0 6px 24px rgba(0,0,0,0.5);}
+
+/* TOAST */
+.toast-wrap{position:fixed;top:80px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-family:'Oxanium',sans-serif;font-size:13px;font-weight:600;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,0.5);animation:tin 0.3s ease,tout 0.3s ease 2.2s forwards;display:flex;align-items:center;gap:8px;}
+.toast.s{border-color:rgba(0,230,118,0.3);}
+.toast.e{border-color:rgba(255,61,87,0.3);}
+@keyframes tin{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+@keyframes tout{from{opacity:1;}to{opacity:0;transform:translateX(20px);}}
+
+/* LOADING */
+.loading-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity 0.5s;}
+.loading-screen.hide{opacity:0;pointer-events:none;}
+.ll{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:var(--gold);letter-spacing:4px;animation:lp 1.5s infinite;}
+@keyframes lp{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.lb2{width:200px;height:3px;background:var(--bg3);border-radius:10px;overflow:hidden;}
+.lb2-f{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--cyan));border-radius:10px;animation:lf 1.8s ease forwards;}
+@keyframes lf{to{width:100%;}}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(7,9,15,0.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;padding:20px;}
+.modal-overlay.active{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:28px;width:100%;max-width:420px;transform:scale(0.95) translateY(10px);transition:transform 0.2s;box-shadow:0 20px 60px rgba(0,0,0,0.6),var(--glow-gold);}
+.modal-overlay.active .modal{transform:scale(1) translateY(0);}
+.modal-title{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.mf{margin-bottom:14px;}
+.mf label{display:block;font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-family:'Oxanium',sans-serif;}
+.mf input,.mf select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:600;color:var(--text);outline:none;transition:border-color 0.2s;}
+.mf input:focus,.mf select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,200,66,0.1);}
+.mf select option{background:var(--bg3);}
+.mactions{display:flex;gap:10px;margin-top:20px;}
+.btn-p{flex:1;padding:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#07090f;border:none;border-radius:10px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;}
+.btn-p:hover{filter:brightness(1.1);box-shadow:var(--glow-gold);}
+.btn-s{flex:1;padding:12px;background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;}
+.btn-s:hover{background:rgba(255,255,255,0.08);color:var(--text);}
+.btn-d{padding:12px 16px;background:rgba(255,61,87,0.1);color:var(--red);border:1px solid rgba(255,61,87,0.2);border-radius:10px;cursor:pointer;font-family:'Oxanium',sans-serif;font-size:12px;font-weight:700;transition:all 0.2s;}
+.btn-d:hover{background:rgba(255,61,87,0.2);}
+
+/* RESPONSIVE */
+@media(max-width:900px)and(min-width:641px){
+  .daily-grid{grid-template-columns:1fr 1fr;}
+  .mmr-dc{grid-column:span 2;}
+}
+@media(max-width:640px){
+  .daily-grid{grid-template-columns:1fr;}
+  .dc-num{font-size:40px;}.mmr-dc .dc-num{font-size:32px;}
+  .section-wrap,.toolbar,.stats-bar{padding:0 16px;}
+  header{padding:0 16px;}.lu-bar{padding:5px 16px;}
+  main{padding:0 16px;}
+  .logo-text{font-size:13px;}.mmr-value{font-size:14px;}
+  .fab{bottom:20px;right:20px;width:52px;height:52px;font-size:22px;}
+  .hero-grid{grid-template-columns:1fr;}
+  .hist-row{flex-direction:column;align-items:flex-start;gap:8px;}
+  .hist-mmr-grp{margin-left:0;}
+  .lu-live{display:none;}
+}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">MLBB TRACKER</div>
+  <div class="ll">MLBB TRACKER</div>
   <div style="color:var(--muted);font-family:'Oxanium';font-size:12px;letter-spacing:3px">CONNECTING TO DATABASE...</div>
-  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  <div class="lb2"><div class="lb2-f"></div></div>
 </div>
 
-<!-- HEADER -->
 <header>
   <div class="header-inner">
     <div class="logo">
       <div class="logo-icon">ML</div>
       <div>
         <div class="logo-text">MLBB TRACKER</div>
-        <div class="logo-sub">Hero Stats</div>
+        <div class="logo-sub">Miya Main</div>
       </div>
     </div>
-    <div class="header-mmr" id="mmrDisplay" onclick="enableMMREdit()">
+    <div class="header-mmr" onclick="openMMRModal()">
       <div>
         <div class="mmr-label">MMR</div>
-        <div class="mmr-value" id="mmrVal">—</div>
+        <div class="mmr-value" id="headerMMR">—</div>
       </div>
-      <button class="mmr-edit-btn" title="Edit MMR">✎</button>
+      <span style="color:var(--gold);font-size:12px;margin-left:4px;">✎</span>
     </div>
   </div>
 </header>
 
+<!-- LAST UPDATE BAR — realtime detik per detik -->
+<div class="lu-bar">
+  <div class="lu-inner">
+    <div class="lu-pulse"></div>
+    <span class="lu-lbl">Terakhir Diubah</span>
+    <span class="lu-ts" id="luTS">—</span>
+    <span class="lu-act" id="luAct"></span>
+    <span class="lu-live">🟢 LIVE &nbsp;·&nbsp; <span id="luClock">—</span></span>
+  </div>
+</div>
+
+<!-- DAILY WIN/LOSE + MMR PANEL -->
+<div class="section-wrap">
+  <div class="sec-title">
+    📅 Hari Ini
+    <span class="sec-badge">Reset 00:00 · <span id="resetCD">—</span></span>
+  </div>
+  <div class="daily-grid">
+
+    <div class="dcounter win-dc">
+      <div class="dc-head">
+        <div class="dc-dot"></div>
+        <div class="dc-lbl">Win Hari Ini</div>
+        <div class="dc-tag" id="dWinDate">—</div>
+      </div>
+      <div class="dc-main">
+        <div class="dc-num" id="dWinNum">0</div>
+        <div class="dc-btns">
+          <button class="dc-btn dc-p" onclick="changeDaily('win',1)">+</button>
+          <button class="dc-btn dc-m" onclick="changeDaily('win',-1)">−</button>
+        </div>
+      </div>
+      <div class="dc-foot">
+        <div class="dc-stat">WR Hari Ini <em id="dWR">0%</em></div>
+        <div class="dc-countdown">Reset <span id="cd1">—</span></div>
+      </div>
+    </div>
+
+    <div class="dcounter lose-dc">
+      <div class="dc-head">
+        <div class="dc-dot"></div>
+        <div class="dc-lbl">Lose Hari Ini</div>
+        <div class="dc-tag" id="dLoseDate">—</div>
+      </div>
+      <div class="dc-main">
+        <div class="dc-num" id="dLoseNum">0</div>
+        <div class="dc-btns">
+          <button class="dc-btn dc-p" onclick="changeDaily('lose',1)">+</button>
+          <button class="dc-btn dc-m" onclick="changeDaily('lose',-1)">−</button>
+        </div>
+      </div>
+      <div class="dc-foot">
+        <div class="dc-stat">Total Games <em id="dTotal">0</em></div>
+        <div class="dc-countdown">Reset <span id="cd2">—</span></div>
+      </div>
+    </div>
+
+    <div class="dcounter mmr-dc">
+      <div class="dc-head">
+        <div class="dc-dot"></div>
+        <div class="dc-lbl">MMR Sekarang</div>
+        <div class="dc-tag" id="dMMRDelta">—</div>
+      </div>
+      <div class="dc-main">
+        <div class="dc-num" id="dMMRNum">—</div>
+        <div class="dc-btns">
+          <button class="dc-btn dc-p" onclick="changeMMR(1)">+</button>
+          <button class="dc-btn dc-m" onclick="changeMMR(-1)">−</button>
+        </div>
+      </div>
+      <div class="dc-foot">
+        <div class="dc-stat">
+          Set Manual:
+          <input class="mmr-inline" type="number" id="mmrInline" placeholder="1000" onkeydown="if(event.key==='Enter')doSetMMR()">
+        </div>
+        <div class="dc-countdown">Ketik lalu <span>Enter</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- HISTORY PANEL -->
+<div class="section-wrap" style="margin-top:20px;">
+  <div class="sec-title">📜 History Harian <span class="sec-badge" id="histCount">0 entri</span></div>
+  <div class="hist-list" id="histList">
+    <div class="hist-empty">Belum ada history. Tersimpan otomatis saat reset 00:00.</div>
+  </div>
+</div>
+
+<!-- HERO STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-icon si-gold">🎮</div>
+    <div class="stat-info"><div class="slbl">Games Hero</div><div class="sval gold" id="stTotal">0</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-green">🏆</div>
+    <div class="stat-info"><div class="slbl">Win Hero</div><div class="sval green" id="stWin">0</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-red">💀</div>
+    <div class="stat-info"><div class="slbl">Lose Hero</div><div class="sval red" id="stLose">0</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-cyan">📊</div>
+    <div class="stat-info"><div class="slbl">Overall WR</div><div class="sval cyan" id="stWR">0%</div></div>
+  </div>
+</div>
+
 <!-- TOOLBAR -->
 <div class="toolbar">
   <div class="search-box">
-    <span class="icon">🔍</span>
+    <span class="search-icon">🔍</span>
     <input type="text" id="searchInput" placeholder="Cari hero..." oninput="filterHeroes()">
   </div>
   <div class="filter-btns">
-    <button class="filter-btn active" data-role="all" onclick="setRole(this,'all')">All</button>
-    <button class="filter-btn" data-role="Marksman" onclick="setRole(this,'Marksman')">Marksman</button>
-    <button class="filter-btn" data-role="Assassin" onclick="setRole(this,'Assassin')">Assassin</button>
-    <button class="filter-btn" data-role="Mage" onclick="setRole(this,'Mage')">Mage</button>
-    <button class="filter-btn" data-role="Tank" onclick="setRole(this,'Tank')">Tank</button>
-    <button class="filter-btn" data-role="Fighter" onclick="setRole(this,'Fighter')">Fighter</button>
-    <button class="filter-btn" data-role="Support" onclick="setRole(this,'Support')">Support</button>
-    <button class="filter-btn win-f" data-role="win" onclick="setRole(this,'win')">🏆 Winrate ≥60%</button>
+    <button class="filter-btn active" onclick="setRole(this,'all')">All</button>
+    <button class="filter-btn" onclick="setRole(this,'Marksman')">Marksman</button>
+    <button class="filter-btn" onclick="setRole(this,'Assassin')">Assassin</button>
+    <button class="filter-btn" onclick="setRole(this,'Mage')">Mage</button>
+    <button class="filter-btn" onclick="setRole(this,'Tank')">Tank</button>
+    <button class="filter-btn" onclick="setRole(this,'Fighter')">Fighter</button>
+    <button class="filter-btn" onclick="setRole(this,'Support')">Support</button>
+    <button class="filter-btn wf" onclick="setRole(this,'win')">🏆 WR ≥60%</button>
   </div>
 </div>
 
-<!-- STATS BAR -->
-<div class="stats-bar" id="statsBar">
-  <div class="stat-card">
-    <div class="stat-icon gold">🎮</div>
-    <div class="stat-info">
-      <div class="label">Total Games</div>
-      <div class="value gold" id="statTotal">0</div>
-    </div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon green">🏆</div>
-    <div class="stat-info">
-      <div class="label">Total Win</div>
-      <div class="value green" id="statWin">0</div>
-    </div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon red">💀</div>
-    <div class="stat-info">
-      <div class="label">Total Lose</div>
-      <div class="value red" id="statLose">0</div>
-    </div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon cyan">📊</div>
-    <div class="stat-info">
-      <div class="label">Overall WR</div>
-      <div class="value cyan" id="statWR">0%</div>
-    </div>
-  </div>
-</div>
-
-<!-- GLOBAL WIN/LOSE/MMR PANEL -->
-<div class="global-panel">
-  <div class="global-panel-title">⚡ Global Counter</div>
-  <div class="global-counters">
-
-    <!-- WIN -->
-    <div class="gcounter win-gc">
-      <div class="gc-header">
-        <div class="gc-dot"></div>
-        <div class="gc-label">Total Win</div>
-        <div class="gc-badge" id="gWinBadge">Global</div>
-      </div>
-      <div class="gc-main">
-        <div class="gc-number" id="gWinNum">0</div>
-        <div class="gc-btns">
-          <button class="gc-btn gc-btn-add" onclick="changeGlobal('win',1)">+</button>
-          <button class="gc-btn gc-btn-sub" onclick="changeGlobal('win',-1)">−</button>
-        </div>
-      </div>
-      <div class="gc-footer">
-        <div class="gc-rate">Win Rate <span id="gWRVal">0%</span></div>
-        <div style="font-size:10px;color:var(--muted);font-family:'Oxanium';letter-spacing:1px">INDEPENDEN DARI HERO</div>
-      </div>
-    </div>
-
-    <!-- LOSE -->
-    <div class="gcounter lose-gc">
-      <div class="gc-header">
-        <div class="gc-dot"></div>
-        <div class="gc-label">Total Lose</div>
-        <div class="gc-badge" id="gLoseBadge">Global</div>
-      </div>
-      <div class="gc-main">
-        <div class="gc-number" id="gLoseNum">0</div>
-        <div class="gc-btns">
-          <button class="gc-btn gc-btn-add" onclick="changeGlobal('lose',1)">+</button>
-          <button class="gc-btn gc-btn-sub" onclick="changeGlobal('lose',-1)">−</button>
-        </div>
-      </div>
-      <div class="gc-footer">
-        <div class="gc-rate">Total Games <span id="gTotalVal">0</span></div>
-        <div style="font-size:10px;color:var(--muted);font-family:'Oxanium';letter-spacing:1px">INDEPENDEN DARI HERO</div>
-      </div>
-    </div>
-
-    <!-- MMR -->
-    <div class="gcounter mmr-gc">
-      <div class="gc-header">
-        <div class="gc-dot"></div>
-        <div class="gc-label">MMR</div>
-        <div class="gc-badge">Ranked Points</div>
-      </div>
-      <div class="gc-main">
-        <div class="gc-number" id="gMMRNum">—</div>
-        <div class="gc-btns">
-          <button class="gc-btn gc-btn-add" onclick="changeMMRGlobal(1)">+</button>
-          <button class="gc-btn gc-btn-sub" onclick="changeMMRGlobal(-1)">−</button>
-        </div>
-      </div>
-      <div class="gc-footer">
-        <div class="gc-rate" style="display:flex;align-items:center;gap:6px">Set: <input class="gc-edit-inline" type="number" id="gMMRInput" placeholder="—" onkeydown="if(event.key==='Enter')setMMRDirect(this.value)"></div>
-        <div style="font-size:10px;color:var(--muted);font-family:'Oxanium';letter-spacing:1px">+/− ATAU KETIK MANUAL</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- MAIN -->
 <main>
-  <div class="section-header">
-    <span class="section-title">Hero List</span>
-    <div class="section-line"></div>
+  <div class="sec-header">
+    <span class="sec-header-title">Hero List</span>
+    <div class="sec-header-line"></div>
     <span style="font-size:12px;color:var(--muted);font-family:'Oxanium';" id="heroCount">0 heroes</span>
   </div>
   <div class="hero-grid" id="heroGrid">
@@ -1148,24 +449,17 @@
   </div>
 </main>
 
-<!-- FAB -->
-<button class="fab" onclick="openAddModal()" title="Tambah Hero">+</button>
-
-<!-- TOAST AREA -->
+<button class="fab" onclick="openAddModal()">+</button>
 <div class="toast-wrap" id="toastWrap"></div>
 
-<!-- ADD/EDIT MODAL -->
+<!-- HERO MODAL -->
 <div class="modal-overlay" id="heroModal">
   <div class="modal">
     <div class="modal-title">⚔️ <span id="modalTitle">Tambah Hero</span></div>
     <input type="hidden" id="editHeroId">
-    <div class="modal-field">
-      <label>Nama Hero</label>
-      <input type="text" id="heroNameInput" placeholder="cth: Miya, Layla, Tigreal...">
-    </div>
-    <div class="modal-field">
-      <label>Role</label>
-      <select id="heroRoleInput">
+    <div class="mf"><label>Nama Hero</label><input type="text" id="hName" placeholder="cth: Miya..."></div>
+    <div class="mf"><label>Role</label>
+      <select id="hRole">
         <option value="Marksman">🏹 Marksman</option>
         <option value="Assassin">🗡️ Assassin</option>
         <option value="Mage">🔮 Mage</option>
@@ -1174,427 +468,444 @@
         <option value="Support">💊 Support</option>
       </select>
     </div>
-    <div class="wl-row">
-      <div class="modal-field" style="margin:0">
-        <label>Win</label>
-        <input type="number" id="heroWinInput" placeholder="0" min="0" value="0">
-      </div>
-      <div class="modal-field" style="margin:0">
-        <label>Lose</label>
-        <input type="number" id="heroLoseInput" placeholder="0" min="0" value="0">
-      </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="mf" style="margin:0"><label>Win</label><input type="number" id="hWin" placeholder="0" min="0" value="0"></div>
+      <div class="mf" style="margin:0"><label>Lose</label><input type="number" id="hLose" placeholder="0" min="0" value="0"></div>
     </div>
-    <div class="modal-field">
-      <label>Main Hero?</label>
-      <select id="heroMainInput">
+    <div class="mf" style="margin-top:14px"><label>Main Hero?</label>
+      <select id="hMain">
         <option value="false">Bukan Main</option>
         <option value="true">★ Main Hero</option>
       </select>
     </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal()">Batal</button>
-      <button class="btn-danger" id="deleteBtn" onclick="deleteHero()" style="display:none">Hapus</button>
-      <button class="btn-primary" onclick="saveHero()">Simpan</button>
+    <div class="mactions">
+      <button class="btn-s" onclick="closeModal()">Batal</button>
+      <button class="btn-d" id="deleteBtn" onclick="deleteHero()" style="display:none">Hapus</button>
+      <button class="btn-p" onclick="saveHero()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- MMR EDIT MODAL -->
+<!-- MMR MODAL -->
 <div class="modal-overlay" id="mmrModal">
   <div class="modal">
     <div class="modal-title">🏅 Edit MMR</div>
-    <div class="modal-field">
-      <label>MMR Saat Ini</label>
-      <input type="number" id="mmrInput" placeholder="cth: 1050" min="0">
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeMMR()">Batal</button>
-      <button class="btn-primary" onclick="saveMMR()">Simpan</button>
+    <div class="mf"><label>MMR Saat Ini</label><input type="number" id="mmrModalVal" placeholder="cth: 1050" min="0"></div>
+    <div class="mactions">
+      <button class="btn-s" onclick="document.getElementById('mmrModal').classList.remove('active')">Batal</button>
+      <button class="btn-p" onclick="saveMMRModal()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- Firebase -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBZs-qSS8Zj7wLs_TdUyYb03xviy81ew_Y",
-    authDomain: "winlose-mlbb.firebaseapp.com",
-    projectId: "winlose-mlbb",
-    storageBucket: "winlose-mlbb.firebasestorage.app",
-    messagingSenderId: "584562860632",
-    appId: "1:584562860632:web:b0b22c23a7871781c8202d",
-    measurementId: "G-XZ60XPGWQ3",
-    databaseURL: "https://winlose-mlbb-default-rtdb.asia-southeast1.firebasedatabase.app"
-  };
+const app = initializeApp({
+  apiKey: "AIzaSyBZs-qSS8Zj7wLs_TdUyYb03xviy81ew_Y",
+  authDomain: "winlose-mlbb.firebaseapp.com",
+  projectId: "winlose-mlbb",
+  storageBucket: "winlose-mlbb.firebasestorage.app",
+  messagingSenderId: "584562860632",
+  appId: "1:584562860632:web:b0b22c23a7871781c8202d",
+  measurementId: "G-XZ60XPGWQ3",
+  databaseURL: "https://winlose-mlbb-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+const db = getDatabase(app);
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+let heroesData = {}, currentRole = 'all', currentSearch = '';
+let dailyData = {win:0,lose:0,date:''};
+let currentMMR = null, currentMMRStart = null;
+let historyData = {};
 
-  let heroesData = {};
-  let currentRole = 'all';
-  let currentSearch = '';
+const ROLE_EMOJI = {Marksman:'🏹',Assassin:'🗡️',Mage:'🔮',Tank:'🛡️',Fighter:'⚔️',Support:'💊'};
+const MONTHS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 
-  const ROLE_EMOJI = {
-    Marksman: '🏹', Assassin: '🗡️', Mage: '🔮',
-    Tank: '🛡️', Fighter: '⚔️', Support: '💊'
-  };
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function fmtDate(s) {
+  if (!s) return '—';
+  const [y,m,d] = s.split('-');
+  return `${parseInt(d)} ${MONTHS[parseInt(m)-1]} ${y}`;
+}
+function fmtTS(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts), p = n => String(n).padStart(2,'0');
+  return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function escH(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function bump(id){ const e=document.getElementById(id); if(!e)return; e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump'); }
 
-  // ── GLOBAL COUNTERS ──
-  let globalData = { win: 0, lose: 0 };
+window.showToast = (msg, type='s') => {
+  const w=document.getElementById('toastWrap'), t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=(type==='s'?'✅':'❌')+' '+msg;
+  w.appendChild(t); setTimeout(()=>t.remove(),2700);
+};
 
-  onValue(ref(db, 'global'), snap => {
-    globalData = snap.val() || { win: 0, lose: 0 };
-    renderGlobal();
-  });
+// ── Live clock detik per detik di lu-bar ──
+function tickClock() {
+  const el = document.getElementById('luClock');
+  if (!el) return;
+  const n = new Date(), p = v => String(v).padStart(2,'0');
+  el.textContent = `${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
+}
+setInterval(tickClock, 1000); tickClock();
 
-  function renderGlobal() {
-    const w = globalData.win || 0;
-    const l = globalData.lose || 0;
-    const total = w + l;
-    const wr = total > 0 ? Math.round(w / total * 100) : 0;
-    document.getElementById('gWinNum').textContent = w;
-    document.getElementById('gLoseNum').textContent = l;
-    document.getElementById('gTotalVal').textContent = total;
-    document.getElementById('gWRVal').textContent = wr + '%';
-  }
+// ── Last update: tulis ke DB, update UI realtime dari DB ──
+function recordUpdate(label) {
+  set(ref(db,'lastUpdate'), {ts: Date.now(), label});
+}
+onValue(ref(db,'lastUpdate'), snap => {
+  const v = snap.val();
+  document.getElementById('luTS').textContent = v ? fmtTS(v.ts) : '—';
+  document.getElementById('luAct').textContent = v?.label ? `· ${v.label}` : '';
+});
 
-  window.changeGlobal = (field, delta) => {
-    const cur = globalData[field] || 0;
-    const next = Math.max(0, cur + delta);
-    update(ref(db, 'global'), { [field]: next })
-      .then(() => bumpNum(field === 'win' ? 'gWinNum' : 'gLoseNum'));
-  };
+// ── Countdown reset + auto-reset harian ──
+let lastCheckedDate = todayStr();
 
-  window.changeMMRGlobal = (delta) => {
-    const cur = parseInt(document.getElementById('gMMRNum').textContent) || 0;
-    const next = Math.max(0, cur + delta);
-    set(ref(db, 'mmr'), next)
-      .then(() => bumpNum('gMMRNum'));
-  };
+function updateCountdown() {
+  const now = new Date();
+  const mid = new Date(now); mid.setHours(24,0,0,0);
+  const diff = mid - now;
+  const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+  const str = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  ['resetCD','cd1','cd2'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=str; });
+  const today = todayStr();
+  if (today !== lastCheckedDate) { lastCheckedDate = today; performDailyReset(today); }
+}
+setInterval(updateCountdown, 1000); updateCountdown();
 
-  window.setMMRDirect = (val) => {
-    const v = parseInt(val);
-    if (isNaN(v) || v < 0) return;
-    set(ref(db, 'mmr'), v)
-      .then(() => {
-        document.getElementById('gMMRInput').value = '';
-        showToast(`MMR diset ke ${v} 🏅`);
-        bumpNum('gMMRNum');
-      });
-  };
+async function performDailyReset(today) {
+  const dSnap = await get(ref(db,'daily'));
+  const d = dSnap.val() || {win:0,lose:0,date:''};
+  const mSnap = await get(ref(db,'mmr'));
+  const mmrNow = mSnap.val() ?? null;
 
-  function bumpNum(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('bump');
-    void el.offsetWidth;
-    el.classList.add('bump');
-  }
-
-  // ── REALTIME LISTENERS ──
-  onValue(ref(db, 'heroes'), snap => {
-    heroesData = snap.val() || {};
-    renderHeroes();
-    updateStats();
-  });
-
-  onValue(ref(db, 'mmr'), snap => {
-    const v = snap.val();
-    const display = v !== null ? v : '—';
-    document.getElementById('mmrVal').textContent = display;
-    document.getElementById('gMMRNum').textContent = display;
-  });
-
-  // ── TOAST ──
-  window.showToast = (msg, type='success') => {
-    const w = document.getElementById('toastWrap');
-    const t = document.createElement('div');
-    t.className = `toast ${type}`;
-    t.innerHTML = (type==='success'?'✅':'❌') + ' ' + msg;
-    w.appendChild(t);
-    setTimeout(() => t.remove(), 2700);
-  };
-
-  // ── RENDER ──
-  function renderHeroes() {
-    const grid = document.getElementById('heroGrid');
-    const empty = document.getElementById('emptyState');
-    const countEl = document.getElementById('heroCount');
-
-    let entries = Object.entries(heroesData);
-
-    // Sort: main first, then alphabetical
-    entries.sort((a,b) => {
-      if (b[1].main && !a[1].main) return 1;
-      if (a[1].main && !b[1].main) return -1;
-      return a[1].name.localeCompare(b[1].name);
+  if (d.date && d.date !== today) {
+    const msSnap = await get(ref(db,`history/${d.date}/mmr_start`));
+    const mmrStart = msSnap.val() ?? mmrNow;
+    await set(ref(db,`history/${d.date}`), {
+      win: d.win||0, lose: d.lose||0,
+      mmr_start: mmrStart, mmr_end: mmrNow, date: d.date
     });
+  }
+  await set(ref(db,'daily'), {win:0, lose:0, date:today});
+  await set(ref(db,`history/${today}/mmr_start`), mmrNow);
+  recordUpdate('🌙 Reset Harian 00:00');
+  showToast('🌙 Reset harian! Data kemarin masuk history.','s');
+}
 
-    // Filter
-    if (currentRole !== 'all' && currentRole !== 'win') {
-      entries = entries.filter(([,h]) => h.role === currentRole);
-    } else if (currentRole === 'win') {
-      entries = entries.filter(([,h]) => {
-        const total = (h.win||0)+(h.lose||0);
-        return total > 0 && (h.win||0)/total >= 0.6;
-      });
-    }
+// ── Daily listener ──
+onValue(ref(db,'daily'), snap => {
+  dailyData = snap.val() || {win:0,lose:0,date:todayStr()};
+  if (!dailyData.date) set(ref(db,'daily'),{...dailyData,date:todayStr()});
+  renderDaily();
+});
 
-    if (currentSearch) {
-      entries = entries.filter(([,h]) => h.name.toLowerCase().includes(currentSearch.toLowerCase()));
-    }
+function renderDaily() {
+  const w=dailyData.win||0, l=dailyData.lose||0, t=w+l;
+  const wr = t>0 ? Math.round(w/t*100) : 0;
+  document.getElementById('dWinNum').textContent = w;
+  document.getElementById('dLoseNum').textContent = l;
+  document.getElementById('dTotal').textContent = t;
+  document.getElementById('dWR').textContent = wr+'%';
+  const dlbl = fmtDate(dailyData.date||todayStr());
+  document.getElementById('dWinDate').textContent = dlbl;
+  document.getElementById('dLoseDate').textContent = dlbl;
+}
 
-    // Clear old cards (keep empty state)
-    [...grid.querySelectorAll('.hero-card')].forEach(c => c.remove());
+window.changeDaily = (field, delta) => {
+  const next = Math.max(0,(dailyData[field]||0)+delta);
+  update(ref(db,'daily'),{[field]:next,date:todayStr()}).then(()=>{
+    bump(field==='win'?'dWinNum':'dLoseNum');
+    recordUpdate(`${field==='win'?'Win':'Lose'} ${delta>0?'+1':'-1'}`);
+  });
+};
 
-    countEl.textContent = `${entries.length} hero${entries.length!==1?'s':''}`;
+// ── MMR ──
+onValue(ref(db,'mmr'), snap => {
+  currentMMR = snap.val();
+  const d = currentMMR!==null ? currentMMR : '—';
+  document.getElementById('headerMMR').textContent = d;
+  document.getElementById('dMMRNum').textContent = d;
+  updateMMRDeltaTag();
+});
 
-    if (entries.length === 0) {
-      empty.style.display = 'block';
-      return;
-    }
-    empty.style.display = 'none';
+// listen to today's mmr_start for delta badge in MMR card
+onValue(ref(db,`history/${todayStr()}/mmr_start`), snap => {
+  currentMMRStart = snap.val();
+  updateMMRDeltaTag();
+});
 
-    entries.forEach(([id, h], i) => {
-      const win = h.win || 0;
-      const lose = h.lose || 0;
-      const total = win + lose;
-      const wr = total > 0 ? Math.round(win / total * 100) : 0;
-      const wrColor = wr >= 60 ? 'var(--green)' : wr >= 50 ? 'var(--gold)' : 'var(--red)';
-      const emoji = ROLE_EMOJI[h.role] || '⚔️';
+function updateMMRDeltaTag() {
+  const tag = document.getElementById('dMMRDelta');
+  if (!tag) return;
+  if (currentMMR===null) { tag.textContent='—'; return; }
+  if (currentMMRStart===null) { tag.textContent=`${currentMMR} pts`; return; }
+  const delta = currentMMR - currentMMRStart;
+  if (delta > 0) tag.textContent = `+${delta} hari ini`;
+  else if (delta < 0) tag.textContent = `${delta} hari ini`;
+  else tag.textContent = `±0 hari ini`;
+}
 
-      const card = document.createElement('div');
-      card.className = `hero-card${h.main ? ' main-hero' : ''}`;
-      card.style.animationDelay = `${i * 0.04}s`;
-      card.innerHTML = `
-        <div class="card-top">
-          <div class="hero-avatar">${emoji}</div>
-          <div class="hero-info">
-            <div class="hero-name">${escHtml(h.name)}</div>
-            <div class="hero-role">${h.role || 'Unknown'}</div>
+window.changeMMR = async (delta) => {
+  const cur = currentMMR!==null ? currentMMR : 0;
+  const next = Math.max(0, cur+delta);
+  await set(ref(db,'mmr'), next);
+  await set(ref(db,`history/${todayStr()}/mmr_end`), next);
+  bump('dMMRNum');
+  recordUpdate(`MMR ${delta>0?'+1':'-1'} → ${next}`);
+};
+
+window.doSetMMR = async () => {
+  const v = parseInt(document.getElementById('mmrInline').value);
+  if (isNaN(v)||v<0){ showToast('MMR tidak valid','e'); return; }
+  await set(ref(db,'mmr'), v);
+  await set(ref(db,`history/${todayStr()}/mmr_end`), v);
+  document.getElementById('mmrInline').value = '';
+  bump('dMMRNum');
+  recordUpdate(`Set MMR → ${v}`);
+  showToast(`MMR diset ke ${v} 🏅`);
+};
+
+window.openMMRModal = () => {
+  document.getElementById('mmrModalVal').value = currentMMR!==null ? currentMMR : '';
+  document.getElementById('mmrModal').classList.add('active');
+  setTimeout(()=>document.getElementById('mmrModalVal').focus(),200);
+};
+window.saveMMRModal = async () => {
+  const v = parseInt(document.getElementById('mmrModalVal').value);
+  if (isNaN(v)||v<0){ showToast('MMR tidak valid','e'); return; }
+  await set(ref(db,'mmr'), v);
+  await set(ref(db,`history/${todayStr()}/mmr_end`), v);
+  document.getElementById('mmrModal').classList.remove('active');
+  recordUpdate(`Set MMR → ${v}`);
+  showToast(`MMR diperbarui: ${v} 🏅`);
+};
+
+// ── History listener ──
+onValue(ref(db,'history'), snap => {
+  historyData = snap.val() || {};
+  renderHistory();
+});
+
+function renderHistory() {
+  const container = document.getElementById('histList');
+  const today = todayStr();
+  const entries = Object.entries(historyData)
+    .filter(([date,v]) => date!==today && v && v.win!==undefined && v.lose!==undefined)
+    .sort((a,b) => b[0].localeCompare(a[0]))
+    .slice(0,60);
+
+  document.getElementById('histCount').textContent = `${entries.length} entri`;
+  if (!entries.length) {
+    container.innerHTML='<div class="hist-empty">Belum ada history. Tersimpan otomatis saat reset jam 00:00.</div>';
+    return;
+  }
+  container.innerHTML='';
+  entries.forEach(([date,v]) => {
+    const w=v.win||0, l=v.lose||0, total=w+l;
+    const wr = total>0 ? Math.round(w/total*100) : 0;
+    const wrColor = wr>=60?'var(--green)':wr>=50?'var(--gold)':'var(--red)';
+    const rowCls = wr>=60?'hr-good':wr>=50?'hr-ok':'hr-bad';
+    const mmrE = v.mmr_end??null, mmrS = v.mmr_start??null;
+    const delta = (mmrE!==null && mmrS!==null) ? mmrE-mmrS : null;
+    const dCls = delta===null?'z':delta>0?'p':delta<0?'n':'z';
+    const dStr = delta===null?'±?':delta>0?`+${delta}`:delta===0?`±0`:`${delta}`;
+    const row = document.createElement('div');
+    row.className=`hist-row ${rowCls}`;
+    row.innerHTML=`
+      <div class="hist-date">${fmtDate(date)}</div>
+      <div class="hist-chips">
+        <span class="hchip w">W ${w}</span>
+        <span class="hchip l">L ${l}</span>
+        <span class="hchip g">🎮 ${total}</span>
+      </div>
+      <div class="hist-wr" style="color:${wrColor}">${wr}%</div>
+      <div class="hist-mmr-grp">
+        <div class="hist-mmr-info">
+          <div class="hist-mmr-lbl">MMR Akhir</div>
+          <div class="hist-mmr-v">${mmrE!==null?mmrE:'—'}</div>
+        </div>
+        <span class="hist-delta ${dCls}">${dStr}</span>
+      </div>`;
+    container.appendChild(row);
+  });
+}
+
+// ── Heroes ──
+onValue(ref(db,'heroes'), snap => {
+  heroesData = snap.val()||{};
+  renderHeroes(); updateStats(); hideLoading();
+});
+
+function hideLoading(){
+  const ls=document.getElementById('loadingScreen');
+  if(ls){ls.classList.add('hide');setTimeout(()=>ls.remove(),600);}
+}
+
+function renderHeroes() {
+  const grid=document.getElementById('heroGrid');
+  const empty=document.getElementById('emptyState');
+  let entries = Object.entries(heroesData);
+  entries.sort((a,b)=>{
+    if(b[1].main&&!a[1].main)return 1;
+    if(a[1].main&&!b[1].main)return -1;
+    return a[1].name.localeCompare(b[1].name);
+  });
+  if(currentRole!=='all'&&currentRole!=='win') entries=entries.filter(([,h])=>h.role===currentRole);
+  else if(currentRole==='win') entries=entries.filter(([,h])=>{const t=(h.win||0)+(h.lose||0);return t>0&&(h.win||0)/t>=0.6;});
+  if(currentSearch) entries=entries.filter(([,h])=>h.name.toLowerCase().includes(currentSearch.toLowerCase()));
+  [...grid.querySelectorAll('.hero-card')].forEach(c=>c.remove());
+  document.getElementById('heroCount').textContent=`${entries.length} hero${entries.length!==1?'s':''}`;
+  if(!entries.length){empty.style.display='block';return;}
+  empty.style.display='none';
+  entries.forEach(([id,h],i)=>{
+    const win=h.win||0,lose=h.lose||0,total=win+lose;
+    const wr=total>0?Math.round(win/total*100):0;
+    const wrC=wr>=60?'var(--green)':wr>=50?'var(--gold)':'var(--red)';
+    const emoji=ROLE_EMOJI[h.role]||'⚔️';
+    const card=document.createElement('div');
+    card.className=`hero-card${h.main?' is-main':''}`;
+    card.style.animationDelay=`${i*0.04}s`;
+    card.innerHTML=`
+      <div class="card-top">
+        ${h.main?'<div class="main-badge">★ MAIN</div>':''}
+        <div class="hero-avatar">${emoji}</div>
+        <div class="hero-info">
+          <div class="hero-name">${escH(h.name)}</div>
+          <div class="hero-role-lbl">${h.role||'Unknown'}</div>
+        </div>
+        <div class="hero-wr-box">
+          <div class="wr-val" style="color:${wrC}">${wr}%</div>
+          <div class="wr-lbl">Win Rate</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="wl-row">
+          <div class="cbox wb">
+            <div class="cbox-left"><div class="cdot"></div><span class="clbl">Win</span></div>
+            <div style="display:flex;align-items:center;gap:5px">
+              <button class="cbtn cbtn-m" onclick="chHero('${id}','win',-1)">−</button>
+              <div class="cnum">${win}</div>
+              <button class="cbtn cbtn-wp" onclick="chHero('${id}','win',1)">+</button>
+            </div>
           </div>
-          <div class="hero-wr">
-            <div class="wr-value" style="color:${wrColor}">${wr}%</div>
-            <div class="wr-label">Win Rate</div>
+          <div class="cbox lb">
+            <div class="cbox-left"><div class="cdot"></div><span class="clbl">Lose</span></div>
+            <div style="display:flex;align-items:center;gap:5px">
+              <button class="cbtn cbtn-m" onclick="chHero('${id}','lose',-1)">−</button>
+              <div class="cnum">${lose}</div>
+              <button class="cbtn cbtn-lp" onclick="chHero('${id}','lose',1)">+</button>
+            </div>
           </div>
         </div>
-        <div class="card-body">
-          <div class="wl-row">
-            <div class="counter-box win-box">
-              <div class="counter-left">
-                <div class="counter-dot"></div>
-                <span class="counter-label">Win</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:6px">
-                <div class="counter-btns">
-                  <button class="btn-counter btn-sub" onclick="changeCount('${id}','win',-1)">−</button>
-                </div>
-                <div class="counter-num">${win}</div>
-                <div class="counter-btns">
-                  <button class="btn-counter btn-win-add" onclick="changeCount('${id}','win',1)">+</button>
-                </div>
-              </div>
-            </div>
-            <div class="counter-box lose-box">
-              <div class="counter-left">
-                <div class="counter-dot"></div>
-                <span class="counter-label">Lose</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:6px">
-                <div class="counter-btns">
-                  <button class="btn-counter btn-sub" onclick="changeCount('${id}','lose',-1)">−</button>
-                </div>
-                <div class="counter-num">${lose}</div>
-                <div class="counter-btns">
-                  <button class="btn-counter btn-lose-add" onclick="changeCount('${id}','lose',1)">+</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="wr-bar-wrap">
-            <div class="wr-bar-labels">
-              <span>Win ${win}</span>
-              <span>${total} games</span>
-              <span>Lose ${lose}</span>
-            </div>
-            <div class="wr-bar-track">
-              <div class="wr-bar-fill" style="width:${wr}%"></div>
-            </div>
-          </div>
-          <div class="games-pill">🎮 ${total} total games played</div>
+        <div class="wr-bar-wrap">
+          <div class="wr-bar-lbls"><span>Win ${win}</span><span>${total} games</span><span>Lose ${lose}</span></div>
+          <div class="wr-track"><div class="wr-fill" style="width:${wr}%"></div></div>
         </div>
-        <div class="card-actions">
-          <button class="btn-edit-card" onclick="openEditModal('${id}')">✎ Edit</button>
-          <button class="btn-del-card" onclick="confirmDelete('${id}')">🗑</button>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-
-    // Hide loading
-    const ls = document.getElementById('loadingScreen');
-    if (ls) { ls.classList.add('hide'); setTimeout(()=>ls.remove(),600); }
-  }
-
-  function updateStats() {
-    const vals = Object.values(heroesData);
-    const totalW = vals.reduce((s,h)=>s+(h.win||0),0);
-    const totalL = vals.reduce((s,h)=>s+(h.lose||0),0);
-    const total = totalW + totalL;
-    const wr = total > 0 ? Math.round(totalW/total*100) : 0;
-    document.getElementById('statTotal').textContent = total;
-    document.getElementById('statWin').textContent = totalW;
-    document.getElementById('statLose').textContent = totalL;
-    document.getElementById('statWR').textContent = wr + '%';
-  }
-
-  // ── COUNTER ──
-  window.changeCount = (id, field, delta) => {
-    const h = heroesData[id];
-    if (!h) return;
-    const cur = h[field] || 0;
-    const next = Math.max(0, cur + delta);
-    update(ref(db, `heroes/${id}`), { [field]: next });
-  };
-
-  // ── FILTER ──
-  window.setRole = (btn, role) => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentRole = role;
-    renderHeroes();
-  };
-
-  window.filterHeroes = () => {
-    currentSearch = document.getElementById('searchInput').value;
-    renderHeroes();
-  };
-
-  // ── ADD HERO MODAL ──
-  window.openAddModal = () => {
-    document.getElementById('modalTitle').textContent = 'Tambah Hero';
-    document.getElementById('editHeroId').value = '';
-    document.getElementById('heroNameInput').value = '';
-    document.getElementById('heroRoleInput').value = 'Marksman';
-    document.getElementById('heroWinInput').value = '0';
-    document.getElementById('heroLoseInput').value = '0';
-    document.getElementById('heroMainInput').value = 'false';
-    document.getElementById('deleteBtn').style.display = 'none';
-    document.getElementById('heroModal').classList.add('active');
-    setTimeout(()=>document.getElementById('heroNameInput').focus(), 200);
-  };
-
-  window.openEditModal = (id) => {
-    const h = heroesData[id];
-    if (!h) return;
-    document.getElementById('modalTitle').textContent = 'Edit Hero';
-    document.getElementById('editHeroId').value = id;
-    document.getElementById('heroNameInput').value = h.name;
-    document.getElementById('heroRoleInput').value = h.role || 'Marksman';
-    document.getElementById('heroWinInput').value = h.win || 0;
-    document.getElementById('heroLoseInput').value = h.lose || 0;
-    document.getElementById('heroMainInput').value = h.main ? 'true' : 'false';
-    document.getElementById('deleteBtn').style.display = 'block';
-    document.getElementById('heroModal').classList.add('active');
-  };
-
-  window.closeModal = () => document.getElementById('heroModal').classList.remove('active');
-
-  window.saveHero = () => {
-    const name = document.getElementById('heroNameInput').value.trim();
-    const role = document.getElementById('heroRoleInput').value;
-    const win = parseInt(document.getElementById('heroWinInput').value) || 0;
-    const lose = parseInt(document.getElementById('heroLoseInput').value) || 0;
-    const main = document.getElementById('heroMainInput').value === 'true';
-    const editId = document.getElementById('editHeroId').value;
-
-    if (!name) { showToast('Nama hero tidak boleh kosong', 'error'); return; }
-
-    const data = { name, role, win, lose, main };
-
-    if (editId) {
-      update(ref(db, `heroes/${editId}`), data)
-        .then(() => { showToast(`${name} berhasil diupdate!`); closeModal(); })
-        .catch(() => showToast('Gagal update', 'error'));
-    } else {
-      push(ref(db, 'heroes'), data)
-        .then(() => { showToast(`${name} berhasil ditambahkan! 🎉`); closeModal(); })
-        .catch(() => showToast('Gagal menyimpan', 'error'));
-    }
-  };
-
-  window.confirmDelete = (id) => {
-    openEditModal(id);
-  };
-
-  window.deleteHero = () => {
-    const id = document.getElementById('editHeroId').value;
-    if (!id) return;
-    const name = heroesData[id]?.name || 'Hero';
-    remove(ref(db, `heroes/${id}`))
-      .then(() => { showToast(`${name} dihapus`); closeModal(); })
-      .catch(() => showToast('Gagal menghapus', 'error'));
-  };
-
-  // ── MMR ──
-  window.enableMMREdit = () => {
-    const cur = document.getElementById('mmrVal').textContent;
-    document.getElementById('mmrInput').value = cur === '—' ? '' : cur;
-    document.getElementById('mmrModal').classList.add('active');
-    setTimeout(()=>document.getElementById('mmrInput').focus(), 200);
-  };
-
-  window.closeMMR = () => document.getElementById('mmrModal').classList.remove('active');
-
-  window.saveMMR = () => {
-    const v = parseInt(document.getElementById('mmrInput').value);
-    if (isNaN(v) || v < 0) { showToast('MMR tidak valid', 'error'); return; }
-    set(ref(db, 'mmr'), v)
-      .then(() => { showToast(`MMR diperbarui: ${v} 🏅`); closeMMR(); })
-      .catch(() => showToast('Gagal update MMR', 'error'));
-  };
-
-  // Close modal on overlay click
-  document.querySelectorAll('.modal-overlay').forEach(m => {
-    m.addEventListener('click', e => {
-      if (e.target === m) { m.classList.remove('active'); }
-    });
+        <div class="games-pill">🎮 ${total} total games played</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-edit" onclick="openEditModal('${id}')">✎ Edit</button>
+        <button class="btn-del" onclick="openEditModal('${id}')">🗑</button>
+      </div>`;
+    grid.appendChild(card);
   });
+}
 
-  // Enter key on inputs
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-    }
-  });
+function updateStats(){
+  const vals=Object.values(heroesData);
+  const w=vals.reduce((s,h)=>s+(h.win||0),0), l=vals.reduce((s,h)=>s+(h.lose||0),0), t=w+l;
+  document.getElementById('stTotal').textContent=t;
+  document.getElementById('stWin').textContent=w;
+  document.getElementById('stLose').textContent=l;
+  document.getElementById('stWR').textContent=(t>0?Math.round(w/t*100):0)+'%';
+}
 
-  function escHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+window.chHero = (id,field,delta) => {
+  const h=heroesData[id]; if(!h)return;
+  const next=Math.max(0,(h[field]||0)+delta);
+  update(ref(db,`heroes/${id}`),{[field]:next});
+  recordUpdate(`${h.name} ${field}${delta>0?' +1':' -1'}`);
+};
+
+window.setRole=(btn,role)=>{
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); currentRole=role; renderHeroes();
+};
+window.filterHeroes=()=>{ currentSearch=document.getElementById('searchInput').value; renderHeroes(); };
+
+window.openAddModal=()=>{
+  document.getElementById('modalTitle').textContent='Tambah Hero';
+  ['editHeroId','hName'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('hRole').value='Marksman';
+  document.getElementById('hWin').value='0';
+  document.getElementById('hLose').value='0';
+  document.getElementById('hMain').value='false';
+  document.getElementById('deleteBtn').style.display='none';
+  document.getElementById('heroModal').classList.add('active');
+  setTimeout(()=>document.getElementById('hName').focus(),200);
+};
+window.openEditModal=(id)=>{
+  const h=heroesData[id]; if(!h)return;
+  document.getElementById('modalTitle').textContent='Edit Hero';
+  document.getElementById('editHeroId').value=id;
+  document.getElementById('hName').value=h.name;
+  document.getElementById('hRole').value=h.role||'Marksman';
+  document.getElementById('hWin').value=h.win||0;
+  document.getElementById('hLose').value=h.lose||0;
+  document.getElementById('hMain').value=h.main?'true':'false';
+  document.getElementById('deleteBtn').style.display='block';
+  document.getElementById('heroModal').classList.add('active');
+};
+window.closeModal=()=>document.getElementById('heroModal').classList.remove('active');
+window.saveHero=()=>{
+  const name=document.getElementById('hName').value.trim();
+  if(!name){showToast('Nama hero tidak boleh kosong','e');return;}
+  const role=document.getElementById('hRole').value;
+  const win=parseInt(document.getElementById('hWin').value)||0;
+  const lose=parseInt(document.getElementById('hLose').value)||0;
+  const main=document.getElementById('hMain').value==='true';
+  const editId=document.getElementById('editHeroId').value;
+  const data={name,role,win,lose,main};
+  if(editId){
+    update(ref(db,`heroes/${editId}`),data).then(()=>{showToast(`${name} diupdate!`);closeModal();recordUpdate(`Edit ${name}`);});
+  } else {
+    push(ref(db,'heroes'),data).then(()=>{showToast(`${name} ditambahkan! 🎉`);closeModal();recordUpdate(`Tambah ${name}`);});
   }
+};
+window.deleteHero=()=>{
+  const id=document.getElementById('editHeroId').value; if(!id)return;
+  const name=heroesData[id]?.name||'Hero';
+  remove(ref(db,`heroes/${id}`)).then(()=>{showToast(`${name} dihapus`);closeModal();recordUpdate(`Hapus ${name}`);});
+};
 
-  // Seed default heroes if DB is empty after 3 seconds
-  setTimeout(async () => {
-    if (Object.keys(heroesData).length === 0) {
-      const defaults = [
-        { name: 'Miya', role: 'Marksman', win: 0, lose: 0, main: true },
-        { name: 'Layla', role: 'Marksman', win: 0, lose: 0, main: false },
-        { name: 'Tigreal', role: 'Tank', win: 0, lose: 0, main: false },
-        { name: 'Alucard', role: 'Fighter', win: 0, lose: 0, main: false },
-        { name: 'Eudora', role: 'Mage', win: 0, lose: 0, main: false },
-        { name: 'Natalia', role: 'Assassin', win: 0, lose: 0, main: false },
-        { name: 'Estes', role: 'Support', win: 0, lose: 0, main: false },
-        { name: 'Balmond', role: 'Fighter', win: 0, lose: 0, main: false },
-      ];
-      for (const h of defaults) {
-        await push(ref(db, 'heroes'), h);
-      }
-    }
-    const ls = document.getElementById('loadingScreen');
-    if (ls) { ls.classList.add('hide'); setTimeout(()=>ls.remove(),600); }
-  }, 3000);
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('active'); });
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('active')); });
+
+setTimeout(async()=>{
+  if(!Object.keys(heroesData).length){
+    const defs=[
+      {name:'Miya',role:'Marksman',win:0,lose:0,main:true},
+      {name:'Layla',role:'Marksman',win:0,lose:0,main:false},
+      {name:'Tigreal',role:'Tank',win:0,lose:0,main:false},
+      {name:'Alucard',role:'Fighter',win:0,lose:0,main:false},
+      {name:'Eudora',role:'Mage',win:0,lose:0,main:false},
+      {name:'Natalia',role:'Assassin',win:0,lose:0,main:false},
+      {name:'Estes',role:'Support',win:0,lose:0,main:false},
+    ];
+    for(const h of defs) await push(ref(db,'heroes'),h);
+  }
+  hideLoading();
+},4000);
 </script>
 </body>
 </html>
