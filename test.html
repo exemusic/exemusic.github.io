@@ -905,8 +905,216 @@ input:checked + .toggle-track::after {
 .fw-700 { font-weight: 700; }
 
 /* ═══════════════════════════════════════════════
-   RESPONSIVE
+   PHOTO UPLOAD SYSTEM
 ═══════════════════════════════════════════════ */
+.photo-upload-wrap {
+  display: flex; align-items: center; gap: 20px;
+  margin-bottom: 20px;
+  padding: 18px;
+  background: var(--c2);
+  border: 1px solid var(--border3);
+  border-radius: var(--r);
+  transition: border-color 0.2s;
+}
+.photo-upload-wrap:hover { border-color: var(--border); }
+
+.photo-preview-container {
+  position: relative; flex-shrink: 0;
+}
+.photo-preview {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: var(--c3);
+  border: 3px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 28px; font-weight: 800;
+  color: var(--gold); overflow: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.photo-preview img { width:100%; height:100%; object-fit:cover; }
+.photo-preview-overlay {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: rgba(6,8,16,0.75);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s; cursor: pointer;
+  font-size: 20px;
+}
+.photo-preview-container:hover .photo-preview-overlay { opacity: 1; }
+
+/* PROGRESS RING */
+.progress-ring-wrap {
+  position: absolute; inset: -4px;
+  display: none;
+}
+.progress-ring-wrap.active { display: block; }
+.progress-ring {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+.progress-ring-track {
+  fill: none;
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 3;
+}
+.progress-ring-fill {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 270;
+  stroke-dashoffset: 270;
+  transition: stroke-dashoffset 0.15s ease;
+  filter: drop-shadow(0 0 4px rgba(240,180,41,0.8));
+}
+
+.photo-upload-info { flex: 1; }
+.photo-upload-title {
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  color: var(--text); margin-bottom: 4px;
+}
+.photo-upload-hint { font-size: 12px; color: var(--text3); line-height: 1.5; margin-bottom: 12px; }
+
+/* UPLOAD PROGRESS BAR */
+.upload-progress-wrap {
+  display: none; margin-top: 10px;
+}
+.upload-progress-wrap.active { display: block; }
+.upload-progress-bar-track {
+  height: 6px; background: var(--c3);
+  border-radius: 10px; overflow: hidden;
+  position: relative; margin-bottom: 6px;
+}
+.upload-progress-bar-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--gold2), var(--gold), var(--cyan));
+  background-size: 200% 100%;
+  border-radius: 10px;
+  transition: width 0.12s ease;
+  animation: barShimmer 1.5s linear infinite;
+  position: relative;
+}
+.upload-progress-bar-fill::after {
+  content: '';
+  position: absolute; right: 0; top: 0; bottom: 0;
+  width: 30px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmerMove 0.8s ease infinite;
+}
+@keyframes barShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes shimmerMove {
+  0% { transform: translateX(-30px); }
+  100% { transform: translateX(30px); }
+}
+.upload-progress-info {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.upload-progress-label {
+  font-family: var(--font-display); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.5px; color: var(--text3);
+}
+.upload-progress-pct {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+  color: var(--gold);
+}
+
+/* UPLOAD MODAL */
+.crop-modal-body { display: flex; flex-direction: column; gap: 16px; }
+.crop-preview-area {
+  width: 100%; aspect-ratio: 1;
+  max-height: 300px;
+  background: var(--c0);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border3);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.crop-img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain;
+}
+.crop-circle-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.crop-circle-mask {
+  width: 200px; height: 200px; border-radius: 50%;
+  border: 2px dashed rgba(240,180,41,0.5);
+  box-shadow: 0 0 0 9999px rgba(6,8,16,0.6);
+}
+.crop-sliders { display: flex; flex-direction: column; gap: 10px; }
+.crop-slider-row { display: flex; align-items: center; gap: 10px; }
+.crop-slider-lbl {
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text3); min-width: 50px;
+}
+.crop-slider {
+  flex: 1; -webkit-appearance: none; appearance: none;
+  height: 4px; background: var(--c3); border-radius: 10px; outline: none;
+  cursor: pointer;
+}
+.crop-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--gold);
+  box-shadow: 0 0 8px rgba(240,180,41,0.5);
+  cursor: pointer;
+}
+.final-preview-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 14px; background: var(--c2);
+  border-radius: var(--r-sm); border: 1px solid var(--border3);
+}
+.final-preview-circle {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 2px solid var(--border);
+  overflow: hidden; flex-shrink: 0;
+}
+.final-preview-circle img { width:100%; height:100%; object-fit:cover; }
+.final-preview-info { flex: 1; }
+.final-preview-title { font-weight: 600; font-size: 13px; }
+.final-preview-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* Hidden file input */
+#photoFileInput { display: none; }
+
+/* ═══════════════════════════════════════════════
+   BOTTOM NAV — MOBILE ONLY
+═══════════════════════════════════════════════ */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(6,8,16,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border3);
+  padding: 6px 0 env(safe-area-inset-bottom, 6px);
+}
+.bottom-nav-inner {
+  display: flex; align-items: center; justify-content: space-around;
+}
+.bnav-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 8px; border-radius: 10px;
+  border: none; background: transparent;
+  cursor: pointer; transition: all 0.15s;
+  min-width: 52px; -webkit-tap-highlight-color: transparent;
+}
+.bnav-btn:active { transform: scale(0.88); }
+.bnav-icon { font-size: 20px; line-height: 1; }
+.bnav-label {
+  font-family: var(--font-display); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--text3); transition: color 0.15s;
+}
+.bnav-btn.active .bnav-label { color: var(--gold); }
+.bnav-btn.active .bnav-icon { filter: drop-shadow(0 0 5px rgba(240,180,41,0.8)); }
+
+/* ═══ TABLET ═══ */
 @media (max-width: 1024px) {
   .home-hero-grid { grid-template-columns: 1fr; }
   .home-grid { grid-template-columns: 1fr; }
@@ -917,25 +1125,117 @@ input:checked + .toggle-track::after {
   .snav-item.on { border-bottom: 2px solid var(--gold); }
   .hero-stats-row { grid-template-columns: repeat(2,1fr); }
 }
+
+/* ═══ MOBILE ═══ */
 @media (max-width: 768px) {
-  .container, .container-sm { padding: 0 16px; }
-  .topbar-nav { display: none; }
+  /* Show bottom nav, hide desktop nav */
+  .bottom-nav { display: block; }
+  .topbar-nav { display: none !important; }
+
+  /* All pages get bottom padding for bottom nav */
+  .home-content { padding-bottom: 88px !important; }
+  .profile-page, .settings-page, .explore-page, .public-profile { padding-bottom: 88px !important; }
+  .home-hero { padding-bottom: 16px; }
+
+  /* FAB above bottom nav */
+  .fab2 { bottom: 72px !important; right: 16px !important; width: 50px !important; height: 50px !important; font-size: 22px !important; }
+
+  /* Container padding */
+  .container, .container-sm, .container-xs { padding: 0 14px; }
+
+  /* Topbar compact */
+  .topbar-inner { height: 52px; }
+  .brand-name { font-size: 13px; }
+
+  /* Update bar hidden on mobile (saves space) */
+  .update-bar { display: none; }
+
+  /* Home hero stacks */
+  .home-hero-grid { grid-template-columns: 1fr !important; gap: 16px; }
   .home-quick-stats { grid-template-columns: repeat(3,1fr); }
-  .profile-header { padding: 20px; gap: 16px; }
-  .profile-stats { grid-template-columns: repeat(3,1fr); }
-  .auth-card { padding: 28px 20px; }
-  .profile-page, .settings-page, .explore-page { padding: 20px 0 60px; }
-  .fab2 { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 22px; }
+
+  /* Home content: hero first, history below */
+  .home-grid { grid-template-columns: 1fr !important; gap: 20px; }
+  .hero-panel { order: 1; }
+  .hist-panel { order: 2; }
+
+  /* ROLE FILTERS — horizontal scroll, no wrap, stays in one line */
+  .hero-toolbar { flex-direction: column; align-items: stretch; gap: 8px; }
+  .htool-search { min-width: unset; flex: none; width: 100%; }
+  .role-filters {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    gap: 6px;
+    padding: 2px 0 6px;
+  }
+  .role-filters::-webkit-scrollbar { display: none; }
+  .rf {
+    flex-shrink: 0 !important;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    padding: 8px 14px;
+    font-size: 11px;
+    touch-action: pan-x;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Hero stats 2 col */
+  .hero-stats-row { grid-template-columns: 1fr 1fr !important; }
+
+  /* Hero grid single col */
   .hero-grid2 { grid-template-columns: 1fr; }
+
+  /* Profile */
+  .profile-header { padding: 16px !important; gap: 14px !important; }
+  .profile-stats { grid-template-columns: repeat(3,1fr) !important; gap: 8px; }
+
+  /* Settings nav horizontal scroll */
+  .settings-grid { grid-template-columns: 1fr !important; }
+  .settings-nav { position: static !important; margin-bottom: 4px; }
+  .settings-nav-list {
+    display: flex !important; flex-wrap: nowrap !important;
+    overflow-x: auto; scrollbar-width: none; gap: 4px; padding-bottom: 4px;
+  }
+  .settings-nav-list::-webkit-scrollbar { display: none; }
+  .snav-item {
+    flex-shrink: 0; white-space: nowrap;
+    border-left: none !important; padding-left: 14px !important;
+  }
+  .snav-item.on { border-bottom: 2px solid var(--gold) !important; }
+
+  /* Auth */
+  .auth-card { padding: 24px 18px; }
+
+  /* Modal */
+  .modal-box { padding: 20px 16px; }
+  .modal-overlay { padding: 12px; align-items: flex-end; }
+  .modal-box { border-radius: var(--r-lg) var(--r-lg) 0 0; max-width: 100%; }
+
+  /* Photo upload */
+  .photo-upload-wrap { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* Hist items */
+  .hist-item { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
+  .hist-date { min-width: unset; }
 }
+
+/* ═══ SMALL MOBILE ═══ */
 @media (max-width: 480px) {
-  .home-quick-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .home-quick-stats { grid-template-columns: 1fr 1fr !important; }
   .form-row { grid-template-columns: 1fr; }
-  .hcard-wl { grid-template-columns: 1fr; }
-  .profile-stats { grid-template-columns: repeat(3,1fr); gap: 8px; }
-  .modal-box { padding: 20px; }
-  .hist-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .hcard-wl { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .profile-stats { grid-template-columns: repeat(3,1fr); }
+  .hist-item { flex-direction: column; align-items: flex-start; }
   .hist-mmr-grp { margin-left: 0; }
+  .hist-chips { flex-wrap: wrap; }
+  .dc-count { font-size: 20px; min-width: 28px; }
+  .home-hero { padding: 20px 0 12px; }
+  .home-welcome-name { font-size: 22px; }
 }
 </style>
 </head>
@@ -949,6 +1249,32 @@ input:checked + .toggle-track::after {
 </div>
 
 <div class="app" id="app">
+
+<!-- ══ BOTTOM NAV (mobile) ══ -->
+<nav class="bottom-nav" id="bottomNav" style="display:none">
+  <div class="bottom-nav-inner">
+    <button class="bnav-btn active" data-page="home" onclick="goPage('home')">
+      <span class="bnav-icon">🏠</span>
+      <span class="bnav-label">Home</span>
+    </button>
+    <button class="bnav-btn" data-page="explore" onclick="goPage('explore')">
+      <span class="bnav-icon">🔍</span>
+      <span class="bnav-label">Explore</span>
+    </button>
+    <button class="bnav-btn" data-page="profile" onclick="goPage('profile')">
+      <span class="bnav-icon">👤</span>
+      <span class="bnav-label">Profil</span>
+    </button>
+    <button class="bnav-btn" data-page="settings" onclick="goPage('settings')">
+      <span class="bnav-icon">⚙️</span>
+      <span class="bnav-label">Settings</span>
+    </button>
+    <button class="bnav-btn" data-page="overlay" onclick="goPage('overlay')">
+      <span class="bnav-icon">🎥</span>
+      <span class="bnav-label">OBS</span>
+    </button>
+  </div>
+</nav>
 
 <!-- ══ TOPBAR ══ -->
 <header class="topbar">
@@ -1335,6 +1661,38 @@ input:checked + .toggle-track::after {
           <!-- PROFIL PANEL -->
           <div class="settings-section" id="sprof">
             <div class="settings-section-title"><span class="icon">👤</span>Informasi Profil</div>
+
+            <!-- PHOTO UPLOAD -->
+            <div class="photo-upload-wrap">
+              <div class="photo-preview-container" onclick="triggerPhotoUpload()">
+                <div class="photo-preview" id="settingsAvatarPreview">?</div>
+                <div class="photo-preview-overlay">📷</div>
+                <!-- SVG Progress Ring -->
+                <div class="progress-ring-wrap" id="progressRingWrap">
+                  <svg class="progress-ring" viewBox="0 0 88 88">
+                    <circle class="progress-ring-track" cx="44" cy="44" r="43"/>
+                    <circle class="progress-ring-fill" id="progressRingFill" cx="44" cy="44" r="43"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="photo-upload-info">
+                <div class="photo-upload-title">Foto Profil</div>
+                <div class="photo-upload-hint">JPG, PNG, atau GIF. Maks 32MB.<br>Foto akan di-crop menjadi lingkaran.</div>
+                <button class="btn btn-cyan btn-sm" onclick="triggerPhotoUpload()">📷 Pilih Foto</button>
+                <!-- Progress Bar -->
+                <div class="upload-progress-wrap" id="uploadProgressWrap">
+                  <div class="upload-progress-bar-track">
+                    <div class="upload-progress-bar-fill" id="uploadProgressFill"></div>
+                  </div>
+                  <div class="upload-progress-info">
+                    <span class="upload-progress-label" id="uploadProgressLabel">Mengupload...</span>
+                    <span class="upload-progress-pct" id="uploadProgressPct">0%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <input type="file" id="photoFileInput" accept="image/*" onchange="handlePhotoSelect(event)">
+
             <div class="form-group">
               <label class="form-label">Username</label>
               <input class="form-input" id="sUsername" placeholder="username kamu">
@@ -1489,6 +1847,59 @@ input:checked + .toggle-track::after {
 
 <!-- TOAST DOCK -->
 <div class="toast-dock" id="toastDock"></div>
+
+<!-- PHOTO CROP / ADJUST MODAL -->
+<div class="modal-overlay" id="photoModal">
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-title">📷 Sesuaikan Foto Profil</div>
+    <div class="crop-modal-body">
+
+      <!-- Preview area with circle mask -->
+      <div class="crop-preview-area" id="cropPreviewArea">
+        <canvas id="cropCanvas" style="max-width:100%;max-height:280px;display:block;"></canvas>
+        <div class="crop-circle-overlay">
+          <div class="crop-circle-mask"></div>
+        </div>
+      </div>
+
+      <!-- Sliders -->
+      <div class="crop-sliders">
+        <div class="crop-slider-row">
+          <div class="crop-slider-lbl">Zoom</div>
+          <input type="range" class="crop-slider" id="cropZoom" min="1" max="3" step="0.01" value="1" oninput="updateCropPreview()">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--gold);min-width:32px" id="cropZoomVal">1×</span>
+        </div>
+        <div class="crop-slider-row">
+          <div class="crop-slider-lbl">X Posisi</div>
+          <input type="range" class="crop-slider" id="cropX" min="-100" max="100" step="1" value="0" oninput="updateCropPreview()">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--cyan);min-width:32px" id="cropXVal">0</span>
+        </div>
+        <div class="crop-slider-row">
+          <div class="crop-slider-lbl">Y Posisi</div>
+          <input type="range" class="crop-slider" id="cropY" min="-100" max="100" step="1" value="0" oninput="updateCropPreview()">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--cyan);min-width:32px" id="cropYVal">0</span>
+        </div>
+      </div>
+
+      <!-- Final preview -->
+      <div class="final-preview-row">
+        <div class="final-preview-circle">
+          <canvas id="finalPreviewCanvas" width="52" height="52"></canvas>
+        </div>
+        <div class="final-preview-info">
+          <div class="final-preview-title">Preview Foto Profil</div>
+          <div class="final-preview-sub">Begini tampilan foto kamu setelah disimpan</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="resetCrop()">↺ Reset</button>
+      </div>
+
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('photoModal')">Batal</button>
+      <button class="btn btn-gold" onclick="uploadAndSavePhoto()">⬆️ Upload & Simpan</button>
+    </div>
+  </div>
+</div>
 
 <!-- HERO MODAL -->
 <div class="modal-overlay" id="heroModal">
@@ -1719,6 +2130,7 @@ function initApp() {
   updateTopbar();
   document.getElementById('updateBar').style.display = 'block';
   document.getElementById('fabBtn').style.display = 'flex';
+  document.getElementById('bottomNav').style.display = 'block';
   subscribeUserData();
   subscribeLastUpdate();
   loadOBSLink();
@@ -1728,8 +2140,9 @@ function initApp() {
 function updateTopbar() {
   if (!currentUser || !userProfile) return;
   const ab = document.getElementById('avatarBtn');
-  if (currentUser.photoURL) {
-    ab.innerHTML = `<img src="${currentUser.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  const photoURL = userProfile.photoURL || currentUser.photoURL || '';
+  if (photoURL) {
+    ab.innerHTML = `<img src="${escH(photoURL)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
   } else {
     ab.textContent = (userProfile.username||'?')[0].toUpperCase();
   }
@@ -2075,9 +2488,267 @@ function loadSettings() {
   setChk('privWL', p.wl!==false);
   setChk('privHist', p.history!==false);
   setChk('privHeroes', p.heroes!==false);
+  // Load current avatar into settings preview
+  loadSettingsAvatar();
 }
 function setVal(id,v){const e=document.getElementById(id);if(e)e.value=v;}
 function setChk(id,v){const e=document.getElementById(id);if(e)e.checked=v;}
+
+function loadSettingsAvatar() {
+  const el = document.getElementById('settingsAvatarPreview');
+  if (!el) return;
+  const photoURL = userProfile?.photoURL || currentUser?.photoURL || '';
+  if (photoURL) {
+    el.innerHTML = `<img src="${escH(photoURL)}" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    el.textContent = (userProfile?.username||'?')[0].toUpperCase();
+  }
+}
+
+// ═══ PHOTO UPLOAD SYSTEM ═══
+const IMGBB_KEY = '17f2d9f0be09f2eb84119ec6be65e88a';
+let cropImageEl = null;
+let cropOriginalFile = null;
+
+window.triggerPhotoUpload = () => {
+  document.getElementById('photoFileInput').click();
+};
+
+window.handlePhotoSelect = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 32 * 1024 * 1024) { showToast('File terlalu besar. Maks 32MB.','err'); return; }
+  cropOriginalFile = file;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      cropImageEl = img;
+      // Reset sliders
+      document.getElementById('cropZoom').value = 1;
+      document.getElementById('cropX').value = 0;
+      document.getElementById('cropY').value = 0;
+      updateCropPreview();
+      openModal('photoModal');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  // Reset input so same file can be selected again
+  event.target.value = '';
+};
+
+window.updateCropPreview = () => {
+  if (!cropImageEl) return;
+  const zoom = parseFloat(document.getElementById('cropZoom').value);
+  const offsetX = parseInt(document.getElementById('cropX').value);
+  const offsetY = parseInt(document.getElementById('cropY').value);
+  document.getElementById('cropZoomVal').textContent = zoom.toFixed(2) + '×';
+  document.getElementById('cropXVal').textContent = offsetX;
+  document.getElementById('cropYVal').textContent = offsetY;
+  drawCrop('cropCanvas', 400, 400, zoom, offsetX, offsetY);
+  drawCrop('finalPreviewCanvas', 52, 52, zoom, offsetX, offsetY);
+};
+
+function drawCrop(canvasId, w, h, zoom, offsetX, offsetY) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !cropImageEl) return;
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+
+  // Draw circular clip
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(w/2, h/2, Math.min(w,h)/2, 0, Math.PI*2);
+  ctx.clip();
+
+  // Calculate draw dimensions
+  const imgAR = cropImageEl.naturalWidth / cropImageEl.naturalHeight;
+  let dw, dh;
+  if (imgAR > 1) { dh = h * zoom; dw = dh * imgAR; }
+  else { dw = w * zoom; dh = dw / imgAR; }
+
+  const dx = (w - dw) / 2 + (offsetX / 100) * w;
+  const dy = (h - dh) / 2 + (offsetY / 100) * h;
+
+  ctx.drawImage(cropImageEl, dx, dy, dw, dh);
+  ctx.restore();
+}
+
+window.resetCrop = () => {
+  document.getElementById('cropZoom').value = 1;
+  document.getElementById('cropX').value = 0;
+  document.getElementById('cropY').value = 0;
+  updateCropPreview();
+};
+
+window.uploadAndSavePhoto = async () => {
+  if (!cropImageEl || !currentUser) return;
+
+  // Get final cropped image as blob
+  const canvas = document.createElement('canvas');
+  canvas.width = 400; canvas.height = 400;
+  const zoom = parseFloat(document.getElementById('cropZoom').value);
+  const offsetX = parseInt(document.getElementById('cropX').value);
+  const offsetY = parseInt(document.getElementById('cropY').value);
+
+  // Draw circular crop on temp canvas
+  const ctx = canvas.getContext('2d');
+  ctx.beginPath();
+  ctx.arc(200, 200, 200, 0, Math.PI * 2);
+  ctx.clip();
+  const imgAR = cropImageEl.naturalWidth / cropImageEl.naturalHeight;
+  let dw, dh;
+  if (imgAR > 1) { dh = 400 * zoom; dw = dh * imgAR; }
+  else { dw = 400 * zoom; dh = dw / imgAR; }
+  const dx = (400 - dw) / 2 + (offsetX / 100) * 400;
+  const dy = (400 - dh) / 2 + (offsetY / 100) * 400;
+  ctx.drawImage(cropImageEl, dx, dy, dw, dh);
+
+  canvas.toBlob(async (blob) => {
+    closeModal('photoModal');
+    await doUploadToImgBB(blob);
+  }, 'image/jpeg', 0.92);
+};
+
+async function doUploadToImgBB(blob) {
+  // Show progress UI
+  const progressWrap = document.getElementById('uploadProgressWrap');
+  const progressFill = document.getElementById('uploadProgressFill');
+  const progressPct = document.getElementById('uploadProgressPct');
+  const progressLabel = document.getElementById('uploadProgressLabel');
+  const ringWrap = document.getElementById('progressRingWrap');
+  const ringFill = document.getElementById('progressRingFill');
+
+  progressWrap.classList.add('active');
+  ringWrap.classList.add('active');
+
+  // Circumference for r=43: 2*PI*43 ≈ 270.18
+  const circumference = 2 * Math.PI * 43;
+  ringFill.style.strokeDasharray = circumference;
+  ringFill.style.strokeDashoffset = circumference;
+
+  function setProgress(pct, label) {
+    progressFill.style.width = pct + '%';
+    progressPct.textContent = Math.round(pct) + '%';
+    if (label) progressLabel.textContent = label;
+    const offset = circumference - (pct / 100) * circumference;
+    ringFill.style.strokeDashoffset = offset;
+  }
+
+  try {
+    setProgress(5, 'Menyiapkan gambar...');
+    await sleep(200);
+
+    // Convert blob to base64
+    setProgress(15, 'Mengkonversi gambar...');
+    const base64 = await blobToBase64(blob);
+    const base64Data = base64.split(',')[1];
+
+    setProgress(25, 'Menghubungi server...');
+    await sleep(150);
+
+    // Upload to imgBB using XMLHttpRequest for progress tracking
+    setProgress(30, 'Mengupload ke ImgBB...');
+
+    const formData = new FormData();
+    formData.append('key', IMGBB_KEY);
+    formData.append('image', base64Data);
+    formData.append('name', `mlbb_profile_${currentUser.uid}`);
+
+    const imgURL = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.imgbb.com/1/upload');
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          // Upload progress: 30% → 80%
+          const uploadPct = 30 + (e.loaded / e.total) * 50;
+          setProgress(uploadPct, 'Mengupload...');
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            if (data.success) resolve(data.data.url);
+            else reject(new Error(data.error?.message || 'Upload gagal'));
+          } catch(e) { reject(new Error('Response tidak valid')); }
+        } else {
+          reject(new Error(`HTTP ${xhr.status}`));
+        }
+      };
+      xhr.onerror = () => reject(new Error('Network error'));
+      xhr.send(formData);
+    });
+
+    setProgress(85, 'Menyimpan ke profil...');
+    await sleep(200);
+
+    // Save URL to Firebase
+    await update(ref(db, `users/${currentUser.uid}/profile`), { photoURL: imgURL });
+    userProfile = { ...userProfile, photoURL: imgURL };
+
+    setProgress(95, 'Memperbarui tampilan...');
+    await sleep(200);
+
+    // Update all avatar elements
+    applyNewPhotoURL(imgURL);
+
+    setProgress(100, 'Selesai! ✨');
+    await sleep(600);
+
+    // Hide progress
+    progressWrap.classList.remove('active');
+    ringWrap.classList.remove('active');
+    progressFill.style.width = '0%';
+    progressPct.textContent = '0%';
+    ringFill.style.strokeDashoffset = circumference;
+
+    recordUpdate('Update foto profil');
+    showToast('Foto profil berhasil diperbarui! 📸','ok');
+
+  } catch(err) {
+    progressWrap.classList.remove('active');
+    ringWrap.classList.remove('active');
+    progressFill.style.width = '0%';
+    progressPct.textContent = '0%';
+    ringFill.style.strokeDashoffset = circumference;
+    showToast('Upload gagal: ' + err.message,'err');
+    console.error('ImgBB upload error:', err);
+  }
+}
+
+function applyNewPhotoURL(url) {
+  const imgTag = `<img src="${escH(url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  const imgTagRect = `<img src="${escH(url)}" style="width:100%;height:100%;object-fit:cover;">`;
+
+  // Topbar avatar
+  const ab = document.getElementById('avatarBtn');
+  if (ab) ab.innerHTML = imgTag;
+
+  // Settings preview
+  const sp = document.getElementById('settingsAvatarPreview');
+  if (sp) sp.innerHTML = imgTagRect;
+
+  // Profile page avatar
+  const pa = document.getElementById('profAvatar');
+  if (pa) pa.innerHTML = imgTagRect;
+}
+
+function blobToBase64(blob) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = () => res(reader.result);
+    reader.onerror = rej;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 window.saveProfile = async () => {
   if (!currentUser||!userProfile) return;
@@ -2141,8 +2812,9 @@ window.changePassword = async () => {
 // ═══ PROFILE PAGE ═══
 function loadProfilePage() {
   if (!userProfile) return;
+  const photoURL = userProfile.photoURL || currentUser?.photoURL || '';
   const av = document.getElementById('profAvatar');
-  if (currentUser.photoURL) av.innerHTML=`<img src="${currentUser.photoURL}">`;
+  if (photoURL) av.innerHTML=`<img src="${escH(photoURL)}" style="width:100%;height:100%;object-fit:cover;">`;
   else av.textContent=(userProfile.username||'?')[0].toUpperCase();
   setEl('profUsername', userProfile.username||'—');
   setEl('profMLID', userProfile.mlid||'—');
@@ -2410,13 +3082,21 @@ window.showPage = (name) => {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const p=document.getElementById(`page-${name}`);
   if(p) p.classList.add('active');
+
+  // Desktop nav active state
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
-  // hide nav elements when on auth/setup
+
+  // Bottom nav active state
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
+
+  // Hide nav elements on auth/setup pages
   const isAuthPage = ['auth','setup'].includes(name);
   const fab = document.getElementById('fabBtn');
   const ubar = document.getElementById('updateBar');
+  const bnav = document.getElementById('bottomNav');
   if (fab) fab.style.display = isAuthPage ? 'none' : (currentUser ? 'flex' : 'none');
   if (ubar) ubar.style.display = isAuthPage ? 'none' : (currentUser ? 'block' : 'none');
+  if (bnav) bnav.style.display = isAuthPage ? 'none' : (currentUser ? 'block' : 'none');
 };
 
 window.goPage = (name) => {
