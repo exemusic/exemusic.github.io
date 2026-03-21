@@ -2614,111 +2614,114 @@ window.uploadAndSavePhoto = async () => {
 };
 
 async function doUploadToImgBB(blob) {
-  // Show progress UI
   const progressWrap = document.getElementById('uploadProgressWrap');
   const progressFill = document.getElementById('uploadProgressFill');
-  const progressPct = document.getElementById('uploadProgressPct');
-  const progressLabel = document.getElementById('uploadProgressLabel');
-  const ringWrap = document.getElementById('progressRingWrap');
-  const ringFill = document.getElementById('progressRingFill');
+  const progressPct  = document.getElementById('uploadProgressPct');
+  const progressLabel= document.getElementById('uploadProgressLabel');
+  const ringWrap     = document.getElementById('progressRingWrap');
+  const ringFill     = document.getElementById('progressRingFill');
 
   progressWrap.classList.add('active');
   ringWrap.classList.add('active');
 
-  // Circumference for r=43: 2*PI*43 ≈ 270.18
-  const circumference = 2 * Math.PI * 43;
-  ringFill.style.strokeDasharray = circumference;
+  const circumference = 2 * Math.PI * 43; // ≈ 270.18
+  ringFill.style.strokeDasharray  = circumference;
   ringFill.style.strokeDashoffset = circumference;
 
   function setProgress(pct, label) {
-    progressFill.style.width = pct + '%';
-    progressPct.textContent = Math.round(pct) + '%';
+    progressFill.style.width        = pct + '%';
+    progressPct.textContent         = Math.round(pct) + '%';
     if (label) progressLabel.textContent = label;
-    const offset = circumference - (pct / 100) * circumference;
-    ringFill.style.strokeDashoffset = offset;
+    ringFill.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+  }
+
+  function resetProgress() {
+    progressWrap.classList.remove('active');
+    ringWrap.classList.remove('active');
+    progressFill.style.width        = '0%';
+    progressPct.textContent         = '0%';
+    ringFill.style.strokeDashoffset = circumference;
   }
 
   try {
-    setProgress(5, 'Menyiapkan gambar...');
-    await sleep(200);
-
-    // Convert blob to base64
-    setProgress(15, 'Mengkonversi gambar...');
-    const base64 = await blobToBase64(blob);
-    const base64Data = base64.split(',')[1];
-
-    setProgress(25, 'Menghubungi server...');
+    setProgress(10, 'Menyiapkan gambar...');
     await sleep(150);
 
-    // Upload to imgBB using XMLHttpRequest for progress tracking
-    setProgress(30, 'Mengupload ke ImgBB...');
+    // Convert blob → base64 string (tanpa prefix data:...)
+    setProgress(20, 'Mengkonversi...');
+    const base64full = await blobToBase64(blob);
+    const base64data = base64full.split(',')[1];
 
-    const formData = new FormData();
-    formData.append('key', IMGBB_KEY);
-    formData.append('image', base64Data);
-    formData.append('name', `mlbb_profile_${currentUser.uid}`);
+    setProgress(30, 'Menghubungi ImgBB...');
+    await sleep(100);
 
+    // Build FormData — ImgBB butuh field "key" dan "image" (base64)
+    const form = new FormData();
+    form.append('key', IMGBB_KEY);
+    form.append('image', base64data);
+
+    setProgress(35, 'Mengupload...');
+
+    // XHR untuk track progress upload
     const imgURL = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', 'https://api.imgbb.com/1/upload');
+      xhr.open('POST', 'https://api.imgbb.com/1/upload', true);
 
-      xhr.upload.onprogress = (e) => {
+      // Track upload byte progress → 35% sampai 85%
+      xhr.upload.addEventListener('progress', (e) => {
         if (e.lengthComputable) {
-          // Upload progress: 30% → 80%
-          const uploadPct = 30 + (e.loaded / e.total) * 50;
-          setProgress(uploadPct, 'Mengupload...');
+          const pct = 35 + (e.loaded / e.total) * 50;
+          setProgress(pct, `Mengupload... ${Math.round(e.loaded/1024)}KB / ${Math.round(e.total/1024)}KB`);
         }
-      };
+      });
 
-      xhr.onload = () => {
+      xhr.addEventListener('load', () => {
         if (xhr.status === 200) {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            if (data.success) resolve(data.data.url);
-            else reject(new Error(data.error?.message || 'Upload gagal'));
-          } catch(e) { reject(new Error('Response tidak valid')); }
+          let data;
+          try { data = JSON.parse(xhr.responseText); }
+          catch { reject(new Error('Response bukan JSON: ' + xhr.responseText.slice(0,100))); return; }
+
+          if (data.success && data.data?.url) {
+            resolve(data.data.url);
+          } else {
+            const errMsg = data.error?.message || data.status_txt || 'Upload gagal';
+            reject(new Error(`ImgBB: ${errMsg} (status ${data.status||'?'})`));
+          }
         } else {
-          reject(new Error(`HTTP ${xhr.status}`));
+          reject(new Error(`HTTP ${xhr.status}: ${xhr.statusText} — ${xhr.responseText.slice(0,120)}`));
         }
-      };
-      xhr.onerror = () => reject(new Error('Network error'));
-      xhr.send(formData);
+      });
+
+      xhr.addEventListener('error',   () => reject(new Error('Network error — cek koneksi internet')));
+      xhr.addEventListener('timeout', () => reject(new Error('Timeout — koneksi terlalu lambat')));
+      xhr.timeout = 60000; // 60 detik timeout
+
+      xhr.send(form);
     });
 
-    setProgress(85, 'Menyimpan ke profil...');
+    setProgress(88, 'Menyimpan ke profil...');
     await sleep(200);
 
-    // Save URL to Firebase
+    // Simpan URL ke Firebase
     await update(ref(db, `users/${currentUser.uid}/profile`), { photoURL: imgURL });
     userProfile = { ...userProfile, photoURL: imgURL };
 
-    setProgress(95, 'Memperbarui tampilan...');
-    await sleep(200);
+    setProgress(96, 'Memperbarui tampilan...');
+    await sleep(150);
 
-    // Update all avatar elements
     applyNewPhotoURL(imgURL);
 
     setProgress(100, 'Selesai! ✨');
-    await sleep(600);
+    await sleep(700);
 
-    // Hide progress
-    progressWrap.classList.remove('active');
-    ringWrap.classList.remove('active');
-    progressFill.style.width = '0%';
-    progressPct.textContent = '0%';
-    ringFill.style.strokeDashoffset = circumference;
-
+    resetProgress();
     recordUpdate('Update foto profil');
-    showToast('Foto profil berhasil diperbarui! 📸','ok');
+    showToast('Foto profil berhasil diperbarui! 📸', 'ok');
 
-  } catch(err) {
-    progressWrap.classList.remove('active');
-    ringWrap.classList.remove('active');
-    progressFill.style.width = '0%';
-    progressPct.textContent = '0%';
-    ringFill.style.strokeDashoffset = circumference;
-    showToast('Upload gagal: ' + err.message,'err');
+  } catch (err) {
+    resetProgress();
     console.error('ImgBB upload error:', err);
+    showToast('Upload gagal: ' + err.message, 'err');
   }
 }
 
@@ -3030,7 +3033,7 @@ function getOBSURL() {
   const size = document.getElementById('obsSize')?.value||'widget';
   const theme = document.getElementById('obsTheme')?.value||'dark';
   const base = window.location.origin + window.location.pathname.replace('index.html','');
-  return `${base}Overlay.html?uid=${uid}&size=${size}&theme=${theme}`;
+  return `${base}overlay.html?uid=${uid}&size=${size}&theme=${theme}`;
 }
 
 function loadOBSLink() {
