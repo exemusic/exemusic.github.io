@@ -1169,6 +1169,58 @@ input:checked + .tog-track::after {
 .c-text   { color: var(--t1); }
 .fw7 { font-weight: 700; }
 .tc  { text-align: center; }
+
+/* ── OBS STREAMER INFO CARD ── */
+.obs-streamer-card {
+  display: none;
+  margin-top: 10px;
+  background: linear-gradient(135deg, rgba(232,171,42,.08) 0%, rgba(32,200,232,.05) 100%);
+  border: 1px solid rgba(232,171,42,.2);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  animation: obs-card-in .3s cubic-bezier(.16,1,.3,1);
+  position: relative; overflow: hidden;
+}
+.obs-streamer-card.visible { display: block; }
+.obs-streamer-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--cyan), var(--gold));
+  background-size: 200% 100%;
+  animation: obs-shimmer 2.5s linear infinite;
+}
+@keyframes obs-shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+@keyframes obs-card-in { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
+
+.obs-card-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.obs-card-icon {
+  width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(232,171,42,.2), rgba(32,200,232,.15));
+  border: 1px solid rgba(232,171,42,.25);
+  display: flex; align-items: center; justify-content: center;
+}
+.obs-card-title {
+  font-family: var(--ff-display); font-size: 12px; font-weight: 800;
+  color: var(--t1); letter-spacing: .5px;
+}
+.obs-card-sub {
+  font-size: 11px; color: var(--t3); margin-top: 2px; line-height: 1.4;
+}
+.obs-features {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.obs-feat {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12px; color: var(--t2); line-height: 1.4;
+}
+.obs-feat-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold); box-shadow: 0 0 5px rgba(232,171,42,.6);
+  flex-shrink: 0; margin-top: 5px;
+}
+.obs-feat strong { color: var(--t1); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -1591,9 +1643,46 @@ input:checked + .tog-track::after {
             <div class="mt14"><label class="form-lbl">Link Browser Source</label>
               <div class="obs-link-wrap">
                 <span class="obs-link-url" id="obsLinkDisplay">—</span>
-                <button class="btn btn-cyan btn-sm" onclick="copyOBSLink()"><span class="ic ic-sm ic-copy"></span> Copy</button>
+                <button class="btn btn-cyan btn-sm" onclick="copyOBSLinkWithCard()" title="Salin link untuk OBS">
+                  <span class="ic ic-sm ic-copy"></span> Salin
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="viewOverlayWindow()" title="Buka overlay di tab baru" style="flex-shrink:0;">
+                  <span class="ic ic-sm ic-eye"></span> View
+                </button>
               </div>
-              <button class="btn btn-ghost btn-sm" onclick="openOBSPreview()"><span class="ic ic-sm ic-eye"></span> Preview</button>
+              <!-- Streamer info card — muncul saat Salin atau View diklik -->
+              <div class="obs-streamer-card" id="obsStreamerCard">
+                <div class="obs-card-header">
+                  <div class="obs-card-icon">
+                    <span class="ic ic-md ic-monitor" style="color:var(--gold)"></span>
+                  </div>
+                  <div>
+                    <div class="obs-card-title">Untuk Streamer Mobile Legends</div>
+                    <div class="obs-card-sub">Fitur ini dirancang khusus untuk streaming menggunakan OBS Studio</div>
+                  </div>
+                </div>
+                <div class="obs-features">
+                  <div class="obs-feat">
+                    <div class="obs-feat-dot"></div>
+                    <span>Paste link ke <strong>Browser Source</strong> di OBS agar overlay tampil di atas gameplay</span>
+                  </div>
+                  <div class="obs-feat">
+                    <div class="obs-feat-dot"></div>
+                    <span>Data <strong>Win, Lose, MMR</strong> update otomatis realtime tanpa refresh saat kamu main</span>
+                  </div>
+                  <div class="obs-feat">
+                    <div class="obs-feat-dot"></div>
+                    <span>Tersedia <strong>8 tema</strong> dan <strong>4 ukuran</strong> — banner bawah, sidebar, widget, atau compact</span>
+                  </div>
+                  <div class="obs-feat">
+                    <div class="obs-feat-dot"></div>
+                    <span>Background transparan — menyatu dengan tampilan stream tanpa kotak hitam</span>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="openOBSPreview()" style="margin-top:8px;">
+                <span class="ic ic-sm ic-monitor"></span> Preview di Halaman Ini
+              </button>
             </div>
             <div style="margin-top:14px;font-size:12px;color:var(--t3);background:var(--bg2);border-radius:var(--r-sm);padding:12px;line-height:1.7;">
               <strong style="color:var(--t1)">Cara pasang di OBS:</strong><br>
@@ -2962,9 +3051,37 @@ function loadOBSLink() {
 window.updateOBSLink = () => loadOBSLink();
 
 window.copyOBSLink = () => {
-  const url=getOBSURL();
-  navigator.clipboard.writeText(url).then(()=>showToast('Link OBS disalin! 📋','ok'));
+  const url = getOBSURL();
+  navigator.clipboard.writeText(url).then(() => showToast('Link OBS disalin!', 'ok'));
 };
+
+// Salin + tampilkan info card
+window.copyOBSLinkWithCard = () => {
+  const url = getOBSURL();
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('Link OBS disalin! Paste ke Browser Source OBS.', 'ok');
+    _showObsCard();
+  });
+};
+
+// Buka overlay di tab/window baru
+window.viewOverlayWindow = () => {
+  const url = getOBSURL();
+  window.open(url, '_blank', 'noopener,noreferrer');
+  _showObsCard();
+};
+
+// Tampilkan / hide streamer info card
+function _showObsCard() {
+  const card = document.getElementById('obsStreamerCard');
+  if (!card) return;
+  card.classList.add('visible');
+  // Auto-hide setelah 12 detik
+  clearTimeout(window._obsCardTimer);
+  window._obsCardTimer = setTimeout(() => {
+    card.classList.remove('visible');
+  }, 12000);
+}
 
 window.openOBSPreview = () => goPage('overlay');
 
