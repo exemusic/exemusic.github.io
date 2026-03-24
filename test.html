@@ -2,108 +2,57 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YT to MP3/MP4 by Hengki</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #0f172a;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .container {
+      color: white;
       text-align: center;
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 15px;
-      width: 360px;
+      padding-top: 100px;
     }
     input {
-      width: 100%;
       padding: 10px;
+      width: 300px;
       border-radius: 8px;
       border: none;
-      margin-bottom: 15px;
     }
     button {
       padding: 10px;
-      border: none;
+      margin: 10px;
       border-radius: 8px;
-      margin: 5px;
+      border: none;
       cursor: pointer;
-      font-weight: bold;
     }
     .mp3 { background: #22c55e; }
     .mp4 { background: #3b82f6; }
-    #status {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #94a3b8;
-    }
-    a {
-      display: block;
-      margin-top: 10px;
-      color: #38bdf8;
-    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>YT to MP3/MP4<br>by Hengki</h2>
-    <input type="text" id="url" placeholder="Masukkan link YouTube...">
-    <br>
-    <button class="mp3" onclick="convert('mp3')">MP3</button>
-    <button class="mp4" onclick="convert('mp4')">MP4</button>
 
-    <div id="status"></div>
-    <div id="result"></div>
-  </div>
+  <h2>YT to MP3/MP4<br>by Hengki</h2>
 
-<script>
-async function convert(type) {
-  const url = document.getElementById('url').value;
-  const status = document.getElementById('status');
-  const result = document.getElementById('result');
+  <input type="text" id="url" placeholder="Masukkan link YouTube...">
+  <br>
 
-  if (!url) {
-    status.innerHTML = "Masukkan link dulu!";
-    return;
-  }
+  <button class="mp3" onclick="goMP3()">MP3</button>
+  <button class="mp4" onclick="goMP4()">MP4</button>
 
-  status.innerHTML = "Processing... ⏳";
-  result.innerHTML = "";
+  <script>
+    function goMP3() {
+      const url = document.getElementById('url').value;
+      if (!url) return alert("Masukkan link dulu!");
 
-  try {
-    const res = await fetch("https://api.cobalt.tools/api/json", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        url: url,
-        vCodec: type === "mp3" ? "none" : "h264",
-        vQuality: "720",
-        aFormat: type === "mp3" ? "mp3" : "mp4"
-      })
-    });
-
-    const data = await res.json();
-
-    if (data.url) {
-      status.innerHTML = "Selesai ✅";
-      result.innerHTML = `<a href="${data.url}" target="_blank">Download ${type.toUpperCase()}</a>`;
-    } else {
-      status.innerHTML = "Gagal convert ❌ (server sibuk)";
+      window.open("https://www.y2mate.is/en/youtube-mp3?url=" + encodeURIComponent(url), "_blank");
     }
 
-  } catch (e) {
-    status.innerHTML = "Server error ❌ coba lagi";
-  }
-}
-</script>
+    function goMP4() {
+      const url = document.getElementById('url').value;
+      if (!url) return alert("Masukkan link dulu!");
+
+      window.open("https://en.savefrom.net/1-youtube-video-downloader/?url=" + encodeURIComponent(url), "_blank");
+    }
+  </script>
+
 </body>
 </html>
