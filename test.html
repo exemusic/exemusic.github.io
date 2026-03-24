@@ -63,47 +63,47 @@
     <div id="result"></div>
   </div>
 
-  <script>
-    async function convert(type) {
-      const url = document.getElementById('url').value;
-      const status = document.getElementById('status');
-      const result = document.getElementById('result');
+<script>
+async function convert(type) {
+  const url = document.getElementById('url').value;
+  const status = document.getElementById('status');
+  const result = document.getElementById('result');
 
-      if (!url) {
-        status.innerHTML = "Masukkan link dulu!";
-        return;
-      }
+  if (!url) {
+    status.innerHTML = "Masukkan link dulu!";
+    return;
+  }
 
-      status.innerHTML = "Processing... ⏳";
-      result.innerHTML = "";
+  status.innerHTML = "Processing... ⏳";
+  result.innerHTML = "";
 
-      try {
-        const res = await fetch("https://co.wuk.sh/api/json", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            url: url,
-            vCodec: type === "mp3" ? "none" : "h264",
-            vQuality: "720",
-            aFormat: type === "mp3" ? "mp3" : "mp4"
-          })
-        });
+  try {
+    const res = await fetch("https://api.cobalt.tools/api/json", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        url: url,
+        vCodec: type === "mp3" ? "none" : "h264",
+        vQuality: "720",
+        aFormat: type === "mp3" ? "mp3" : "mp4"
+      })
+    });
 
-        const data = await res.json();
+    const data = await res.json();
 
-        if (data.url) {
-          status.innerHTML = "Selesai ✅";
-          result.innerHTML = `<a href="${data.url}" target="_blank">Download ${type.toUpperCase()}</a>`;
-        } else {
-          status.innerHTML = "Gagal ❌";
-        }
-
-      } catch (e) {
-        status.innerHTML = "Server error ❌";
-      }
+    if (data.url) {
+      status.innerHTML = "Selesai ✅";
+      result.innerHTML = `<a href="${data.url}" target="_blank">Download ${type.toUpperCase()}</a>`;
+    } else {
+      status.innerHTML = "Gagal convert ❌ (server sibuk)";
     }
-  </script>
+
+  } catch (e) {
+    status.innerHTML = "Server error ❌ coba lagi";
+  }
+}
+</script>
 </body>
 </html>
