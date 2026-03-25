@@ -3,109 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hexky YT to MP3</title>
+    <title>Hexky AI - YT Downloader</title>
     <style>
-        /* Gaya Tampilan (CSS) */
         body {
-            background-color: #121212; /* Warna gelap */
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f0f;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
-
-        .container {
-            background-color: #1e1e1e;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        .box {
+            background: #1a1a1a;
+            padding: 25px;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
             text-align: center;
             width: 90%;
-            max-width: 450px;
-            border: 1px solid #333;
+            max-width: 400px;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
         }
-
-        h2 { color: #00d4ff; } /* Warna neon biru */
-
         input {
             width: 100%;
-            padding: 12px;
-            margin: 20px 0;
-            border-radius: 8px;
+            padding: 10px;
+            margin: 15px 0;
+            background: #222;
             border: 1px solid #444;
-            background-color: #2a2a2a;
-            color: white;
+            color: #fff;
+            border-radius: 5px;
             box-sizing: border-box;
         }
-
         button {
-            background-color: #00d4ff;
+            background: #00d4ff;
             color: #000;
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
+            padding: 10px 20px;
             font-weight: bold;
+            cursor: pointer;
             width: 100%;
-            transition: 0.3s;
+            border-radius: 5px;
         }
-
-        button:hover {
-            background-color: #0099cc;
-            transform: scale(1.02);
-        }
-
-        #result {
-            margin-top: 25px;
-        }
-
-        iframe {
-            border: none;
-            width: 100%;
-            height: 60px; /* Ukuran tombol download dari API */
-        }
+        button:hover { background: #0099cc; }
+        #downloadResult { margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>YT to MP3 Converter</h2>
-    <p>Masukkan Link YouTube di bawah:</p>
-    
-    <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
-    <button onclick="convertVideo()">Konversi Sekarang</button>
+<div class="box">
+    <h3>HEXKY AI CONVERTER</h3>
+    <p style="font-size: 10px; color: #888;">Admin Execurive Roleplay</p>
+    <input type="text" id="videoLink" placeholder="Masukkan link YouTube...">
+    <button onclick="unduh()">GENERATE LINK</button>
 
-    <div id="result">
-        <!-- Tombol download akan muncul di sini -->
-    </div>
+    <div id="downloadResult"></div>
 </div>
 
 <script>
-    // Logika Pemrograman (JavaScript)
-    function convertVideo() {
-        let url = document.getElementById('videoUrl').value;
-        const resultDiv = document.getElementById('result');
-    
-        if (url === "") {
-            alert("Masukkan link YouTube dulu, Hexky!");
+    function unduh() {
+        let url = document.getElementById('videoLink').value;
+        let result = document.getElementById('downloadResult');
+
+        if (!url) {
+            alert("Hexky, linknya jangan kosong!");
             return;
         }
-    
-        // Penjelasan untuk Hexky:
-        // Baris di bawah ini gunanya untuk mengambil ID video saja 
-        // dan membuang sampah link seperti &list= atau &index=
-        if (url.includes("watch?v=")) {
-            url = url.split('&')[0]; 
+
+        // Ambil ID Video
+        let videoId = "";
+        if (url.includes("v=")) {
+            videoId = url.split("v=")[1].split("&")[0];
+        } else if (url.includes("youtu.be/")) {
+            videoId = url.split("youtu.be/")[1].split("?")[0];
+        } else {
+            videoId = url; // Asumsi user masukkan ID langsung
         }
-    
-        resultDiv.innerHTML = `
-            <p style="font-size: 12px; color: #aaa;">Menghubungkan ke server konversi...</p>
-            <iframe src="https://api.vevioz.com/apis/button/mp3?url=${url}" 
-                    scrolling="no" 
-                    style="border:none; width:100%; height:60px;">
+
+        // Pakai widget loader agar tidak kena blokir GitHub
+        result.innerHTML = `
+            <p style="color:#888; font-size:12px;">Klik tombol di bawah untuk download:</p>
+            <iframe 
+                src="https://api.vevioz.com/apis/button/mp3?url=https://www.youtube.com/watch?v=${videoId}" 
+                width="100%" 
+                height="70px" 
+                scrolling="no" 
+                style="border:none;">
             </iframe>
         `;
     }
