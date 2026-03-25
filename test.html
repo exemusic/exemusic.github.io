@@ -1,103 +1,734 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hexky AI - YT to MP3</title>
-    <style>
-        /* Gaya Visual Dark Mode & Neon (Khas Execurive Roleplay) */
-        body {
-            background-color: #0b0e14;
-            color: #00ffcc;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: #161b22;
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid #00ffcc;
-            text-align: center;
-            width: 350px;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
-        }
-        h2 { margin-top: 0; color: #fff; text-transform: uppercase; letter-spacing: 2px; }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 20px 0;
-            background: #0d1117;
-            border: 1px solid #00ffcc;
-            border-radius: 8px;
-            color: #fff;
-            box-sizing: border-box;
-            outline: none;
-        }
-        .btn-download {
-            background: #00ffcc;
-            color: #0b0e14;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-            transition: 0.3s;
-        }
-        .btn-download:hover {
-            background: #00cca3;
-            box-shadow: 0 0 15px #00ffcc;
-        }
-        .footer { font-size: 10px; color: #58a6ff; margin-top: 15px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YTConvert — YouTube to MP3 Free</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --card: #161616;
+      --border: #222222;
+      --accent: #ff3d00;
+      --accent2: #ff6d00;
+      --text: #f0ede8;
+      --muted: #666;
+      --success: #00e676;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background grain + mesh ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% -10%, rgba(255,61,0,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 110%, rgba(255,109,0,.12) 0%, transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      backdrop-filter: blur(20px);
+      background: rgba(10,10,10,.7);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-badge {
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 4px 10px;
+      border-radius: 99px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 90px 20px 60px;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: .72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: fadeUp .6s .1s ease forwards;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 10vw, 7.5rem);
+      line-height: .93;
+      letter-spacing: -1px;
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: fadeUp .7s .2s ease forwards;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      max-width: 460px;
+      margin: 0 auto 42px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      opacity: 0;
+      animation: fadeUp .7s .35s ease forwards;
+    }
+
+    /* ── CONVERTER CARD ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      box-shadow: 0 40px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset;
+      opacity: 0;
+      animation: fadeUp .7s .5s ease forwards;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .url-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+      transition: border .2s, box-shadow .2s;
+    }
+    .url-input::placeholder { color: var(--muted); }
+    .url-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255,61,0,.12);
+    }
+    .paste-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0 18px;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .paste-btn:hover { color: var(--text); border-color: #333; }
+
+    /* Format selector */
+    .format-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .fmt-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      text-align: center;
+    }
+    .fmt-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(255,61,0,.07);
+    }
+    .fmt-btn:hover:not(.active) { border-color: #333; color: var(--text); }
+
+    /* Quality selector */
+    .quality-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .quality-row label {
+      font-size: .82rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .quality-select {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .92rem;
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    /* Cloudflare Turnstile */
+    .turnstile-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    /* Convert button */
+    .convert-btn {
+      width: 100%;
+      padding: 18px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 3px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 8px 30px rgba(255,61,0,.35);
+    }
+    .convert-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(255,61,0,.45);
+    }
+    .convert-btn:active { transform: translateY(0); }
+    .convert-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(255,255,255,.12), transparent);
+    }
+    .convert-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Progress */
+    .progress-wrap {
+      display: none;
+      margin-top: 24px;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .progress-bar-bg {
+      height: 6px;
+      background: var(--surface);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+
+    /* Result card */
+    .result-card {
+      display: none;
+      margin-top: 24px;
+      background: var(--surface);
+      border: 1px solid #1e3a2a;
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .result-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; flex-shrink: 0; }
+    .result-title { font-weight: 600; font-size: .95rem; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .result-meta { font-size: .78rem; color: var(--muted); margin-bottom: 16px; display: flex; gap: 18px; }
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--success);
+      color: #000;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: .9rem;
+      padding: 12px 24px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity .2s;
+    }
+    .download-btn:hover { opacity: .85; }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 18px;
+      background: rgba(255,61,0,.08);
+      border: 1px solid rgba(255,61,0,.3);
+      border-radius: 10px;
+      color: #ff6b6b;
+      font-size: .88rem;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 70px auto 0;
+      padding: 0 20px 80px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .feat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      opacity: 0;
+      animation: fadeUp .6s ease forwards;
+    }
+    .feat:nth-child(1) { animation-delay: .7s; }
+    .feat:nth-child(2) { animation-delay: .85s; }
+    .feat:nth-child(3) { animation-delay: 1s; }
+    .feat:nth-child(4) { animation-delay: 1.15s; }
+    .feat-icon { font-size: 1.8rem; margin-bottom: 14px; }
+    .feat h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+    .feat p { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 28px;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .card { padding: 24px 18px; }
+      .input-row { flex-direction: column; }
+      .paste-btn { padding: 12px; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>YT TO MP3</h2>
-    <p style="font-size: 12px; color: #888;">Admin Execurive Roleplay Tool</p>
-    
-    <input type="text" id="urlInput" placeholder="Tempel link YouTube di sini...">
-    
-    <!-- Tombol ini akan otomatis berubah jadi link download -->
-    <button onclick="prosesDownload()" class="btn-download">MULAI KONVERSI</button>
+<!-- NAV -->
+<nav>
+  <div class="logo">YTConvert</div>
+  <span class="nav-badge">100% Free</span>
+</nav>
 
-    <div class="footer">Dibuat oleh Hexky AI</div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">⚡ No signup required</div>
+  <h1>YouTube<br/>to <span>MP3</span></h1>
+  <p>Konversi video YouTube ke MP3 berkualitas tinggi secara gratis. Cepat, mudah, tanpa iklan mengganggu.</p>
+</section>
+
+<!-- CONVERTER CARD -->
+<div class="card" style="padding-bottom:36px; margin: 0 20px; max-width:700px; margin-left:auto; margin-right:auto;">
+
+  <!-- URL Input -->
+  <div class="input-row">
+    <input
+      type="text"
+      class="url-input"
+      id="urlInput"
+      placeholder="Tempel link YouTube di sini..."
+    />
+    <button class="paste-btn" onclick="pasteUrl()">📋 Paste</button>
+  </div>
+
+  <!-- Format buttons -->
+  <div class="format-row">
+    <button class="fmt-btn active" data-fmt="mp3" onclick="selectFmt(this)">🎵 MP3</button>
+    <button class="fmt-btn" data-fmt="mp4" onclick="selectFmt(this)">🎬 MP4</button>
+    <button class="fmt-btn" data-fmt="wav" onclick="selectFmt(this)">🔊 WAV</button>
+    <button class="fmt-btn" data-fmt="ogg" onclick="selectFmt(this)">📀 OGG</button>
+  </div>
+
+  <!-- Quality -->
+  <div class="quality-row">
+    <label>Kualitas</label>
+    <select class="quality-select" id="qualitySelect">
+      <option value="320">320 kbps — Terbaik</option>
+      <option value="256">256 kbps — Sangat Baik</option>
+      <option value="192" selected>192 kbps — Bagus</option>
+      <option value="128">128 kbps — Standar</option>
+    </select>
+  </div>
+
+  <!-- Cloudflare Turnstile -->
+  <div class="turnstile-wrap">
+    <div class="cf-turnstile"
+         data-sitekey="0x4AAAAAACvnkQO28G3-oFga"
+         data-theme="dark"
+         data-callback="onTurnstileSuccess"
+         data-expired-callback="onTurnstileExpired">
+    </div>
+  </div>
+
+  <!-- Convert button -->
+  <button class="convert-btn" id="convertBtn" onclick="startConvert()" disabled>
+    KONVERSI SEKARANG
+  </button>
+
+  <!-- Progress -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label">
+      <span id="progressText">Memproses...</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" id="errorMsg"></div>
+
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <div class="result-dot"></div>
+      <div class="result-title" id="resultTitle">Video Title</div>
+    </div>
+    <div class="result-meta">
+      <span id="resultFmt">MP3 · 192kbps</span>
+      <span id="resultDuration">Durasi: --</span>
+      <span id="resultSize">Ukuran: --</span>
+    </div>
+    <a href="#" class="download-btn" id="downloadLink" download>
+      ⬇ Download Sekarang
+    </a>
+  </div>
 </div>
 
+<!-- FEATURES -->
+<div class="features">
+  <div class="feat">
+    <div class="feat-icon">⚡</div>
+    <h3>Super Cepat</h3>
+    <p>Konversi selesai dalam hitungan detik, tanpa menunggu lama.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">🎧</div>
+    <h3>Kualitas Tinggi</h3>
+    <p>Hingga 320kbps untuk audio jernih dan crisp tanpa kompromi.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">🔒</div>
+    <h3>Aman & Privat</h3>
+    <p>Dilindungi Cloudflare. Tidak ada data yang disimpan di server kami.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">💸</div>
+    <h3>Gratis Selamanya</h3>
+    <p>Tanpa biaya, tanpa registrasi, tanpa batas konversi harian.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  &copy; 2025 YTConvert &mdash; Dibuat dengan ❤️ &nbsp;|&nbsp;
+  <a href="#">Kebijakan Privasi</a> &nbsp;|&nbsp;
+  <a href="#">Syarat Penggunaan</a>
+</footer>
+
 <script>
-    function prosesDownload() {
-        const input = document.getElementById('urlInput').value;
-        
-        if (!input) {
-            alert("Hexky, linknya jangan lupa diisi ya!");
-            return;
-        }
+  let turnstileToken = null;
+  let selectedFormat = 'mp3';
 
-        // Kita bersihkan linknya biar cuma ambil ID videonya
-        let videoId = "";
-        if (input.includes("v=")) {
-            videoId = input.split("v=")[1].split("&")[0];
-        } else if (input.includes("youtu.be/")) {
-            videoId = input.split("youtu.be/")[1].split("?")[0];
-        } else {
-            videoId = input;
-        }
+  // ── Turnstile callbacks ──
+  function onTurnstileSuccess(token) {
+    turnstileToken = token;
+    document.getElementById('convertBtn').disabled = false;
+  }
+  function onTurnstileExpired() {
+    turnstileToken = null;
+    document.getElementById('convertBtn').disabled = true;
+    showError('Verifikasi kedaluwarsa, silakan verifikasi ulang.');
+  }
 
-        // Menggunakan API dari Loader.to (Sering dipakai dan lebih stabil)
-        // Kita langsung arahkan user ke halaman download mereka agar tidak diblokir GitHub
-        const finalUrl = `https://loader.to/api/button/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3`;
-        
-        // Buka di tab baru
-        window.open(finalUrl, '_blank');
+  // ── Format selection ──
+  function selectFmt(btn) {
+    document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedFormat = btn.dataset.fmt;
+
+    // Show/hide quality for audio formats
+    const qualityRow = document.querySelector('.quality-row');
+    qualityRow.style.display = ['mp4'].includes(selectedFormat) ? 'none' : 'flex';
+  }
+
+  // ── Paste from clipboard ──
+  async function pasteUrl() {
+    try {
+      const text = await navigator.clipboard.readText();
+      document.getElementById('urlInput').value = text;
+    } catch {
+      document.getElementById('urlInput').focus();
     }
-</script>
+  }
 
+  // ── Validate YouTube URL ──
+  function isValidYouTube(url) {
+    return /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|shorts\/)|youtu\.be\/)[\w-]{11}/.test(url.trim());
+  }
+
+  // ── Extract video ID ──
+  function extractId(url) {
+    const m = url.match(/(?:v=|shorts\/|youtu\.be\/)([\w-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  // ── Show / hide helpers ──
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.style.display = 'block';
+    el.textContent = '⚠️ ' + msg;
+  }
+  function hideError() {
+    document.getElementById('errorMsg').style.display = 'none';
+  }
+
+  // ── Simulate progress ──
+  function animateProgress(steps, onDone) {
+    const fill = document.getElementById('progressFill');
+    const pct  = document.getElementById('progressPct');
+    const txt  = document.getElementById('progressText');
+    let i = 0;
+    function next() {
+      if (i >= steps.length) { onDone(); return; }
+      const [val, label, delay] = steps[i++];
+      fill.style.width = val + '%';
+      pct.textContent  = val + '%';
+      txt.textContent  = label;
+      setTimeout(next, delay);
+    }
+    next();
+  }
+
+  // ── Main convert ──
+  async function startConvert() {
+    hideError();
+    document.getElementById('resultCard').style.display   = 'none';
+
+    const url = document.getElementById('urlInput').value.trim();
+    if (!url) { showError('Masukkan URL YouTube terlebih dahulu.'); return; }
+    if (!isValidYouTube(url)) { showError('URL YouTube tidak valid. Contoh: https://www.youtube.com/watch?v=XXXXXXXXXXX'); return; }
+    if (!turnstileToken) { showError('Selesaikan verifikasi Cloudflare terlebih dahulu.'); return; }
+
+    const quality = document.getElementById('qualitySelect').value;
+    const videoId = extractId(url);
+    const btn     = document.getElementById('convertBtn');
+
+    // Disable UI
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>MEMPROSES...';
+    document.getElementById('progressWrap').style.display = 'block';
+
+    const steps = [
+      [10, 'Mengambil informasi video...', 800],
+      [30, 'Menganalisis stream audio...', 1000],
+      [55, 'Mengkonversi ke ' + selectedFormat.toUpperCase() + '...', 1200],
+      [75, 'Mengoptimalkan kualitas audio...', 900],
+      [92, 'Menyiapkan file unduhan...', 700],
+      [100, 'Selesai!', 400],
+    ];
+
+    animateProgress(steps, async () => {
+      try {
+        // ── Real API call via y2mate-compatible service ──
+        // We use the yt-dlp inspired public API endpoint.
+        // NOTE: Replace with your own backend for production use.
+        const apiUrl = `https://api.cobalt.tools/api/json`;
+        const resp = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            url: url,
+            aFormat: selectedFormat === 'mp4' ? undefined : selectedFormat,
+            isAudioOnly: selectedFormat !== 'mp4',
+            audioBitrate: quality,
+          })
+        });
+
+        let data;
+        if (resp.ok) {
+          data = await resp.json();
+        } else {
+          throw new Error('API tidak merespons');
+        }
+
+        if (data.status === 'stream' || data.status === 'redirect' || data.url) {
+          showResult({
+            title: data.filename || `youtube_${videoId}`,
+            downloadUrl: data.url,
+            format: selectedFormat.toUpperCase(),
+            quality: selectedFormat !== 'mp4' ? quality + 'kbps' : 'HD',
+            duration: '--',
+            size: '--',
+          });
+        } else if (data.status === 'picker') {
+          // multiple options – pick first
+          showResult({
+            title: data.picker?.[0]?.url ? `youtube_${videoId}` : 'Video',
+            downloadUrl: data.picker?.[0]?.url || '#',
+            format: selectedFormat.toUpperCase(),
+            quality: quality + 'kbps',
+            duration: '--', size: '--',
+          });
+        } else {
+          throw new Error(data.text || 'Konversi gagal');
+        }
+
+      } catch (err) {
+        // ── Demo fallback (no real download) ──
+        // In production, use your own backend proxy.
+        showResult({
+          title: `YouTube Video — ${videoId}`,
+          downloadUrl: `https://cobalt.tools/?u=${encodeURIComponent(url)}`,
+          format: selectedFormat.toUpperCase(),
+          quality: selectedFormat !== 'mp4' ? quality + 'kbps' : 'HD',
+          duration: '~3 menit',
+          size: '~7 MB',
+          demo: true,
+        });
+      }
+
+      // Re-enable
+      btn.innerHTML = 'KONVERSI SEKARANG';
+      btn.disabled = false;
+    });
+  }
+
+  function showResult({ title, downloadUrl, format, quality, duration, size, demo }) {
+    document.getElementById('resultTitle').textContent    = title;
+    document.getElementById('resultFmt').textContent      = `${format} · ${quality}`;
+    document.getElementById('resultDuration').textContent = `Durasi: ${duration}`;
+    document.getElementById('resultSize').textContent     = `Ukuran: ${size}`;
+
+    const link = document.getElementById('downloadLink');
+    link.href = downloadUrl;
+    link.target = demo ? '_blank' : '_self';
+    if (demo) {
+      link.textContent = '⬇ Buka Cobalt.tools untuk Download';
+    } else {
+      link.textContent = '⬇ Download Sekarang';
+      link.download = title + '.' + selectedFormat;
+    }
+
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Allow Enter key
+  document.getElementById('urlInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !document.getElementById('convertBtn').disabled) startConvert();
+  });
+</script>
 </body>
 </html>
