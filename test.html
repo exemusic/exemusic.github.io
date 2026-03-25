@@ -1,88 +1,108 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>YT to MP3 by Hengki</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      padding-top: 100px;
-    }
-    input {
-      padding: 10px;
-      width: 300px;
-      border-radius: 8px;
-      border: none;
-    }
-    button {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      background: #22c55e;
-      color: white;
-    }
-    #result {
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexky YT to MP3</title>
+    <style>
+        /* Gaya Tampilan (CSS) */
+        body {
+            background-color: #121212; /* Warna gelap */
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+            border: 1px solid #333;
+        }
+
+        h2 { color: #00d4ff; } /* Warna neon biru */
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background-color: #2a2a2a;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #00d4ff;
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #0099cc;
+            transform: scale(1.02);
+        }
+
+        #result {
+            margin-top: 25px;
+        }
+
+        iframe {
+            border: none;
+            width: 100%;
+            height: 60px; /* Ukuran tombol download dari API */
+        }
+    </style>
 </head>
 <body>
 
-  <h2>YT to MP3<br>by Hengki</h2>
+<div class="container">
+    <h2>YT to MP3 Converter</h2>
+    <p>Masukkan Link YouTube di bawah:</p>
+    
+    <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
+    <button onclick="convertVideo()">Konversi Sekarang</button>
 
-  <input type="text" id="url" placeholder="Masukkan link YouTube...">
-  <br>
-
-  <button onclick="convert()">Download MP3</button>
-
-  <div id="result"></div>
+    <div id="result">
+        <!-- Tombol download akan muncul di sini -->
+    </div>
+</div>
 
 <script>
-async function convert() {
-  const url = document.getElementById("url").value;
-  const result = document.getElementById("result");
+    // Logika Pemrograman (JavaScript)
+    function convertVideo() {
+        const url = document.getElementById('videoUrl').value;
+        const resultDiv = document.getElementById('result');
 
-  if (!url) {
-    result.innerHTML = "Masukkan link dulu!";
-    return;
-  }
+        if (url === "") {
+            alert("Tolong masukkan link YouTube dulu ya, Hexky!");
+            return;
+        }
 
-  result.innerHTML = "Processing... ⏳";
-
-  try {
-  const response = await fetch(
-    "https://api.allorigins.win/raw?url=" +
-    encodeURIComponent(
-      "https://youtube-mp310.p.rapidapi.com/download/mp3?url=" + url
-    ),
-    {
-      headers: {
-        "x-rapidapi-key": "7b17bf3ab4mshb72cf086f868e75p1087cejsnb980948f364d",
-        "x-rapidapi-host": "youtube-mp310.p.rapidapi.com"
-      }
+        // Kita menggunakan API dari vevioz untuk konversi.
+        // Caranya: Kita memasukkan URL user ke dalam iframe milik mereka.
+        resultDiv.innerHTML = `
+            <p style="font-size: 12px; color: #aaa;">Menyiapkan link download...</p>
+            <iframe src="https://api.vevioz.com/apis/button/mp3?url=${url}" 
+                    scrolling="no">
+            </iframe>
+        `;
     }
-  );
-
-    const data = await response.json();
-
-    if (data.download_url) {
-      result.innerHTML = `
-        <p>${data.title || "Ready!"}</p>
-        <a href="${data.download_url}" target="_blank">Download MP3</a>
-      `;
-    } else {
-      result.innerHTML = "Gagal convert ❌";
-    }
-
-  } catch (err) {
-    result.innerHTML = "Error / kena CORS ❌";
-  }
-}
 </script>
 
 </body>
