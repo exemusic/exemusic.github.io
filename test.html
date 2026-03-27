@@ -10768,7 +10768,82 @@
       if (!t || t === 'Ketik ID lagu dulu') { showToast('Isi ID dulu'); return; }
       navigator.clipboard.writeText(t).then(() => showToast('URL disalin!')); document.getElementById('modalAdminCopyUrl').style.display = 'none';
     }
-    // ============================================================
+  </script>
+</body>
+  // ============================================================
+// ExeMusic Patch v3.2.4 - Script 1: Cleanup
+// Paste before </body>
+// ============================================================
+(function() {
+  function applyCleanup() {
+    // Remove Ramadhan tab from event center
+    var ramTab = document.querySelector('[data-tab="ramadhan"]');
+    if (ramTab) ramTab.remove();
+    var ramView = document.getElementById('evTabRamadhan');
+    if (ramView) ramView.remove();
+
+    // Remove Sahur & Ramadhan admin cards
+    document.querySelectorAll('.admin-card').forEach(function(card) {
+      var txt = card.textContent || '';
+      if (txt.includes('SECRET TAG: EXE-SAHUR') ||
+          txt.includes('RAMADHAN EVENT CONTROL') ||
+          txt.includes('CYCLE 1 - Awal') ||
+          txt.includes('CYCLE 2 - Mid') ||
+          txt.includes('CYCLE 3 - 10 Hari')) {
+        card.remove();
+      }
+    });
+
+    // Remove Ramadhan admin section class
+    var ramSection = document.querySelector('.admin-ramadhan-section');
+    if (ramSection) ramSection.remove();
+
+    // Remove story popup and thank you overlay
+    ['storyPopup','thankYouOverlay'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.remove();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyCleanup);
+  } else {
+    applyCleanup();
+  }
+})();
+
+// No-op overrides for removed features
+window.showStoryPopup     = function() {};
+window.closeStoryPopup    = function() {};
+window.showThankYouAnimation = function() {};
+window.toggleImageZoom    = function() {};
+window.updateRamadhanProgress = function() {};
+window.claimRamadhanCycle = function() {};
+window.checkRamadhanProgress  = function() {};
+window.checkSahurTime     = function() { return false; };
+window.grantSahurTag      = function() {};
+window.adSaveRamadhanEvent  = function() { if(window.showToast) showToast('Event Ramadhan telah dihapus'); };
+window.adClearRamadhanEvent = function() { if(window.showToast) showToast('Event Ramadhan telah dihapus'); };
+window.adViewRamadhanProgress = function() { if(window.showToast) showToast('Event Ramadhan telah dihapus'); };
+window.adEnableSahurTag   = function() { if(window.showToast) showToast('Fitur ini telah dihapus'); };
+window.adDisableSahurTag  = function() { if(window.showToast) showToast('Fitur ini telah dihapus'); };
+window.updateSahurStatus  = function() {};
+
+// Override dismissLoader: hapus showStoryPopup() call
+setTimeout(function() {
+  var origAdvance = window.advanceLoader;
+  window.dismissLoader = function() {
+    if (origAdvance) origAdvance(100, 'READY!');
+    setTimeout(function() {
+      var screen = document.getElementById('gameLoadScreen');
+      if (screen) {
+        screen.classList.add('fade-out');
+        setTimeout(function() { screen.style.display = 'none'; }, 800);
+      }
+    }, 400);
+  };
+}, 200);
+  // ============================================================
 // ExeMusic Patch v3.2.4 - Script 2: Leaderboard Extended
 // Top Listener + Weekly/AllTime + Reset Countdown
 // Paste before </body>, AFTER Script 1
@@ -11247,80 +11322,4 @@ window.openLeaderboard = function() {
 window.switchLbPeriod = window.switchLbPeriod;
 
 console.log('[ExeMusic v3.2.4] Leaderboard Extended loaded');
-
-  // ============================================================
-// ExeMusic Patch v3.2.4 - Script 1: Cleanup
-// Paste before </body>
-// ============================================================
-(function() {
-  function applyCleanup() {
-    // Remove Ramadhan tab from event center
-    var ramTab = document.querySelector('[data-tab="ramadhan"]');
-    if (ramTab) ramTab.remove();
-    var ramView = document.getElementById('evTabRamadhan');
-    if (ramView) ramView.remove();
-
-    // Remove Sahur & Ramadhan admin cards
-    document.querySelectorAll('.admin-card').forEach(function(card) {
-      var txt = card.textContent || '';
-      if (txt.includes('SECRET TAG: EXE-SAHUR') ||
-          txt.includes('RAMADHAN EVENT CONTROL') ||
-          txt.includes('CYCLE 1 - Awal') ||
-          txt.includes('CYCLE 2 - Mid') ||
-          txt.includes('CYCLE 3 - 10 Hari')) {
-        card.remove();
-      }
-    });
-
-    // Remove Ramadhan admin section class
-    var ramSection = document.querySelector('.admin-ramadhan-section');
-    if (ramSection) ramSection.remove();
-
-    // Remove story popup and thank you overlay
-    ['storyPopup','thankYouOverlay'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.remove();
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyCleanup);
-  } else {
-    applyCleanup();
-  }
-})();
-
-// No-op overrides for removed features
-window.showStoryPopup     = function() {};
-window.closeStoryPopup    = function() {};
-window.showThankYouAnimation = function() {};
-window.toggleImageZoom    = function() {};
-window.updateRamadhanProgress = function() {};
-window.claimRamadhanCycle = function() {};
-window.checkRamadhanProgress  = function() {};
-window.checkSahurTime     = function() { return false; };
-window.grantSahurTag      = function() {};
-window.adSaveRamadhanEvent  = function() { if(window.showToast) showToast('Event Ramadhan telah dihapus'); };
-window.adClearRamadhanEvent = function() { if(window.showToast) showToast('Event Ramadhan telah dihapus'); };
-window.adViewRamadhanProgress = function() { if(window.showToast) showToast('Event Ramadhan telah dihapus'); };
-window.adEnableSahurTag   = function() { if(window.showToast) showToast('Fitur ini telah dihapus'); };
-window.adDisableSahurTag  = function() { if(window.showToast) showToast('Fitur ini telah dihapus'); };
-window.updateSahurStatus  = function() {};
-
-// Override dismissLoader: hapus showStoryPopup() call
-setTimeout(function() {
-  var origAdvance = window.advanceLoader;
-  window.dismissLoader = function() {
-    if (origAdvance) origAdvance(100, 'READY!');
-    setTimeout(function() {
-      var screen = document.getElementById('gameLoadScreen');
-      if (screen) {
-        screen.classList.add('fade-out');
-        setTimeout(function() { screen.style.display = 'none'; }, 800);
-      }
-    }, 400);
-  };
-}, 200);
-  </script>
-</body>
 </html>
