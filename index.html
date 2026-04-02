@@ -12,7 +12,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js" defer></script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -2051,18 +2050,30 @@
     #ddErrorSection #ddErrorLink { color: var(--accent2); text-decoration: none; font-weight: 600; transition: all 0.3s ease; }
     #ddErrorSection #ddErrorLink:hover { color: #00ff88; text-shadow: 0 0 8px rgba(0,255,136,0.5); }
 
-    /* reCAPTCHA styling */
-    .g-recaptcha {
+    /* Cloudflare Turnstile styling */
+    .turnstile-container {
       display: inline-block;
-      transform: scale(0.85);
-      transform-origin: center;
+      max-width: 100%;
       margin: 0 auto;
     }
 
-    /* Responsive reCAPTCHA */
+    .cf-turnstile {
+      margin: 0 auto;
+      display: block;
+    }
+
+    /* Responsive Turnstile */
+    @media (max-width: 768px) {
+      .cf-turnstile {
+        transform: scale(0.85) !important;
+        transform-origin: center !important;
+      }
+    }
+
     @media (max-width: 480px) {
-      .g-recaptcha {
-        transform: scale(0.75);
+      .cf-turnstile {
+        transform: scale(0.75) !important;
+        transform-origin: center !important;
       }
     }
 
@@ -3588,46 +3599,164 @@
     .log-time { color: #444; }
 
     /* ============================================================
-       TOAST
+       TOAST NOTIFICATIONS - UPDATED
     ============================================================ */
     #toast-container {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
       z-index: 99999;
       pointer-events: none;
+      max-width: 90vw;
     }
+
     .toast {
-      background: rgba(10,10,18,0.95);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-left: 3px solid var(--accent);
+      background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%);
+      border: 1px solid rgba(148,163,184,0.3);
+      border-left: 4px solid var(--accent);
       color: #fff;
-      padding: 9px 18px;
-      border-radius: 8px;
-      font-size: 12px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 9px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-      animation: toastIn 0.3s cubic-bezier(0.68,-0.55,0.27,1.55);
-      backdrop-filter: blur(10px);
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+      animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      backdrop-filter: blur(20px);
       white-space: nowrap;
       pointer-events: auto;
+      min-width: 280px;
+      max-width: 500px;
     }
-    .toast.hide { animation: toastOut 0.3s forwards; }
-    .toast.toast-success { border-left-color: #22c55e; }
-    .toast.toast-error { border-left-color: #f97316; }
-    .toast.toast-event { border-left-color: #38bdf8; }
+
+    .toast-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .toast-icon {
+      font-size: 16px;
+      min-width: 16px;
+    }
+
+    .toast-text {
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .toast-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      font-size: 12px;
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .toast:hover .toast-close {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .toast-close:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .toast.hide {
+      animation: toastOut 0.3s forwards;
+    }
+
+    .toast.toast-success {
+      border-left-color: #22c55e;
+      background: linear-gradient(135deg, rgba(34,197,94,0.1) 0%, rgba(15,23,42,0.95) 100%);
+    }
+
+    .toast.toast-error {
+      border-left-color: #f97316;
+      background: linear-gradient(135deg, rgba(249,115,22,0.1) 0%, rgba(15,23,42,0.95) 100%);
+    }
+
+    .toast.toast-event {
+      border-left-color: #38bdf8;
+      background: linear-gradient(135deg, rgba(56,189,248,0.1) 0%, rgba(15,23,42,0.95) 100%);
+    }
+
+    .toast.toast-info {
+      border-left-color: #8b5cf6;
+      background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(15,23,42,0.95) 100%);
+    }
+
     @keyframes toastIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) translateY(0);
+      }
     }
+
     @keyframes toastOut {
-      from { opacity: 1; transform: translateY(0) scale(1); }
-      to { opacity: 0; transform: translateY(-12px) scale(0.96); }
+      from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9) translateY(-10px);
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .toast {
+        min-width: 250px;
+        max-width: 85vw;
+        padding: 12px 16px;
+        font-size: 13px;
+      }
+
+      .toast-content {
+        gap: 10px;
+      }
+
+      .toast-icon {
+        font-size: 14px;
+        min-width: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .toast {
+        min-width: 200px;
+        max-width: 90vw;
+        padding: 10px 14px;
+        font-size: 12px;
+      }
+
+      .toast-content {
+        gap: 8px;
+      }
+
+      .toast-icon {
+        font-size: 12px;
+        min-width: 12px;
+      }
     }
 
     .global-event-pill {
@@ -5243,9 +5372,21 @@
               <div class="download-item"><b>File:</b> <span id="ddFile">-</span></div>
               <div class="download-item"><b>Link:</b> <a id="ddLink" href="#" target="_blank" rel="noopener">-</a></div>
               <div class="download-item">
-                <div style="text-align: center; margin: 12px 0;">
-                  <div class="g-recaptcha" data-sitekey="6LcH7KIsAAAAAMzHThJ6DX3kXlKssbOsKMDQcXxb" data-callback="onRecaptchaSuccess" data-expired-callback="onRecaptchaExpired" data-error-callback="onRecaptchaError"></div>
-                  <div style="font-size: 12px; color: #888; margin-top: 8px;">Verifikasi bahwa Anda bukan robot</div>
+                <div style="text-align: center; margin: 16px 0;">
+                  <div class="turnstile-container" style="display: inline-block; max-width: 100%; margin-bottom: 8px;">
+                    <div
+                      id="download-turnstile"
+                      class="cf-turnstile"
+                      data-sitekey="0x4AAAAAACvnkQO28G3-oFga"
+                      data-theme="dark"
+                      data-callback="onDownloadCaptchaSuccess"
+                      data-expired-callback="onDownloadCaptchaExpired"
+                      data-error-callback="onDownloadCaptchaError"
+                      data-size="normal"
+                      style="transform: scale(0.9); transform-origin: center;"
+                    ></div>
+                  </div>
+                  <div style="font-size: 12px; color: #888; margin-top: 4px;">Verifikasi keamanan Cloudflare</div>
                 </div>
               </div>
             </div>
@@ -7866,16 +8007,22 @@
     }
 
     // ============================================================
-    // TOAST
+    // TOAST NOTIFICATIONS - UPDATED
     // ============================================================
     function showToast(text, type = 'info') {
       const container = document.getElementById('toast-container');
       if (!container) return;
+
+      // Remove oldest toast if we have 3 already
       if (container.children.length >= 3) {
-        container.removeChild(container.firstElementChild);
+        const oldestToast = container.firstElementChild;
+        oldestToast.classList.add('hide');
+        setTimeout(() => oldestToast.remove(), 300);
       }
+
       const el = document.createElement('div');
-      el.className = 'toast';
+      el.className = 'toast toast-' + type;
+
       let icon = 'fa-info-circle';
       if (type === 'success') icon = 'fa-check-circle';
       else if (type === 'error') icon = 'fa-exclamation-triangle';
@@ -7888,11 +8035,33 @@
         else if (text.includes('✅') || text.includes('berhasil')) icon = 'fa-check-circle';
         else if (text.includes('Error') || text.includes('❌')) icon = 'fa-exclamation-triangle';
       }
-      el.classList.add('toast-' + type);
-      el.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
+
+      el.innerHTML = `
+        <div class="toast-content">
+          <i class="fas ${icon} toast-icon"></i>
+          <span class="toast-text">${text}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.classList.add('hide'); setTimeout(() => this.parentElement.remove(), 300);">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+
       container.appendChild(el);
-      setTimeout(() => el.classList.add('hide'), 2500);
-      setTimeout(() => el.remove(), 2900);
+
+      // Auto-hide after 3 seconds (increased from 2.5s for better UX)
+      const autoHideTimeout = setTimeout(() => {
+        if (el.parentElement) { // Check if still attached
+          el.classList.add('hide');
+          setTimeout(() => el.remove(), 300);
+        }
+      }, 3000);
+
+      // Clear timeout if manually closed
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('.toast-close')) {
+          clearTimeout(autoHideTimeout);
+        }
+      });
     }
     function msg(m) { showToast(m); }
     function closeModal() {
@@ -9553,15 +9722,15 @@
       ddLink.textContent = url;
       ddSize.textContent = 'Menghitung...';
 
-      // Reset reCAPTCHA and disable download button
-      if (window.grecaptcha) {
+      // Reset Turnstile and disable download button
+      if (window.turnstile) {
         try {
-          window.grecaptcha.reset();
+          window.turnstile.reset('#download-turnstile');
         } catch (e) {
-          console.warn('reCAPTCHA reset failed:', e);
+          console.warn('Turnstile reset failed:', e);
         }
       }
-      window.recaptchaToken = null;
+      window.downloadCaptchaToken = null;
       ddStartBtn.disabled = true;
       ddStartBtn.style.display = 'block';
       document.getElementById('ddCancelBtn').style.display = 'none';
@@ -9621,41 +9790,41 @@
     }
 
     function startDownloadFromDetail() {
-      if (!window.recaptchaToken) {
-        msg('Silakan lengkapi verifikasi reCAPTCHA terlebih dahulu');
+      if (!window.downloadCaptchaToken) {
+        msg('Silakan lengkapi verifikasi Turnstile terlebih dahulu');
         return;
       }
       downloadSong();
     }
 
-    // reCAPTCHA callback functions
-    function onRecaptchaSuccess(token) {
-      console.log('✅ reCAPTCHA berhasil:', token ? 'Token valid' : 'Token kosong');
-      window.recaptchaToken = token;
+    // Cloudflare Turnstile callback functions for download
+    function onDownloadCaptchaSuccess(token) {
+      console.log('✅ Turnstile download berhasil:', token ? 'Token valid' : 'Token kosong');
+      window.downloadCaptchaToken = token;
       const ddStartBtn = document.getElementById('ddStartBtn');
       if (ddStartBtn) {
         ddStartBtn.disabled = false;
       }
     }
 
-    function onRecaptchaExpired() {
-      console.log('⏰ reCAPTCHA expired');
-      window.recaptchaToken = null;
+    function onDownloadCaptchaExpired() {
+      console.log('⏰ Turnstile download expired');
+      window.downloadCaptchaToken = null;
       const ddStartBtn = document.getElementById('ddStartBtn');
       if (ddStartBtn) {
         ddStartBtn.disabled = true;
       }
-      showToast('Verifikasi reCAPTCHA telah kedaluwarsa, silakan verifikasi ulang', 'warning');
+      showToast('Verifikasi Turnstile telah kedaluwarsa, silakan verifikasi ulang', 'warning');
     }
 
-    function onRecaptchaError() {
-      console.error('❌ reCAPTCHA error');
-      window.recaptchaToken = null;
+    function onDownloadCaptchaError() {
+      console.error('❌ Turnstile download error');
+      window.downloadCaptchaToken = null;
       const ddStartBtn = document.getElementById('ddStartBtn');
       if (ddStartBtn) {
         ddStartBtn.disabled = true;
       }
-      showToast('Terjadi kesalahan pada verifikasi reCAPTCHA', 'error');
+      showToast('Terjadi kesalahan pada verifikasi Turnstile', 'error');
     }
 
     async function downloadSong() {
