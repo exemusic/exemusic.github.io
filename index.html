@@ -60,6 +60,7 @@
                   linear-gradient(180deg, #030308 0%, #06060f 50%, #030308 100%);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: opacity 0.8s ease, transform 0.8s ease;
+      pointer-events: none;
     }
     #gameLoadScreen.fade-out {
       opacity: 0;
@@ -6225,44 +6226,60 @@
     // WELCOME ANIMATION
     // ============================================================
     function showWelcomeAnimation() {
-      const overlay = document.getElementById('welcomeOverlay');
-      const sparklesContainer = document.getElementById('welcomeSparklesContainer');
-      const welcomeText = document.getElementById('welcomeText');
-      
-      if (overlay && welcomeText) {
-        // Set welcome text based on login status
-        if (auth.currentUser && userData && userData.username) {
-          welcomeText.innerHTML = `Welcome Back<br>${userData.username}!!`;
-        } else {
-          welcomeText.innerHTML = 'Welcome To<br>ExeMusic!!';
-        }
-        
-        overlay.classList.add('show');
-        
-        // Create sparkles
-        if (sparklesContainer) {
-          for (let i = 0; i < 30; i++) {
-            setTimeout(() => {
-              const sparkle = document.createElement('div');
-              sparkle.className = 'sparkle';
-              sparkle.style.left = Math.random() * 100 + '%';
-              sparkle.style.top = 50 + Math.random() * 20 + '%';
-              sparkle.style.animationDelay = Math.random() * 0.5 + 's';
-              sparklesContainer.appendChild(sparkle);
-              
-              setTimeout(() => sparkle.remove(), 2500);
-            }, i * 50);
+      try {
+        console.log('🎉 Starting welcome animation...');
+        const overlay = document.getElementById('welcomeOverlay');
+        const sparklesContainer = document.getElementById('welcomeSparklesContainer');
+        const welcomeText = document.getElementById('welcomeText');
+
+        if (overlay && welcomeText) {
+          // Set welcome text based on login status
+          if (typeof auth !== 'undefined' && auth && auth.currentUser && userData && userData.username) {
+            welcomeText.innerHTML = `Welcome Back<br>${userData.username}!!`;
+          } else {
+            welcomeText.innerHTML = 'Welcome To<br>ExeMusic!!';
           }
-        }
-        
-        // Hide after 3 seconds
-        setTimeout(() => {
-          overlay.style.animation = 'welcomeFadeIn 0.5s ease reverse';
+
+          overlay.classList.add('show');
+
+          // Create sparkles
+          if (sparklesContainer) {
+            for (let i = 0; i < 30; i++) {
+              setTimeout(() => {
+                try {
+                  const sparkle = document.createElement('div');
+                  sparkle.className = 'sparkle';
+                  sparkle.style.left = Math.random() * 100 + '%';
+                  sparkle.style.top = 50 + Math.random() * 20 + '%';
+                  sparkle.style.animationDelay = Math.random() * 0.5 + 's';
+                  sparklesContainer.appendChild(sparkle);
+
+                  setTimeout(() => sparkle.remove(), 2500);
+                } catch (e) {
+                  console.warn('⚠️ Error creating sparkle:', e);
+                }
+              }, i * 50);
+            }
+          }
+
+          // Hide after 3 seconds
           setTimeout(() => {
-            overlay.classList.remove('show');
-            overlay.style.animation = '';
-          }, 500);
-        }, 3000);
+            try {
+              overlay.style.animation = 'welcomeFadeIn 0.5s ease reverse';
+              setTimeout(() => {
+                overlay.classList.remove('show');
+                overlay.style.animation = '';
+              }, 500);
+            } catch (e) {
+              console.warn('⚠️ Error hiding welcome overlay:', e);
+              overlay.classList.remove('show');
+            }
+          }, 3000);
+        } else {
+          console.warn('⚠️ Welcome overlay elements not found');
+        }
+      } catch (e) {
+        console.error('❌ Error in showWelcomeAnimation:', e);
       }
     }
 
@@ -6278,6 +6295,22 @@
     };
     // Initialize Firebase after DOM is ready
     window.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 DOM Content Loaded - Starting initialization...');
+
+      // Force dismiss loading screen immediately as backup
+      setTimeout(() => {
+        const screen = document.getElementById('gameLoadScreen');
+        if (screen && screen.style.display !== 'none') {
+          console.log('🔧 Force dismissing loading screen on DOM load');
+          screen.style.display = 'none';
+          try {
+            showWelcomeAnimation();
+          } catch (e) {
+            console.warn('⚠️ Welcome animation failed:', e);
+          }
+        }
+      }, 1000);
+
       console.log('🚀 Initializing Firebase...');
       firebase.initializeApp(firebaseConfig);
       console.log('✅ Firebase initialized successfully');
@@ -6362,21 +6395,35 @@
       next();
     }
     function dismissLoader() {
-      console.log('✅ Dismissing loader...');
-      advanceLoader(100, 'READY!');
-      setTimeout(() => {
+      try {
+        console.log('✅ Dismissing loader...');
+        advanceLoader(100, 'READY!');
+        setTimeout(() => {
+          const screen = document.getElementById('gameLoadScreen');
+          if (screen) {
+            console.log('🎬 Fading out loading screen...');
+            screen.classList.add('fade-out');
+            setTimeout(() => {
+              screen.style.display = 'none';
+              console.log('✨ Loading screen hidden, showing welcome animation...');
+              // Show welcome animation after loading completes
+              try {
+                showWelcomeAnimation();
+              } catch (e) {
+                console.error('❌ Error in showWelcomeAnimation:', e);
+              }
+            }, 800);
+          }
+        }, 400);
+      } catch (e) {
+        console.error('❌ Error in dismissLoader:', e);
+        // Force hide loading screen on error
         const screen = document.getElementById('gameLoadScreen');
         if (screen) {
-          console.log('🎬 Fading out loading screen...');
-          screen.classList.add('fade-out');
-          setTimeout(() => {
-            screen.style.display = 'none';
-            console.log('✨ Loading screen hidden, showing welcome animation...');
-            // Show welcome animation after loading completes
-            showWelcomeAnimation();
-          }, 800);
+          screen.style.display = 'none';
+          console.log('✨ Force hidden loading screen due to error');
         }
-      }, 400);
+      }
     }
     runLoadSequence();
 
@@ -6394,14 +6441,26 @@
       const screen = document.getElementById('gameLoadScreen');
       if (screen && screen.style.display !== 'none') {
         console.warn('🚨 Emergency loading timeout - forcing dismissal');
-        advanceLoader(100, 'READY!');
         screen.classList.add('fade-out');
         setTimeout(() => {
           screen.style.display = 'none';
           showWelcomeAnimation();
+          console.log('✨ Emergency dismissal completed');
         }, 500);
       }
     }, 8000);
+
+    // Ultra safety - force dismiss after 3 seconds as last resort
+    setTimeout(() => {
+      const screen = document.getElementById('gameLoadScreen');
+      if (screen && screen.style.display !== 'none') {
+        console.error('🚨🚨 CRITICAL: Force dismissing loading screen');
+        screen.style.display = 'none';
+        screen.style.opacity = '0';
+        showWelcomeAnimation();
+        console.log('✨ Critical dismissal completed');
+      }
+    }, 3000);
 
     // Global error handler for debugging
     window.addEventListener('error', function(e) {
@@ -6409,10 +6468,28 @@
       console.error('🚨 Error message:', e.message);
       console.error('🚨 Error file:', e.filename);
       console.error('🚨 Error line:', e.lineno);
+
+      // Force hide loading screen on any error
+      setTimeout(() => {
+        const screen = document.getElementById('gameLoadScreen');
+        if (screen && screen.style.display !== 'none') {
+          console.log('🚨 Force hiding loading screen due to error');
+          screen.style.display = 'none';
+        }
+      }, 100);
     });
 
     window.addEventListener('unhandledrejection', function(e) {
       console.error('🚨 Unhandled promise rejection:', e.reason);
+
+      // Force hide loading screen on promise rejection
+      setTimeout(() => {
+        const screen = document.getElementById('gameLoadScreen');
+        if (screen && screen.style.display !== 'none') {
+          console.log('🚨 Force hiding loading screen due to promise rejection');
+          screen.style.display = 'none';
+        }
+      }, 100);
     });
     
     function createHeart() {
