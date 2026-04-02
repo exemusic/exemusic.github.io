@@ -8,6 +8,7 @@
 
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app-check.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
@@ -2011,16 +2012,94 @@
     .download-progress-bar #downloadProgressFill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.2s ease; }
     .download-progress-text { font-size: 11px; color: #fff; text-align: center; letter-spacing: 0.4px; font-family: 'JetBrains Mono', monospace; }
 
-    .download-detail-modal { position: fixed; inset: 0; z-index: 999999; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; padding: 20px; }
-    .download-detail-card { background: #0d0d14; border: 1px solid rgba(0,255,136,0.3); border-radius: 14px; width: min(420px, 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.6); overflow: hidden; }
-    .download-detail-header { display: flex; justify-content: space-between; align-items: center; background: rgba(0,255,136,0.08); padding: 12px 14px; font-weight: 700; color: #fff; }
-    .download-detail-close { border: none; background: transparent; color: #fff; font-size: 18px; cursor: pointer; }
-    .download-detail-body { padding: 14px; display: grid; gap: 8px; }
-    .download-item { font-size: 13px; color: #ddd; }
-    .download-item a { color: var(--accent2); word-break: break-all; }
-    .download-detail-actions { display: flex; justify-content: space-between; gap: 10px; padding: 12px 14px 14px; }
-    .download-detail-actions .btn-act { flex: 1; font-size: 13px; padding: 8px 10px; }
-    .download-detail-modal input[type="checkbox"] { margin-right: 6px; }
+    .download-detail-modal { position: fixed; inset: 0; z-index: 999999; background: rgba(0,0,0,0.9); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; padding: 20px; animation: modalFadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .download-detail-card { background: linear-gradient(135deg, #0d0d14 0%, #1a1a24 50%, #0f0f18 100%); border: 2px solid rgba(0,255,136,0.5); border-radius: 20px; width: min(480px, 100%); box-shadow: 0 25px 80px rgba(0,0,0,0.9), 0 0 30px rgba(0,255,136,0.15), inset 0 1px 0 rgba(255,255,255,0.1); overflow: hidden; transform: scale(0.9); animation: modalScaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; position: relative; }
+    .download-detail-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent)); }
+    .download-detail-header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, rgba(0,255,136,0.15), rgba(0,255,136,0.08)); padding: 18px 20px; font-weight: 700; color: #fff; border-bottom: 1px solid rgba(0,255,136,0.3); position: relative; }
+    .download-detail-header::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 60%; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,136,0.6), transparent); }
+    .download-detail-close { border: none; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05)); color: #fff; font-size: 16px; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .download-detail-close:hover { background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1)); transform: scale(1.1) rotate(90deg); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .download-detail-body { padding: 20px; display: grid; gap: 14px; }
+    .download-item { font-size: 14px; color: #e0e0e0; padding: 12px 16px; background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+    .download-item::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,255,136,0.1), transparent); transition: left 0.5s ease; }
+    .download-item:hover::before { left: 100%; }
+    .download-item:hover { background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border-color: rgba(0,255,136,0.3); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,255,136,0.1); }
+    .download-item b { color: var(--accent2); font-weight: 600; display: inline-block; margin-right: 8px; }
+    .download-item a { color: var(--accent2); text-decoration: none; font-weight: 500; transition: all 0.3s ease; position: relative; }
+    .download-item a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--accent2); transition: width 0.3s ease; }
+    .download-item a:hover::after { width: 100%; }
+    .download-item a:hover { color: #00ff88; text-shadow: 0 0 8px rgba(0,255,136,0.5); }
+    .download-detail-actions { display: flex; justify-content: space-between; gap: 12px; padding: 18px 20px 20px; background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1)); border-top: 1px solid rgba(0,255,136,0.2); }
+    .download-detail-actions .btn-act { flex: 1; font-size: 14px; padding: 12px 16px; border-radius: 12px; font-weight: 600; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+    .download-detail-actions .btn-act::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; }
+    .download-detail-actions .btn-act:hover::before { left: 100%; }
+    .download-detail-actions .btn-act:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .download-detail-actions .btn-act:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .download-detail-actions .btn-act:disabled:hover { transform: none; box-shadow: none; }
+
+    /* Progress section styling */
+    #ddProgressSection { background: linear-gradient(135deg, rgba(0,255,136,0.05), rgba(0,255,136,0.02)); border-radius: 12px; padding: 16px; border: 1px solid rgba(0,255,136,0.2); }
+    #ddProgressSection .download-progress-bar { width: 100%; height: 10px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; border: 1px solid rgba(255,255,255,0.2); box-shadow: inset 0 1px 2px rgba(0,0,0,0.2); }
+    #ddProgressSection #ddProgressFill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(0,255,136,0.5); }
+    #ddProgressSection #ddProgressText { font-size: 13px; color: #fff; text-align: center; letter-spacing: 0.5px; font-family: 'JetBrains Mono', monospace; font-weight: 500; margin-top: 8px; }
+
+    /* Error section styling */
+    #ddErrorSection { background: linear-gradient(135deg, rgba(255,107,107,0.1), rgba(255,107,107,0.05)); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,107,107,0.3); }
+    #ddErrorSection #ddErrorMsg { color: #ffcccc; font-size: 13px; margin-bottom: 12px; }
+    #ddErrorSection #ddErrorLink { color: var(--accent2); text-decoration: none; font-weight: 600; transition: all 0.3s ease; }
+    #ddErrorSection #ddErrorLink:hover { color: #00ff88; text-shadow: 0 0 8px rgba(0,255,136,0.5); }
+
+    /* Checkbox styling */
+    .download-item input[type="checkbox"] { margin-right: 8px; accent-color: var(--accent2); transform: scale(1.2); }
+
+    @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalScaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Additional visual enhancements */
+    .download-detail-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+      opacity: 0.8;
+    }
+
+    .download-item input[type="checkbox"]:checked {
+      filter: drop-shadow(0 0 6px rgba(0,255,136,0.6));
+    }
+
+    /* Success animation for completed downloads */
+    @keyframes downloadComplete {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .download-complete {
+      animation: downloadComplete 0.6s ease-out;
+    }
+
+    /* Loading spinner for progress */
+    .download-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent2);
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalScaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .vol-row { display: flex; align-items: center; gap: 10px; padding: 0 5px; }
     #vol { flex: 1; height: 4px; accent-color: var(--accent); cursor: pointer; border-radius: 2px; }
 
@@ -5154,15 +5233,21 @@
               </div>
             </div>
             <div id="ddProgressSection" style="display:none;">
-              <div class="download-progress-bar" style="margin-bottom:8px;">
-                <div id="ddProgressFill" style="width:0%; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.2s ease;"></div>
+              <div style="text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 16px; font-weight: 600; color: var(--accent2); margin-bottom: 8px;">📥 Downloading...</div>
+                <div class="download-progress-bar" style="margin-bottom:8px; height: 12px; border-radius: 6px; background: rgba(255,255,255,0.1); overflow: hidden; border: 1px solid rgba(0,255,136,0.3);">
+                  <div id="ddProgressFill" style="width:0%; height:100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition:width 0.3s ease; border-radius: 5px;"></div>
+                </div>
+                <div class="download-progress-text" id="ddProgressText" style="font-size: 14px; color: #fff; font-weight: 500;">Mempersiapkan...</div>
               </div>
-              <div class="download-progress-text" id="ddProgressText" style="text-align:center; font-size:13px;">Mempersiapkan...</div>
             </div>
             <div id="ddErrorSection" style="display:none;">
-              <div style="color:#ff6b6b; font-size:13px; margin-bottom:8px;">❌ Download Gagal</div>
-              <div class="download-item" style="color:#ccc; font-size:12px; margin-bottom:8px;" id="ddErrorMsg"></div>
-              <div class="download-item"><b>Link:</b> <a id="ddErrorLink" href="#" target="_blank" rel="noopener" style="color:var(--accent2);">Buka di jendela baru →</a></div>
+              <div style="text-align: center; padding: 16px; background: rgba(255,59,48,0.1); border: 1px solid rgba(255,59,48,0.3); border-radius: 12px; margin-bottom: 12px;">
+                <div style="color:#ff6b6b; font-size: 16px; font-weight: 600; margin-bottom: 8px;">❌ Download Gagal</div>
+                <div class="download-item" style="color:#ccc; font-size: 13px; margin-bottom: 12px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;" id="ddErrorMsg"></div>
+                <div style="font-size: 13px; color: #bbb; margin-bottom: 8px;">Coba buka link langsung:</div>
+                <a id="ddErrorLink" href="#" target="_blank" rel="noopener" style="color: var(--accent2); font-weight: 600; text-decoration: none; padding: 8px 16px; background: rgba(0,255,136,0.1); border-radius: 8px; display: inline-block; transition: all 0.2s ease;">🔗 Buka di jendela baru</a>
+              </div>
             </div>
           </div>
           <div class="download-detail-actions">
@@ -6038,6 +6123,51 @@
     const auth = firebase.auth();
     const db = firebase.database();
     const storage = firebase.storage();
+
+    // ============================================================
+    // FIREBASE APP CHECK - Security Enhancement
+    // ============================================================
+    // App Check helps protect Firebase resources from abuse by ensuring
+    // that requests come from legitimate apps. It uses reCAPTCHA v3 to
+    // verify that requests are coming from real users and not bots.
+    // This adds an extra layer of security to database and storage operations.
+    // ============================================================
+    try {
+      const appCheck = firebase.appCheck();
+      appCheck.activate(
+        new firebase.appCheck.ReCaptchaV3Provider('6LcH7KIsAAAAAMzHThJ6DX3kXlKssbOsKMDQcXxb'),
+        true // Set to true for debug mode during development
+      );
+      console.log('🔒 Firebase App Check activated successfully with reCAPTCHA v3');
+
+      // Test App Check token generation
+      appCheck.getToken().then(token => {
+        if (token && token.token) {
+          console.log('✅ App Check token generated successfully');
+        } else {
+          console.warn('⚠️ App Check token generation returned empty token');
+        }
+      }).catch(error => {
+        console.warn('⚠️ App Check token generation failed:', error);
+      });
+
+    } catch (error) {
+      console.error('❌ Failed to initialize Firebase App Check:', error);
+      showToast('App Check initialization failed - some security features may not work', 'warning');
+    }
+
+    // Function to verify App Check status
+    function checkAppCheckStatus() {
+      try {
+        const appCheck = firebase.appCheck();
+        return appCheck.getToken().then(token => {
+          return !!(token && token.token);
+        }).catch(() => false);
+      } catch (error) {
+        console.error('❌ Cannot check App Check status:', error);
+        return false;
+      }
+    }
 
     // ============================================================
     // SUPABASE CONFIGURATION - v3.2.3
@@ -7532,21 +7662,35 @@
     return null;
   }
     function updateQuestProgress(type, id, delta, uidOverride) {
-      if (!auth || !auth.currentUser || !delta) return;
+      if (!auth || !auth.currentUser || !delta) {
+        console.warn('⚠️ updateQuestProgress: Missing auth, currentUser, or delta');
+        return Promise.reject(new Error('Missing required parameters'));
+      }
       const def = getQuestDef(type, id);
-      if (!def || def.enabled === false) return;
+      if (!def || def.enabled === false) {
+        console.warn('⚠️ updateQuestProgress: Quest not found or disabled:', type, id);
+        return Promise.reject(new Error('Quest not found or disabled'));
+      }
       const uid = uidOverride || auth.currentUser.uid;
       const periodKey = type === 'daily' ? getDailyKey() : getWeeklyKey();
+      console.log('📊 Updating quest:', { type, id, delta, uid, periodKey });
+
       const ref = db.ref('userQuests/' + uid + '/' + type + '/' + id);
       return ref.transaction(cur => {
         if (!cur || cur.periodKey !== periodKey) {
           const curVal = Math.min(delta, def.max);
+          console.log('📊 New quest period, setting cur to:', curVal);
           return { periodKey, cur: curVal, claimed: false };
         }
         const curVal = cur.cur || 0;
         const nextVal = Math.min(curVal + delta, def.max);
-        if (nextVal === curVal) return cur;
-        
+        if (nextVal === curVal) {
+          console.log('📊 Quest already at max, no change needed');
+          return cur;
+        }
+
+        console.log('📊 Quest progress:', curVal, '->', nextVal, '/', def.max);
+
         // Check if quest just completed
         if (curVal < def.max && nextVal >= def.max) {
           // Quest completed! Show toast
@@ -7556,21 +7700,31 @@
             'daily_listener': 'Active Listener',
             'weekly_active_creator': 'Active Creator',
             'weekly_social_butterfly': 'Social Butterfly',
-            'weekly_music_explorer': 'Music Explorer'
+            'weekly_music_explorer': 'Music Explorer',
+            'weekly_download_music_2': 'Music Collector'
           };
           const name = questNames[id] || id;
           const typeLabel = type === 'daily' ? 'Harian' : 'Mingguan';
+          console.log('🎉 Quest completed:', name);
           showToast(`[Misi ${typeLabel}] ${name} Selesai! 🎉`, 'success');
         }
-        
+
         return { ...cur, cur: nextVal };
       }).then(res => {
-        if (!res.committed) return;
+        if (!res.committed) {
+          console.warn('⚠️ Quest transaction not committed');
+          return;
+        }
+        console.log('✅ Quest transaction committed successfully');
         if (uid === (auth.currentUser && auth.currentUser.uid)) {
           if (!userQuestState[type]) userQuestState[type] = {};
           userQuestState[type][id] = res.snapshot.val() || {};
+          console.log('📊 Updated local quest state:', userQuestState[type][id]);
         }
-      }).catch(() => {});
+      }).catch(err => {
+        console.error('❌ Quest update error:', err);
+        throw err;
+      });
     }
     function grantCoins(uid, amount) {
       if (!uid || !amount || amount <= 0) return Promise.resolve();
@@ -9490,13 +9644,13 @@
           if (ddProgressFill && ddProgressText) {
             if (percent !== null) {
               ddProgressFill.style.width = percent + '%';
-              ddProgressText.textContent = `Downloading ${percent}%`;
+              ddProgressText.innerHTML = `<span class="download-spinner"></span>Downloading ${percent}%`;
               // Disable cancel button at 60%
               if (ddCancelBtn && percent >= 60) {
                 ddCancelBtn.disabled = true;
               }
             } else {
-              ddProgressText.textContent = `Downloading ${Math.round(receivedLength / 1024)} KB`; 
+              ddProgressText.innerHTML = `<span class="download-spinner"></span>Downloading ${Math.round(receivedLength / 1024)} KB`;
             }
           }
         }
@@ -9515,12 +9669,39 @@
 
         if (ddProgressFill && ddProgressText) {
           ddProgressFill.style.width = '100%';
-          ddProgressText.textContent = 'Selesai! ✓';
+          ddProgressText.innerHTML = '✅ Selesai!';
+        }
+
+        // Add success animation
+        const ddCard = document.getElementById('downloadDetailModal');
+        if (ddCard) {
+          ddCard.classList.add('download-complete');
+          setTimeout(() => {
+            ddCard.classList.remove('download-complete');
+          }, 600);
         }
 
         // Add quest progress
         if (auth.currentUser && userData) {
-          updateQuestProgress('weekly', 'weekly_download_music_2', 1, auth.currentUser.uid);
+          console.log('🎵 Updating quest progress for download - user:', auth.currentUser.uid);
+          console.log('🎵 Quest ID: weekly_download_music_2, delta: 1');
+          updateQuestProgress('weekly', 'weekly_download_music_2', 1, auth.currentUser.uid).then(() => {
+            console.log('✅ Quest progress updated successfully for Music Collector');
+            // Refresh quest UI immediately
+            loadUserQuests().then(() => {
+              renderEventCenter();
+              console.log('🔄 Quest UI refreshed after download');
+              // Show success message
+              showToast('Quest "Music Collector" progress updated! 📥', 'success');
+            }).catch(err => {
+              console.error('❌ Failed to refresh quest UI:', err);
+            });
+          }).catch(err => {
+            console.error('❌ Failed to update quest progress:', err);
+            showToast('Quest update failed, but download successful', 'warning');
+          });
+        } else {
+          console.warn('⚠️ Cannot update quest: user not authenticated or userData missing');
         }
 
         showToast('Download berhasil, check folder unduhan Anda.');
