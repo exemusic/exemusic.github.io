@@ -2375,6 +2375,13 @@
     .mp-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; justify-content: center; }
     .mp-name { font-size: 20px; font-weight: 800; color: #fff; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; }
     .mp-handle { font-size: 11px; color: #888; margin-bottom: 12px; letter-spacing: 0.3px; }
+    .mp-ranking-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+      justify-content: center;
+    }
     .mp-ranking-badge {
       display: inline-flex; align-items: center; gap: 4px;
       background: linear-gradient(135deg, rgba(255,193,7,0.15), rgba(255,152,0,0.1));
@@ -6591,7 +6598,7 @@
     let leaderboardRefreshInterval = null;
     let leaderboardRefreshCountdown = 60;
 
-    function openLeaderboard() {
+    function openLeaderboard(defaultCategory = 'followers') {
       const eventModal = document.getElementById('modalEventCenter');
       const lbModal = document.getElementById('modalLeaderboard');
       
@@ -6605,10 +6612,13 @@
       if (lbModal) lbModal.style.display = 'block';
       
       // Set hash for refresh
-      window.location.hash = '#leaderboard';
+      window.location.hash = `#leaderboard#${defaultCategory}`;
       
       // Load leaderboard data
       loadLeaderboardData();
+      
+      // Switch to default category
+      switchLeaderboardTab(defaultCategory, null);
       
       // Start refresh timer
       startLeaderboardRefresh();
@@ -6821,22 +6831,18 @@
         
         // Check ranking in each category
         const categories = ['followers', 'tags', 'uploads', 'execoin'];
-        let bestRank = null;
-        let bestCategory = null;
+        const userRanks = [];
         
         categories.forEach(cat => {
           const sorted = allUsers.sort((a, b) => b[cat] - a[cat]);
           const rank = sorted.findIndex(u => u.uid === uid) + 1;
           if (rank > 0 && rank <= 5) {
-            if (!bestRank || rank < bestRank) {
-              bestRank = rank;
-              bestCategory = cat;
-            }
+            userRanks.push({ category: cat, rank: rank });
           }
         });
         
-        // If user is in top 5, show badge
-        if (bestRank && bestCategory) {
+        // If user has ranks, show badges
+        if (userRanks.length > 0) {
           const categoryLabels = {
             followers: 'Followers',
             tags: 'Tags',
@@ -6844,14 +6850,21 @@
             execoin: 'ExeCoin'
           };
           
-          const badge = document.createElement('div');
-          badge.className = `mp-ranking-badge rank-${bestRank}`;
-          badge.innerHTML = `
-            <span class="mp-ranking-icon">🔥</span>
-            <span class="mp-ranking-text">#${bestRank} ${categoryLabels[bestCategory]}</span>
-          `;
-          badge.onclick = () => openLeaderboard();
-          profHeader.appendChild(badge);
+          const badgesContainer = document.createElement('div');
+          badgesContainer.className = 'mp-ranking-badges';
+          
+          userRanks.forEach(({ category, rank }) => {
+            const badge = document.createElement('div');
+            badge.className = `mp-ranking-badge rank-${rank}`;
+            badge.innerHTML = `
+              <span class="mp-ranking-icon">🔥</span>
+              <span class="mp-ranking-text">#${rank} ${categoryLabels[category]}</span>
+            `;
+            badge.onclick = () => openLeaderboard(category);
+            badgesContainer.appendChild(badge);
+          });
+          
+          profHeader.appendChild(badgesContainer);
         }
       } catch (err) {
         console.error('Error loading ranking badge:', err);
