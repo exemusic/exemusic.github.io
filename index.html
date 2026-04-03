@@ -5124,6 +5124,7 @@
       <div class="sys-tools">
         <button onclick="copyRawUrl()" title="Copy URL Audio"><i class="fas fa-link"></i></button>
         <button onclick="openCopyLink()" title="Share Link"><i class="fas fa-share-alt"></i></button>
+        <button onclick="toggleBlacklist()" id="blacklistBtn" title="Blacklist Song"><i class="fas fa-ban"></i></button>
         <button onclick="downloadSong()" title="Download"><i class="fas fa-download"></i></button>
         <button onclick="openReq()" title="Upload"><i class="fas fa-plus-circle"></i></button>
       </div>
@@ -6834,7 +6835,7 @@
       if (!profHeader || !uid) return;
       
       // Remove existing badge
-      const existingBadge = profHeader.querySelector('.mp-ranking-badge');
+      const existingBadge = profHeader.querySelector('.mp-ranking-badges');
       if (existingBadge) existingBadge.remove();
       
       try {
@@ -8532,6 +8533,15 @@
     async function setup(idx, play = true) {
       if (!songs[idx]) return;
       i = idx;
+      
+      // Check if song is blacklisted
+      const songId = songs[i].key;
+      if (userData?.blacklist?.includes(songId)) {
+        showToast('Lagu di-blacklist, skip ke lagu berikutnya');
+        next();
+        return;
+      }
+      
       applyProfileUrl(true);
       audio.src = songs[i].url;
       document.getElementById('title').textContent = songs[i].title;
@@ -8548,7 +8558,7 @@
         document.getElementById('eq').classList.add('playing');
         showToast(`🎵 Now Playing: ${songs[i].title}`);
       }
-      updateFollowUI(); updateFavoriteUI(); saveLastSong();
+      updateFollowUI(); updateFavoriteUI(); updateBlacklistUI(); saveLastSong();
     }
 
     function toggle() {
@@ -9374,6 +9384,36 @@
           if (progressEl) progressEl.style.display = 'none';
         }, 2500);
       }
+    }
+    async function toggleBlacklist() {
+      if (!auth.currentUser || !userData) {
+        showToast('Login dulu untuk blacklist lagu');
+        return;
+      }
+      const songId = songs[i]?.key;
+      if (!songId) return;
+      
+      if (!userData.blacklist) userData.blacklist = [];
+      
+      const isBlacklisted = userData.blacklist.includes(songId);
+      if (isBlacklisted) {
+        userData.blacklist = userData.blacklist.filter(id => id !== songId);
+        showToast('Lagu di-unblacklist');
+      } else {
+        userData.blacklist.push(songId);
+        showToast('Lagu di-blacklist');
+      }
+      
+      await db.ref('users/' + auth.currentUser.uid).update({ blacklist: userData.blacklist });
+      updateBlacklistUI();
+    }
+    function updateBlacklistUI() {
+      const btn = document.getElementById('blacklistBtn');
+      if (!btn || !songs[i]) return;
+      const songId = songs[i].key;
+      const isBlacklisted = userData?.blacklist?.includes(songId);
+      btn.innerHTML = isBlacklisted ? '<i class="fas fa-check"></i>' : '<i class="fas fa-ban"></i>';
+      btn.title = isBlacklisted ? 'Unblacklist Song' : 'Blacklist Song';
     }
     function openReq() { document.getElementById('modalReq').style.display = 'block'; }
     function openAbout() { document.getElementById('modalAbout').style.display = 'block'; }
