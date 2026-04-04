@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 3.2.3</title>
+  <title>ExeMusic 3.3.0</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
 
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -267,6 +267,52 @@
       10% { opacity: 1; }
       80% { opacity: 0.8; }
       100% { transform: translateY(-100vh) rotate(360deg) scale(1.2); opacity: 0; }
+    }
+
+    /* ============================================================
+       REAL ACCOUNT TAG - STAR PARTICLES EFFECT
+    ============================================================ */
+    .tag-realaccount {
+      background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
+      color: #000;
+      border: 1px solid #ffd700;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 10px rgba(255,215,0,0.8), 0 0 20px rgba(255,237,78,0.5);
+      position: relative;
+      overflow: visible;
+      border-radius: 999px;
+      animation: realAccountGlow 2s ease-in-out infinite;
+    }
+    @keyframes realAccountGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(255,215,0,0.6), inset 0 0 5px rgba(255,255,255,0.3); }
+      50% { box-shadow: 0 0 20px rgba(255,215,0,0.9), 0 0 30px rgba(255,237,78,0.7), inset 0 0 8px rgba(255,255,255,0.5); }
+    }
+
+    /* star particles around real account tag */
+    .stars-container {
+      position: fixed; pointer-events: none; z-index: 99991;
+      width: 100vw; height: 100vh; top: 0; left: 0;
+      overflow: hidden;
+      display: none;
+    }
+    .stars-container.active { display: block; }
+    
+    .star-particle {
+      position: absolute;
+      bottom: -20px;
+      font-size: 12px;
+      color: #ffd700;
+      animation: floatStar linear infinite;
+      opacity: 0;
+      text-shadow: 0 0 5px #ffd700;
+    }
+    @keyframes floatStar {
+      0% { transform: translateY(0) rotate(0deg) scale(0.3); opacity: 0; }
+      10% { opacity: 1; }
+      50% { opacity: 0.8; transform: translateY(-50vh) rotate(180deg) scale(1); }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-100vh) rotate(360deg) scale(0.5); opacity: 0; }
     }
 
     /* ============================================================
@@ -2503,6 +2549,20 @@
     ============================================================ */
     .song-item { padding: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; display: flex; align-items: center; justify-content: space-between; border-radius: 10px; transition: 0.2s; }
     .song-item:hover { background: rgba(255,255,255,0.04); }
+
+    .trending-section { margin-bottom: 20px; }
+    .trending-songs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+    .trending-songs::-webkit-scrollbar { height: 3px; }
+    .trending-songs::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.2); border-radius: 10px; }
+    .trending-item {
+      min-width: 120px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 10px;
+      border: 1px solid rgba(255,215,0,0.3); cursor: pointer; transition: 0.2s;
+      text-align: center; font-size: 11px; color: #ddd;
+    }
+    .trending-item:hover { background: rgba(255,215,0,0.1); transform: translateY(-2px); }
+    .trending-rank { font-size: 16px; font-weight: bold; color: #ffd700; margin-bottom: 4px; }
+    .trending-title { font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .trending-artist { font-size: 10px; color: #aaa; }
 
     /* ============================================================
        INPUTS & BUTTONS
@@ -4976,6 +5036,7 @@
 
   <!-- FLOATING HEARTS (for velly) -->
   <div class="hearts-container" id="heartsContainer"></div>
+  <div class="stars-container" id="starsContainer"></div>
 
   <!-- KETUPAT PARTICLES (for ramadhan tags) -->
   <div class="ketupat-container" id="ketupatContainer"></div>
@@ -5609,6 +5670,10 @@
     <div class="sheet">
       <input type="text" id="searchSongInput" class="inp-dark" placeholder="🔍 Cari lagu..." 
              oninput="filterSongList(this.value)" style="margin-bottom:12px; width: 100%;">
+      <div class="trending-section" id="trendingSection">
+        <h4 style="color:var(--accent); margin-bottom:8px">🔥 TRENDING</h4>
+        <div id="trendingSongs" class="trending-songs"></div>
+      </div>
       <div id="songContainer"></div>
     </div>
   </div>
@@ -5616,7 +5681,7 @@
   <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="about-box">
-        <h3>🎵 ExeMusic 3.2.3</h3>
+        <h3>🎵 ExeMusic 3.3.0</h3>
         <p>Platform musik untuk para creator url berbagi dan menikmati musik berkualitas tinggi.</p>
         <p><b>Fitur Platform</b></p>
         <ul class="about-features">
@@ -5634,10 +5699,50 @@
         </div>
         <p style="margin-top:12px; color:#ddd">
           📱 WhatsApp — <a href="https://wa.me/62895329018240" target="_blank" class="about-dev-link">click here</a><br>
-           Use Boombox — <a href="javascript:void(0)" onclick="openBoomboxTutorial()" class="about-dev-link">click here</a>
+           Use Boombox — <a href="javascript:void(0)" onclick="openBoomboxTutorial()" class="about-dev-link">click here</a><br>
+           Update info — <a href="javascript:void(0)" onclick="openUpdateInfo()" class="about-dev-link">click here</a>
         </p>
         <p style="font-size:11px; color:#555; margin-top:10px">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2025 ExeMusic</p>
         <button onclick="closeModal()" class="btn-act">SAYA MENGERTI</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalUpdateInfo" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="about-box">
+        <h3>📋 Update Info v3.3.0</h3>
+        <p><b>Version:</b> 3.3.0</p>
+        <p><b>Date:</b> 4/5/2024</p>
+        <p><b>Update List:</b></p>
+        <ul class="about-features">
+          <li><b>UI Button Updates</b> – Perbaikan tampilan tombol untuk pengalaman yang lebih baik</li>
+          <li><b>Blacklist/Unblacklist Music System</b> – Sistem untuk memblokir atau membuka blokir musik</li>
+          <li><b>Trending Music by Admin</b> – Admin dapat mengatur musik trending #1, #2, #3</li>
+        </ul>
+        <button onclick="closeModal()" class="btn-act">TUTUP</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalTrending" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet">
+      <div class="about-box">
+        <h3>🔥 Set Trending Song</h3>
+        <input type="text" id="trendingMusicId" class="inp-dark" placeholder="Enter Music ID" style="margin-bottom:10px">
+        <select id="trendingRank" class="inp-dark" style="margin-bottom:10px">
+          <option value="1">#1</option>
+          <option value="2">#2</option>
+          <option value="3">#3</option>
+        </select>
+        <button onclick="adSetTrending()" class="btn-act" style="margin-bottom:10px">SET</button>
+        <h4>Untrending</h4>
+        <select id="untrendingRank" class="inp-dark" style="margin-bottom:10px">
+          <option value="1">#1</option>
+          <option value="2">#2</option>
+          <option value="3">#3</option>
+        </select>
+        <button onclick="adUntrending()" class="btn-act">UNSET</button>
       </div>
     </div>
   </div>
@@ -6062,6 +6167,7 @@
 
     let heartsInterval = null;
     let heartsMode = 'love';
+    let starsInterval = null;
     let ketupatInterval = null;
     let profileMusicInterval = null;
     let profileMusicDuration = 0;
@@ -6096,6 +6202,32 @@
       const c = document.getElementById('heartsContainer');
       if (c) c.classList.remove('active');
       if (heartsInterval) { clearInterval(heartsInterval); heartsInterval = null; }
+    }
+    
+    function createStar() {
+      const c = document.getElementById('starsContainer');
+      if (!c) return;
+      const s = document.createElement('div');
+      s.className = 'star-particle';
+      s.textContent = '⭐';
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.fontSize = (8 + Math.random() * 12) + 'px';
+      s.style.animationDuration = (3 + Math.random() * 3) + 's';
+      s.style.animationDelay = (Math.random() * 1) + 's';
+      c.appendChild(s);
+      setTimeout(() => s.remove(), 7000);
+    }
+    function startStars() {
+      const c = document.getElementById('starsContainer');
+      if (!c) return;
+      c.classList.add('active');
+      if (starsInterval) return;
+      starsInterval = setInterval(createStar, 500);
+    }
+    function stopStars() {
+      const c = document.getElementById('starsContainer');
+      if (c) c.classList.remove('active');
+      if (starsInterval) { clearInterval(starsInterval); starsInterval = null; }
     }
     
     function createKetupat() {
@@ -6223,6 +6355,7 @@
     const lastReadNotifTimeKey = 'exeNotifRead';
     let userCache = {};
     let isFirstTimeUser = false;
+    let trendingSongs = {};
     let adAllUsers = [], adAllSongs = [];
     let adminLoaded = false;
     let adminDrag = { active: false, offsetX: 0, offsetY: 0 };
@@ -8511,6 +8644,12 @@
         adAllSongs = [...songs];
         renderAdminSongs();
 
+        // Load trending
+        db.ref('settings/trending').once('value').then(trendSnap => {
+          trendingSongs = trendSnap.val() || {};
+          renderTrending();
+        });
+
         const urlParams = new URLSearchParams(window.location.search);
         const songId = urlParams.get('id');
         const profileUid = urlParams.get('profile_userid');
@@ -9154,6 +9293,29 @@
       });
     }
     
+    function renderTrending() {
+      const container = document.getElementById('trendingSongs');
+      if (!container) return;
+      const html = [1,2,3].map(rank => {
+        const songId = trendingSongs[rank];
+        const song = songs.find(s => s.key === songId);
+        if (song) {
+          return `<div class="trending-item" onclick="setup(${songs.indexOf(song)}); closeModal()">
+            <div class="trending-rank">#${rank}</div>
+            <div class="trending-title">${escapeHtml(song.title)}</div>
+            <div class="trending-artist">@${escapeHtml(song.by || '')}</div>
+          </div>`;
+        } else {
+          return `<div class="trending-item" style="opacity:0.5">
+            <div class="trending-rank">#${rank}</div>
+            <div class="trending-title">No Song</div>
+            <div class="trending-artist">-</div>
+          </div>`;
+        }
+      }).join('');
+      container.innerHTML = html;
+    }
+    
     function toggleFav(u, e) {
       e.stopPropagation();
       if (fav.includes(u)) { fav = fav.filter(x => x !== u); showToast('Dihapus dari Favorit'); }
@@ -9181,7 +9343,8 @@
       const myTagLower = (userData && userData.tag ? userData.tag.toLowerCase() : '');
       if (myTagLower.includes('velly')) startHearts('love');
       else if (myTagLower.includes('gamers')) startHearts('game');
-      else stopHearts();
+      else if (myTagLower.includes('realaccount')) startStars();
+      else { stopHearts(); stopStars(); }
       if (!audio.paused) {
         audio.pause();
         document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
@@ -9274,7 +9437,8 @@
       const cTagLower2 = (cData && cData.tag ? cData.tag.toLowerCase() : '');
       if (cTagLower2.includes('velly')) startHearts('love');
       else if (cTagLower2.includes('gamers')) startHearts('game');
-      else stopHearts();
+      else if (cTagLower2.includes('realaccount')) startStars();
+      else { stopHearts(); stopStars(); }
 
       if (cData && cData.profilemusic) playProfileMusic(cData.profilemusic);
       else {
@@ -9450,6 +9614,7 @@
     }
     function openReq() { document.getElementById('modalReq').style.display = 'block'; }
     function openAbout() { document.getElementById('modalAbout').style.display = 'block'; }
+    function openUpdateInfo() { document.getElementById('modalUpdateInfo').style.display = 'block'; }
     function openBoomboxTutorial() { document.getElementById('modalBoombox').style.display = 'block'; }
     function openTutorial() { document.getElementById('tutorialOverlay').style.display = 'flex'; }
     function closeTutorial() { const o = document.getElementById('tutorialOverlay'); o.style.display = 'none'; const v = document.getElementById('tutorialVideo'); if (v) { const src = v.src; v.src = src; } }
@@ -9859,7 +10024,8 @@
       'ramadhan-1447h': { title: 'RAMADHAN 1447H', desc: '🌅 Event Ramadhan Cycle 1: Login 3 hari + Play 10 lagu + Online 30 menit' },
       'night-tarawih': { title: 'NIGHT TARAWIH', desc: '🌙 Event Ramadhan Cycle 2: Online jam 18-20 (2 hari) + Share 2 lagu + Like 5 lagu' },
       'lailat-mode': { title: 'LAILAT MODE', desc: '🕌 Event Ramadhan Cycle 3: Login 7/10 hari terakhir + 120 menit playtime + Aktif jam 23+' },
-      'exe-sahur': { title: 'EXE-SAHUR', desc: '🌙 SECRET TAG: Upload lagu jam 03:00-05:00 (waktu sahur) - Auto grant jika enabled' }
+      'exe-sahur': { title: 'EXE-SAHUR', desc: '🌙 SECRET TAG: Upload lagu jam 03:00-05:00 (waktu sahur) - Auto grant jika enabled' },
+      realaccount: { title: 'REAL ACCOUNT', desc: 'Tag untuk akun asli yang terverifikasi' }
     };
     let adSelectedUserUid = null;
 
@@ -10051,6 +10217,7 @@
       if (!box) return;
       box.innerHTML = list.map(s => `<div class="admin-song-row">
         <div class="as-info"><div class="as-title">${escapeHtml(s.title)}</div><div class="as-by">@${escapeHtml(s.by || '')}</div></div>
+        <button class="admin-btn admin-btn-gold" onclick="adOpenTrendingModal('${s.key}')" style="padding:6px 10px;font-size:11px"><i class="fas fa-fire"></i></button>
         <button class="admin-btn admin-btn-red" onclick="adDelSong('${s.key}')" style="padding:6px 10px;font-size:11px"><i class="fas fa-trash"></i></button>
       </div>`).join('');
     }
@@ -10062,6 +10229,41 @@
     function adDelSong(id) {
       Swal.fire({ title: 'Hapus Lagu?', text: 'Permanen!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ff3333', confirmButtonText: 'Hapus!', background: '#0d0d15', color: '#fff' })
         .then(r => { if (r.isConfirmed) { db.ref('songs/' + id).remove(); addLog('Deleted song: ' + id); showToast('Lagu dihapus'); } });
+    }
+
+    function adOpenTrendingModal(songId) {
+      document.getElementById('trendingMusicId').value = songId;
+      document.getElementById('modalTrending').style.display = 'block';
+    }
+
+    function adSetTrending() {
+      const songId = document.getElementById('trendingMusicId').value.trim();
+      const rank = document.getElementById('trendingRank').value;
+      if (!songId) { showToast('Masukkan Music ID!'); return; }
+      db.ref('settings/trending/' + rank).set(songId).then(() => {
+        addLog('Set trending #' + rank + ': ' + songId);
+        showToast('Trending #' + rank + ' diset!');
+        document.getElementById('modalTrending').style.display = 'none';
+        // Reload trending
+        db.ref('settings/trending').once('value').then(trendSnap => {
+          trendingSongs = trendSnap.val() || {};
+          renderTrending();
+        });
+      });
+    }
+
+    function adUntrending() {
+      const rank = document.getElementById('untrendingRank').value;
+      db.ref('settings/trending/' + rank).remove().then(() => {
+        addLog('Unset trending #' + rank);
+        showToast('Trending #' + rank + ' dihapus!');
+        document.getElementById('modalTrending').style.display = 'none';
+        // Reload trending
+        db.ref('settings/trending').once('value').then(trendSnap => {
+          trendingSongs = trendSnap.val() || {};
+          renderTrending();
+        });
+      });
     }
 
     function adManualAdd() {
