@@ -6884,9 +6884,12 @@
       const eventModal = document.getElementById('modalEventCenter');
       const lbModal = document.getElementById('modalLeaderboard');
       
-      if (!auth.currentUser || !userData) {
+      if (!auth.currentUser) {
         msg('Login dulu untuk akses leaderboard');
         return;
+      }
+      if (!userData) {
+        console.warn('Leaderboard dibuka sebelum userData selesai dimuat. Proses tetap dilanjutkan.');
       }
 
       // store URL before leaderboard
