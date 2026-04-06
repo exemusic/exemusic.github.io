@@ -2325,6 +2325,7 @@
     .active-btn { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px var(--accent); }
 
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; backdrop-filter: blur(8px); }
+    .modal.show { display: flex !important; align-items: flex-start !important; justify-content: center !important; padding: 40px 16px !important; opacity: 1 !important; z-index: 99999 !important; }
     .sheet {
       position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%);
       background: linear-gradient(180deg, #121220, #0a0a16);
@@ -7050,10 +7051,56 @@
       // Close event center, open leaderboard
       if (eventModal) eventModal.style.display = 'none';
       if (lbModal) {
+        // Remove any existing inline styles and use class
+        lbModal.style.cssText = '';
+        lbModal.classList.add('show');
+        console.log('Leaderboard modal should be visible now');
+      }
+
+      // Set leaderboard URL
+      setLeaderboardUrl(defaultCategory);
+      
+      // Load leaderboard data
+      loadLeaderboardData();
+      
+      // Switch to default category
+      switchLeaderboardTab(defaultCategory, null);
+      
+      // Start refresh timer
+      startLeaderboardRefresh();
+    }
+
+    function closeLeaderboard() {
+      const lbModal = document.getElementById('modalLeaderboard');
+      if (lbModal) {
+        lbModal.classList.remove('show');
+        lbModal.style.display = 'none';
+      }
+      restoreUrlAfterLeaderboard();
+      if (leaderboardRefreshInterval) {
+        clearInterval(leaderboardRefreshInterval);
+        leaderboardRefreshInterval = null;
+      }
+    }
+      if (!userData) {
+        console.warn('Leaderboard dibuka sebelum userData selesai dimuat. Proses tetap dilanjutkan.');
+      }
+
+      // store URL before leaderboard
+      if (!lastNonLeaderboardUrl) {
+        lastNonLeaderboardUrl = window.location.href;
+      }
+      
+      // Close event center, open leaderboard
+      if (eventModal) eventModal.style.display = 'none';
+      if (lbModal) {
         lbModal.style.display = 'flex';
-        lbModal.style.alignItems = 'center';
+        lbModal.style.alignItems = 'flex-start';
         lbModal.style.justifyContent = 'center';
+        lbModal.style.padding = '40px 16px';
         lbModal.style.zIndex = '99999';
+        lbModal.style.opacity = '1';
+        lbModal.style.background = 'rgba(0,0,0,0.85)';
         console.log('Leaderboard modal should be visible now');
       }
 
