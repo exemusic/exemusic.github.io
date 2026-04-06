@@ -6401,6 +6401,7 @@
       next();
     }
     function dismissLoader() {
+      console.log('dismissLoader called');
       advanceLoader(100, 'READY!');
       setTimeout(() => {
         const screen = document.getElementById('gameLoadScreen');
@@ -7028,7 +7029,7 @@
     }
 
     function openLeaderboard(defaultCategory = 'followers') {
-      console.log('openLeaderboard called with category:', defaultCategory);
+      console.log('openLeaderboard called, auth:', auth.currentUser ? 'logged in' : 'not logged in');
       
       const eventModal = document.getElementById('modalEventCenter');
       const lbModal = document.getElementById('modalLeaderboard');
@@ -7053,7 +7054,7 @@
         lbModal.style.alignItems = 'center';
         lbModal.style.justifyContent = 'center';
         lbModal.style.zIndex = '99999';
-        console.log('Leaderboard modal should be visible now');
+        console.log('Leaderboard modal set to flex');
       }
 
       // Set leaderboard URL
@@ -8702,7 +8703,14 @@
     // ============================================================
     // AUTH
     // ============================================================
+    // Fallback: dismiss loader after 15 seconds max
+    setTimeout(() => {
+      console.log('Force dismiss loader after timeout');
+      dismissLoader();
+    }, 15000);
+
     auth.onAuthStateChanged(u => {
+      console.log('Auth state changed:', u ? 'user logged in' : 'no user');
       if (u) {
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
