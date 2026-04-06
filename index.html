@@ -6872,7 +6872,10 @@
 
     function closeLeaderboard() {
       const lbModal = document.getElementById('modalLeaderboard');
-      if (lbModal) lbModal.style.display = 'none';
+      if (lbModal) {
+        lbModal.style.display = 'none';
+        lbModal.style.zIndex = '';
+      }
       restoreUrlAfterLeaderboard();
       if (leaderboardRefreshInterval) {
         clearInterval(leaderboardRefreshInterval);
@@ -6899,7 +6902,12 @@
       
       // Close event center, open leaderboard
       if (eventModal) eventModal.style.display = 'none';
-      if (lbModal) lbModal.style.display = 'block';
+      if (lbModal) {
+        lbModal.style.display = 'flex';
+        lbModal.style.alignItems = 'center';
+        lbModal.style.justifyContent = 'center';
+        lbModal.style.zIndex = '99999';
+      }
 
       // Set leaderboard URL
       setLeaderboardUrl(defaultCategory);
