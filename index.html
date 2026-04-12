@@ -3,10 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 3.3.0</title>
+  <title>ExeMusic 3.3.1</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
 
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  
+  <!-- Gate Verification Check -->
+  <script>
+    (function() {
+      const VERIFICATION_KEY = 'exe_verified';
+      const EXPIRY_KEY = 'exe_expiry';
+      
+      function checkGateVerification() {
+        const verified = localStorage.getItem(VERIFICATION_KEY);
+        const expiry = localStorage.getItem(EXPIRY_KEY);
+        
+        // If not verified or token expired, redirect to gate
+        if (verified !== 'true' || !expiry || Date.now() > parseInt(expiry)) {
+          const gateUrl = window.location.protocol + '//' + window.location.host + window.location.pathname.replace(window.location.pathname, '/gate.html');
+          window.location.href = gateUrl;
+        }
+      }
+      
+      // Run check immediately
+      checkGateVerification();
+    })();
+  </script>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -5755,7 +5778,7 @@
   <div class="modal" id="modalAbout" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="about-box">
-        <h3>🎵 ExeMusic 3.3.0</h3>
+        <h3>🎵 ExeMusic 3.3.1</h3>
         <p>Platform musik untuk para creator url berbagi dan menikmati musik berkualitas tinggi.</p>
         <p><b>Fitur Platform</b></p>
         <ul class="about-features">
@@ -5766,6 +5789,8 @@
           <li><b>Blacklist System</b> – Blokir lagu yang tidak ingin didengar lagi</li>
           <li><b>Built-in Admin Panel</b> – Kelola platform langsung dari aplikasi</li>
           <li><b>Real-time Sync</b> – Followers, likes, playlist real-time</li>
+          <li><b>Gate Verification System</b> – Proteksi dari bot & spam dengan verifikasi Cloudflare</li>
+          <li><b>Modern Leaderboard</b> – Sistem ranking responsif tanpa hash navigation</li>
         </ul>
         <div class="rules-warn">
           <b>PERATURAN KETAT:</b><br>Konten SARA, pornografi audio, earrape, ujaran kebencian →<br>
@@ -5785,14 +5810,16 @@
   <div class="modal" id="modalUpdateInfo" onclick="if(event.target==this)this.style.display='none'">
     <div class="sheet">
       <div class="about-box">
-        <h3>📋 Update Info v3.3.0</h3>
-        <p><b>Version:</b> 3.3.0</p>
-        <p><b>Date:</b> 4/5/2024</p>
+        <h3>📋 Update Info v3.3.1</h3>
+        <p><b>Version:</b> 3.3.1</p>
+        <p><b>Date:</b> 4/12/2026</p>
         <p><b>Update List:</b></p>
         <ul class="about-features">
-          <li><b>UI Button Updates</b> – Perbaikan tampilan tombol untuk pengalaman yang lebih baik</li>
-          <li><b>Blacklist/Unblacklist Music System</b> – Sistem untuk memblokir atau membuka blokir musik</li>
-          <li><b>Trending Music by Admin</b> – Admin dapat mengatur musik trending #1, #2, #3</li>
+          <li><b>Gate Verification System</b> – Proteksi platform dengan Cloudflare Turnstile</li>
+          <li><b>Security Improvement</b> – Cegah bot & spam dengan verifikasi 3 jam sekali</li>
+          <li><b>Modern Leaderboard</b> – Sistem leaderboard responsif tanpa hash-based navigation</li>
+          <li><b>Cleaner URL</b> – Hilangkan ?leaderboard# untuk pengalaman lebih profesional</li>
+          <li><b>Responsive Design</b> – Optimisasi untuk semua ukuran perangkat</li>
         </ul>
         <button onclick="closeModal()" class="btn-act">TUTUP</button>
       </div>
@@ -6848,27 +6875,10 @@
     }
 
     // ============================================================
-    // LEADERBOARD SYSTEM - v3.2.3
+    // LEADERBOARD SYSTEM - v3.3.1 (Clean URL, No Hash Navigation)
     // ============================================================
     let leaderboardRefreshInterval = null;
     let leaderboardRefreshCountdown = 60;
-
-    let lastNonLeaderboardUrl = null;
-
-    function setLeaderboardUrl(category) {
-      const base = window.location.protocol + '//' + window.location.host + window.location.pathname;
-      const leaderboardUrl = base + '?leaderboard#' + category;
-      window.history.pushState({ path: leaderboardUrl }, '', leaderboardUrl);
-    }
-
-    function restoreUrlAfterLeaderboard() {
-      if (lastNonLeaderboardUrl) {
-        window.history.pushState({ path: lastNonLeaderboardUrl }, '', lastNonLeaderboardUrl);
-      } else {
-        applyProfileUrl(true); // default fallback
-      }
-      lastNonLeaderboardUrl = null;
-    }
 
     function closeLeaderboard() {
       const lbModal = document.getElementById('modalLeaderboard');
@@ -6876,7 +6886,6 @@
         lbModal.style.display = 'none';
         lbModal.style.zIndex = '';
       }
-      restoreUrlAfterLeaderboard();
       if (leaderboardRefreshInterval) {
         clearInterval(leaderboardRefreshInterval);
         leaderboardRefreshInterval = null;
@@ -6894,11 +6903,6 @@
       if (!userData) {
         console.warn('Leaderboard dibuka sebelum userData selesai dimuat. Proses tetap dilanjutkan.');
       }
-
-      // store URL before leaderboard
-      if (!lastNonLeaderboardUrl) {
-        lastNonLeaderboardUrl = window.location.href;
-      }
       
       // Close event center, open leaderboard
       if (eventModal) eventModal.style.display = 'none';
@@ -6908,9 +6912,6 @@
         lbModal.style.justifyContent = 'center';
         lbModal.style.zIndex = '99999';
       }
-
-      // Set leaderboard URL
-      setLeaderboardUrl(defaultCategory);
       
       // Load leaderboard data
       loadLeaderboardData();
@@ -7169,18 +7170,9 @@
       }
     }
 
-    // Handle browser back/forward navigation for leaderboard
+    // Handle browser navigation (legacy support)
     window.addEventListener('popstate', (event) => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const isLeaderboard = urlParams.get('leaderboard');
-      const leaderboardCategory = window.location.hash.substring(1) || 'followers';
-
-      if (isLeaderboard && auth.currentUser) {
-        openLeaderboard(leaderboardCategory);
-      } else {
-        // Close leaderboard if navigating away
-        closeLeaderboard();
-      }
+      // Leaderboard now uses modal-only navigation, no URL-based handling needed
     });
 
     // ============================================================
