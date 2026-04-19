@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ExeMusic 3.3.1</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
+  <script>
+    (function () {
+      try {
+        var vk = 'exe_verified', ek = 'exe_expiry';
+        var ok = localStorage.getItem(vk) === 'true';
+        var ex = localStorage.getItem(ek);
+        if (!ok || !ex || Date.now() >= parseInt(ex, 10)) {
+          window.location.replace(new URL('gate.html', window.location.href).href);
+        }
+      } catch (e) {}
+    })();
+  </script>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -1357,6 +1369,149 @@
       color: #e5e7eb;
       border: 1px solid rgba(75,85,99,0.95);
     }
+
+    /* Top-up game (Roblox) — Event & Quest */
+    .event-topup-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .event-topup-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(224,30,90,0.12), rgba(0,162,255,0.08));
+      border: 1px solid rgba(224,30,90,0.35);
+    }
+    .event-topup-head-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(224,30,90,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+    }
+    .event-topup-head-text h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    .event-topup-head-text p {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+    .event-topup-user-row label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #9ca3af;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .event-topup-user-row input.inp-dark {
+      width: 100%;
+      max-width: 100%;
+    }
+    .event-topup-packs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .event-topup-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(55,65,81,0.9);
+    }
+    .event-topup-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+    .event-topup-card-title span {
+      color: #38bdf8;
+    }
+    .event-topup-card-meta {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+    .event-topup-card-meta strong {
+      color: #fbbf24;
+    }
+    .event-topup-go {
+      font-size: 10px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(224,30,90,0.55);
+      background: linear-gradient(135deg, rgba(224,30,90,0.35), rgba(185,28,28,0.25));
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .event-topup-go:hover {
+      box-shadow: 0 0 16px rgba(224,30,90,0.35);
+    }
+    .event-topup-go:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .event-topup-progress-panel {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(3,7,18,0.98);
+      border: 1px solid rgba(34,197,94,0.4);
+    }
+    .event-topup-progress-panel.show {
+      display: flex;
+    }
+    .event-topup-progress-panel .lbl {
+      font-size: 11px;
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+    .event-topup-progress-panel .sub {
+      font-size: 10px;
+      color: #9ca3af;
+    }
+    .event-topup-progress-bar {
+      position: relative;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(31,41,55,0.95);
+      overflow: hidden;
+    }
+    .event-topup-progress-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #38bdf8);
+      transition: width 0.25s ease-out;
+    }
+    .event-topup-progress-pct {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #22c55e;
+      text-align: right;
+    }
     @media (max-width: 900px) {
       .event-center-layout {
         grid-template-columns: minmax(0, 1fr);
@@ -1380,6 +1535,13 @@
       .event-quest-action,
       .event-shop-action {
         align-items: flex-start;
+      }
+      .event-topup-card {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .event-topup-go {
+        width: 100%;
+        justify-content: center;
       }
     }
 
@@ -5514,6 +5676,7 @@
             <button class="event-tab-btn active" data-tab="daily" onclick="switchEventTab('daily', this)"><i class="fas fa-sun"></i> Tugas Harian</button>
             <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Misi Mingguan</button>
             <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Toko ExeCoin</button>
+            <button class="event-tab-btn" data-tab="topup" onclick="switchEventTab('topup', this)"><i class="fas fa-cube"></i> Top Up Game</button>
           </div>
           <div style="margin-top:10px; display:flex; justify-content:center">
             <button class="event-tab-btn" style="background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(245,158,11,0.15)); border-color: rgba(251,191,36,0.6); color: #fbbf24" onclick="openLeaderboard()">
@@ -5531,6 +5694,46 @@
           <div id="evTabShop" class="event-tab-view">
             <div class="event-tab-caption">Tukar ExeCoin dengan tag eksklusif dan VIP.</div>
             <div id="evShopList" class="event-quest-list"></div>
+          </div>
+          <div id="evTabTopup" class="event-tab-view">
+            <div class="event-tab-caption">Tukar ExeCoin ke Robux (Roblox). Pastikan username Roblox benar.</div>
+            <div class="event-quest-list event-topup-wrap">
+              <div class="event-topup-head">
+                <div class="event-topup-head-icon"><i class="fas fa-cube"></i></div>
+                <div class="event-topup-head-text">
+                  <h4>ROBLOX — Top Up via ExeCoin</h4>
+                  <p>Paket tetap: 5.999 ExeCoin → 500 Robux · 15.000 ExeCoin → 1.200 Robux. Proses pengiriman simulasi otomatis setelah saldo &amp; username lolos cek.</p>
+                </div>
+              </div>
+              <div class="event-topup-user-row">
+                <label for="robloxTopupUsername">Username Roblox</label>
+                <input type="text" id="robloxTopupUsername" class="inp-dark" placeholder="contoh: Builderman" autocomplete="username" maxlength="20">
+              </div>
+              <div id="robloxTopupProgress" class="event-topup-progress-panel" aria-live="polite">
+                <div class="lbl" id="robloxTopupProgressTitle">Mengirim Robux…</div>
+                <div class="sub" id="robloxTopupProgressDetail">Menghubungkan ke pipeline…</div>
+                <div class="event-topup-progress-bar">
+                  <div id="robloxTopupProgressFill" class="event-topup-progress-fill"></div>
+                </div>
+                <div class="event-topup-progress-pct" id="robloxTopupProgressPct">0%</div>
+              </div>
+              <div class="event-topup-packs">
+                <div class="event-topup-card">
+                  <div>
+                    <div class="event-topup-card-title"><span>500</span> Robux</div>
+                    <div class="event-topup-card-meta">Harga: <strong>5.999</strong> ExeCoin</div>
+                  </div>
+                  <button type="button" class="event-topup-go" id="robloxBtn500" onclick="startRobloxTopupFromUi(500, 5999)">Cek &amp; kirim</button>
+                </div>
+                <div class="event-topup-card">
+                  <div>
+                    <div class="event-topup-card-title"><span>1.200</span> Robux</div>
+                    <div class="event-topup-card-meta">Harga: <strong>15.000</strong> ExeCoin</div>
+                  </div>
+                  <button type="button" class="event-topup-go" id="robloxBtn1200" onclick="startRobloxTopupFromUi(1200, 15000)">Cek &amp; kirim</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="event-center-sidepanel">
@@ -6506,7 +6709,8 @@
         'daily': 'evTabDaily',
         'weekly': 'evTabWeekly',
         'ramadhan': 'evTabRamadhan',
-        'shop': 'evTabShop'
+        'shop': 'evTabShop',
+        'topup': 'evTabTopup'
       };
       const tab = document.getElementById(tabMap[id] || 'evTabDaily');
       if (tab) tab.classList.add('active');
@@ -7209,6 +7413,99 @@
     function fmt(s) { if (isNaN(s)) return '0:00'; let m = Math.floor(s / 60), sec = Math.floor(s % 60); return m + ':' + (sec < 10 ? '0' + sec : sec); }
     function addLog(msg) { db.ref('logs').push({ msg, time: new Date().toLocaleTimeString() }); }
 
+    let robloxTopupBusy = false;
+    function isValidRobloxUsername(name) {
+      const s = String(name || '').trim();
+      if (s.length < 3 || s.length > 20) return false;
+      return /^[A-Za-z0-9_]+$/.test(s);
+    }
+    function setRobloxTopupButtonsDisabled(dis) {
+      ['robloxBtn500', 'robloxBtn1200'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.disabled = !!dis;
+      });
+    }
+    function startRobloxTopupFromUi(robuxAmount, priceExeCoin) {
+      if (robloxTopupBusy) return;
+      if (!auth.currentUser || !userData) {
+        msg('Login dulu untuk top up');
+        return;
+      }
+      const raw = document.getElementById('robloxTopupUsername');
+      const username = raw ? String(raw.value || '').trim() : '';
+      if (!isValidRobloxUsername(username)) {
+        showToast('Username Roblox tidak valid (3–20 karakter, huruf/angka/_ saja)', 'error');
+        return;
+      }
+      const coins = userData.coins || 0;
+      if (coins < priceExeCoin) {
+        showToast('ExeCoin belum cukup untuk paket ini', 'error');
+        return;
+      }
+      const uid = auth.currentUser.uid;
+      const coinsRef = db.ref('users/' + uid + '/coins');
+      robloxTopupBusy = true;
+      setRobloxTopupButtonsDisabled(true);
+      showToast('Memeriksa username & saldo…', 'info');
+      coinsRef.transaction(cur => {
+        const base = typeof cur === 'number' ? cur : 0;
+        if (base < priceExeCoin) return;
+        return base - priceExeCoin;
+      }).then(res => {
+        if (!res.committed) {
+          robloxTopupBusy = false;
+          setRobloxTopupButtonsDisabled(false);
+          showToast('ExeCoin belum cukup', 'error');
+          return;
+        }
+        return coinsRef.once('value').then(csnap => {
+          userData.coins = csnap.val() || 0;
+          const balEl = document.getElementById('evCoinBalance');
+          if (balEl) balEl.textContent = String(userData.coins);
+          runRobloxTopupProgress(username, robuxAmount, priceExeCoin);
+        });
+      }).catch(() => {
+        robloxTopupBusy = false;
+        setRobloxTopupButtonsDisabled(false);
+        showToast('Gagal memproses top up', 'error');
+      });
+    }
+    function runRobloxTopupProgress(username, robuxAmount, paidCoins) {
+      const panel = document.getElementById('robloxTopupProgress');
+      const fill = document.getElementById('robloxTopupProgressFill');
+      const pctEl = document.getElementById('robloxTopupProgressPct');
+      const titleEl = document.getElementById('robloxTopupProgressTitle');
+      const detailEl = document.getElementById('robloxTopupProgressDetail');
+      if (panel) panel.classList.add('show');
+      if (fill) fill.style.width = '0%';
+      if (pctEl) pctEl.textContent = '0%';
+      const steps = [
+        { p: 12, t: 'Validasi order', d: 'Menautkan ke @' + username + '…' },
+        { p: 35, t: 'Antrian Robux', d: 'Mengalokasikan ' + robuxAmount + ' Robux…' },
+        { p: 58, t: 'Gateway pembayaran', d: paidCoins + ' ExeCoin sudah dikunci…' },
+        { p: 82, t: 'Pengiriman', d: 'Memproses transfer ke akun Roblox…' },
+        { p: 100, t: 'Selesai', d: 'Robux dikirim (simulasi). Cek inventaris Roblox kamu.' }
+      ];
+      let i = 0;
+      const tick = () => {
+        if (i >= steps.length) {
+          robloxTopupBusy = false;
+          setRobloxTopupButtonsDisabled(false);
+          if (titleEl) titleEl.textContent = 'Pengiriman selesai';
+          showToast('Sukses: ~' + robuxAmount + ' Robux dikirim ke ' + username, 'success');
+          return;
+        }
+        const st = steps[i++];
+        if (fill) fill.style.width = st.p + '%';
+        if (pctEl) pctEl.textContent = st.p + '%';
+        if (titleEl) titleEl.textContent = st.t;
+        if (detailEl) detailEl.textContent = st.d;
+        setTimeout(tick, 700);
+      };
+      if (titleEl) titleEl.textContent = 'Mengirim Robux…';
+      if (detailEl) detailEl.textContent = 'Memulai pipeline untuk ' + robuxAmount + ' Robux…';
+      setTimeout(tick, 400);
+    }
     function renderEventCenter() {
       if (!auth.currentUser || !userData) return;
       const coinsEl = document.getElementById('evCoinBalance');
@@ -7219,6 +7516,11 @@
       if (dailyEl) dailyEl.innerHTML = buildDailyQuestsHtml();
       if (weeklyEl) weeklyEl.innerHTML = buildWeeklyQuestsHtml();
       if (shopEl) shopEl.innerHTML = buildShopHtml();
+      if (!robloxTopupBusy) {
+        const panel = document.getElementById('robloxTopupProgress');
+        if (panel) panel.classList.remove('show');
+        setRobloxTopupButtonsDisabled(false);
+      }
       updateEventSideFromTagDrop();
     }
     function getDailyKey() {
