@@ -1473,44 +1473,178 @@
     .event-topup-progress-panel {
       display: none;
       flex-direction: column;
-      gap: 8px;
-      padding: 14px;
-      border-radius: 14px;
-      background: rgba(3,7,18,0.98);
-      border: 1px solid rgba(34,197,94,0.4);
+      gap: 0;
+      padding: 0;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(155deg, rgba(12,14,28,0.99) 0%, rgba(6,8,18,0.99) 50%, rgba(10,12,24,0.99) 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        0 0 0 1px rgba(224,30,90,0.12) inset,
+        0 16px 40px rgba(0,0,0,0.45),
+        0 0 48px rgba(224,30,90,0.08);
     }
     .event-topup-progress-panel.show {
       display: flex;
     }
+    .event-topup-progress-topline {
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(90deg, transparent, #e01e5a, #00a2ff, #22c55e, transparent);
+      background-size: 200% 100%;
+      animation: rbxToplineMove 2.2s linear infinite;
+    }
+    @keyframes rbxToplineMove {
+      to { background-position: 200% 0; }
+    }
+    .event-topup-progress-inner {
+      padding: 14px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .event-topup-progress-headrow {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .rbx-prog-pulse {
+      flex-shrink: 0;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #fff;
+      background: linear-gradient(145deg, rgba(224,30,90,0.45), rgba(0,162,255,0.2));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 0 24px rgba(224,30,90,0.25);
+      position: relative;
+    }
+    .rbx-prog-pulse::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 18px;
+      border: 2px solid rgba(34,197,94,0.25);
+      animation: rbxRingPulse 1.4s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes rbxRingPulse {
+      0% { transform: scale(1); opacity: 0.9; }
+      100% { transform: scale(1.15); opacity: 0; }
+    }
+    .event-topup-progress-headtext { min-width: 0; flex: 1; }
     .event-topup-progress-panel .lbl {
-      font-size: 11px;
-      color: #e5e7eb;
-      font-weight: 600;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: 0.4px;
+      line-height: 1.2;
     }
     .event-topup-progress-panel .sub {
-      font-size: 10px;
-      color: #9ca3af;
+      font-size: 11px;
+      color: rgba(148,163,184,0.95);
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+    .rbx-prog-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .rbx-chip {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.35);
+      color: #86efac;
+    }
+    .rbx-chip-dim {
+      background: rgba(51,65,85,0.5);
+      border-color: rgba(100,116,139,0.45);
+      color: #cbd5e1;
+    }
+    .event-topup-progress-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .event-topup-progress-bar {
       position: relative;
-      height: 8px;
+      flex: 1;
+      height: 10px;
       border-radius: 999px;
-      background: rgba(31,41,55,0.95);
+      background: rgba(15,23,42,0.95);
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: inset 0 1px 8px rgba(0,0,0,0.5);
     }
     .event-topup-progress-fill {
       position: absolute;
-      inset: 0 auto 0 0;
+      left: 0;
+      top: 0;
+      bottom: 0;
       width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #22c55e, #38bdf8);
-      transition: width 0.25s ease-out;
+      background: linear-gradient(90deg, #e01e5a, #f97316, #22c55e, #38bdf8);
+      background-size: 160% 100%;
+      transition: width 0.32s cubic-bezier(0.33, 1, 0.68, 1);
+      box-shadow: 0 0 18px rgba(34,197,94,0.35);
+    }
+    .event-topup-progress-panel.show .event-topup-progress-fill {
+      animation: rbxBarShimmer 1.8s ease-in-out infinite;
+    }
+    @keyframes rbxBarShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
     .event-topup-progress-pct {
-      font-size: 10px;
+      font-size: 11px;
       font-family: 'JetBrains Mono', monospace;
-      color: #22c55e;
+      font-weight: 700;
+      color: #4ade80;
+      min-width: 38px;
       text-align: right;
+      text-shadow: 0 0 12px rgba(74,222,128,0.35);
+    }
+    .rbx-prog-steps {
+      display: flex;
+      gap: 5px;
+      margin-top: 2px;
+    }
+    .rbx-step {
+      flex: 1;
+      text-align: center;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+      color: rgba(100,116,139,0.85);
+      padding: 7px 3px;
+      border-radius: 10px;
+      background: rgba(30,41,59,0.65);
+      border: 1px solid rgba(51,65,85,0.6);
+      transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .rbx-step.active {
+      color: #f8fafc;
+      border-color: rgba(56,189,248,0.65);
+      background: linear-gradient(180deg, rgba(56,189,248,0.2), rgba(15,23,42,0.9));
+      box-shadow: 0 0 14px rgba(56,189,248,0.2);
+    }
+    .rbx-step.done {
+      color: #bbf7d0;
+      border-color: rgba(34,197,94,0.55);
+      background: rgba(34,197,94,0.12);
     }
     @media (max-width: 900px) {
       .event-center-layout {
@@ -3785,48 +3919,256 @@
     .log-time { color: #444; }
 
     /* ============================================================
-       TOAST
+       SYSTEM NOTIFY (toast profesional)
     ============================================================ */
-    #toast-container {
+    .sys-notify-stack {
       position: fixed;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 72px;
+      right: 14px;
+      left: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      z-index: 99999;
+      gap: 10px;
+      z-index: 100000;
+      align-items: flex-end;
       pointer-events: none;
-      align-items: center;
+      max-width: min(380px, calc(100vw - 28px));
     }
-    .toast {
-      background: rgba(10,10,18,0.95);
+    .sys-notify {
+      position: relative;
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) 28px;
+      gap: 10px 6px;
+      align-items: start;
+      width: 100%;
+      padding: 12px 10px 12px 12px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(18,18,28,0.97) 0%, rgba(8,10,20,0.98) 100%);
       border: 1px solid rgba(255,255,255,0.08);
-      border-left: 3px solid var(--accent);
-      color: #fff;
-      padding: 9px 18px;
-      border-radius: 8px;
-      font-size: 12px;
+      box-shadow:
+        0 4px 24px rgba(0,0,0,0.55),
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 0 40px rgba(0,255,136,0.06);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      pointer-events: auto;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateX(28px) scale(0.96);
+      transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1), transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sys-notify--in {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+    .sys-notify--out {
+      opacity: 0;
+      transform: translateX(40px) scale(0.94);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+    .sys-notify-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--sn-accent, var(--accent)), transparent);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+    .sys-notify-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
-      gap: 9px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-      animation: toastIn 0.3s cubic-bezier(0.68,-0.55,0.27,1.55);
-      backdrop-filter: blur(10px);
+      justify-content: center;
+      font-size: 18px;
+      color: #fff;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.2), transparent 55%),
+                  linear-gradient(135deg, rgba(0,255,136,0.25), rgba(0,212,255,0.12));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 0 20px rgba(0,255,136,0.12);
+    }
+    .sys-notify--music { --sn-accent: #a855f7; }
+    .sys-notify--music .sys-notify-icon {
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15), transparent 55%),
+                  linear-gradient(135deg, rgba(168,85,247,0.45), rgba(59,130,246,0.2));
+      box-shadow: 0 0 22px rgba(168,85,247,0.25);
+    }
+    .sys-notify--quest { --sn-accent: #fbbf24; }
+    .sys-notify--quest .sys-notify-icon {
+      background: linear-gradient(135deg, rgba(251,191,36,0.35), rgba(245,158,11,0.15));
+      box-shadow: 0 0 20px rgba(251,191,36,0.2);
+    }
+    .sys-notify--success { --sn-accent: #22c55e; }
+    .sys-notify--success .sys-notify-icon {
+      background: linear-gradient(135deg, rgba(34,197,94,0.4), rgba(16,185,129,0.15));
+      box-shadow: 0 0 18px rgba(34,197,94,0.2);
+    }
+    .sys-notify--error { --sn-accent: #f97316; }
+    .sys-notify--error .sys-notify-icon {
+      background: linear-gradient(135deg, rgba(249,115,22,0.4), rgba(239,68,68,0.15));
+      box-shadow: 0 0 18px rgba(249,115,22,0.2);
+    }
+    .sys-notify--event { --sn-accent: #38bdf8; }
+    .sys-notify--event .sys-notify-icon {
+      background: linear-gradient(135deg, rgba(56,189,248,0.4), rgba(14,165,233,0.12));
+      box-shadow: 0 0 20px rgba(56,189,248,0.2);
+    }
+    .sys-notify--info .sys-notify-icon {
+      background: linear-gradient(135deg, rgba(148,163,184,0.35), rgba(71,85,105,0.2));
+      box-shadow: 0 0 14px rgba(148,163,184,0.12);
+    }
+    .sys-notify-content { min-width: 0; padding-top: 1px; }
+    .sys-notify-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 3px;
+    }
+    .sys-notify-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: 0.3px;
+      line-height: 1.2;
+    }
+    .sys-notify-sub {
+      font-size: 12px;
+      color: rgba(226,232,240,0.88);
+      line-height: 1.45;
+      margin-top: 4px;
+      word-break: break-word;
+    }
+    .sys-notify-meta {
+      font-size: 10px;
+      color: rgba(148,163,184,0.95);
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .sys-notify-close {
+      grid-column: 3;
+      grid-row: 1;
+      align-self: start;
+      width: 26px;
+      height: 26px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.55);
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .sys-notify-close:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+    @media (max-width: 520px) {
+      .sys-notify-stack {
+        top: auto;
+        bottom: 100px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        align-items: stretch;
+      }
+      .sys-notify {
+        grid-template-columns: 42px minmax(0, 1fr) 26px;
+      }
+    }
+
+    /* Info card: ExeCoin → Robux (Event modal) */
+    .event-execoin-info-card {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) auto auto;
+      gap: 10px 8px;
+      align-items: center;
+      margin: 10px 0 4px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: linear-gradient(120deg, rgba(251,191,36,0.1), rgba(224,30,90,0.08), rgba(0,212,255,0.06));
+      border: 1px solid rgba(251,191,36,0.35);
+      box-shadow: 0 0 20px rgba(251,191,36,0.08);
+    }
+    .event-execoin-info-card.is-hidden {
+      display: none;
+    }
+    .event-execoin-info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(251,191,36,0.15);
+      border: 1px solid rgba(251,191,36,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fbbf24;
+      font-size: 18px;
+    }
+    .event-execoin-info-body { min-width: 0; }
+    .event-execoin-info-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fef3c7;
+      letter-spacing: 0.4px;
+    }
+    .event-execoin-info-desc {
+      font-size: 10px;
+      color: rgba(226,232,240,0.85);
+      line-height: 1.45;
+      margin-top: 2px;
+    }
+    .event-execoin-info-go {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(224,30,90,0.5);
+      background: linear-gradient(135deg, rgba(224,30,90,0.35), rgba(185,28,28,0.2));
+      color: #fff;
+      cursor: pointer;
       white-space: nowrap;
-      pointer-events: auto;
     }
-    .toast.hide { animation: toastOut 0.3s forwards; }
-    .toast.toast-success { border-left-color: #22c55e; }
-    .toast.toast-error { border-left-color: #f97316; }
-    .toast.toast-event { border-left-color: #38bdf8; }
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    .event-execoin-info-go:hover {
+      box-shadow: 0 0 14px rgba(224,30,90,0.35);
     }
-    @keyframes toastOut {
-      from { opacity: 1; transform: translateY(0) scale(1); }
-      to { opacity: 0; transform: translateY(-12px) scale(0.96); }
+    .event-execoin-info-dismiss {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.25);
+      color: rgba(255,255,255,0.5);
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .event-execoin-info-dismiss:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.2);
+    }
+    @media (max-width: 520px) {
+      .event-execoin-info-card {
+        grid-template-columns: 36px minmax(0, 1fr);
+        grid-template-rows: auto auto;
+      }
+      .event-execoin-info-go { grid-column: 1 / -1; }
+      .event-execoin-info-dismiss {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+      }
+      .event-execoin-info-card { position: relative; padding-right: 36px; }
     }
 
     .global-event-pill {
@@ -4991,7 +5333,7 @@
   <div id="mtScreen" class="full-overlay"><i class="fas fa-tools" style="color:var(--accent)"></i><h1>Server Maintenance</h1><p>Kami sedang melakukan pembaruan sistem.<br>Mohon tunggu sebentar lagi.</p></div>
   <div id="bannedScreen" class="full-overlay"><i class="fas fa-user-slash" style="color:var(--danger)"></i><h1>Access Denied</h1><p>Akun anda telah diblokir secara permanen.</p></div>
 
-  <div id="toastLegacy" style="display:none"></div>
+  <div id="sysNotifyStack" class="sys-notify-stack" aria-live="polite" aria-relevant="additions"></div>
 
     <!-- Notif Panel — OUTSIDE .app to avoid overflow:hidden clipping -->
     <div id="notifPanel" class="notif-panel">
@@ -5678,6 +6020,15 @@
             <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Toko ExeCoin</button>
             <button class="event-tab-btn" data-tab="topup" onclick="switchEventTab('topup', this)"><i class="fas fa-cube"></i> Top Up Game</button>
           </div>
+          <div id="evExecoinRobuxCard" class="event-execoin-info-card">
+            <div class="event-execoin-info-icon"><i class="fas fa-coins"></i></div>
+            <div class="event-execoin-info-body">
+              <div class="event-execoin-info-title">ExeCoin bisa dipakai top-up Robux</div>
+              <div class="event-execoin-info-desc">Tukar saldo ke Roblox lewat tab <b>Top Up Game</b> — paket 5.999 → 500 Robux &amp; 15.000 → 1.200 Robux. Pastikan username Roblox benar.</div>
+            </div>
+            <button type="button" class="event-execoin-info-go" onclick="switchEventTab('topup', null)">Buka top up</button>
+            <button type="button" class="event-execoin-info-dismiss" onclick="dismissExecoinRobuxInfoCard()" title="Sembunyikan">×</button>
+          </div>
           <div style="margin-top:10px; display:flex; justify-content:center">
             <button class="event-tab-btn" style="background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(245,158,11,0.15)); border-color: rgba(251,191,36,0.6); color: #fbbf24" onclick="openLeaderboard()">
               <i class="fas fa-trophy"></i> Lihat Leaderboard Top 5
@@ -5702,7 +6053,7 @@
                 <div class="event-topup-head-icon"><i class="fas fa-cube"></i></div>
                 <div class="event-topup-head-text">
                   <h4>ROBLOX — Top Up via ExeCoin</h4>
-                  <p>Paket tetap: 5.999 ExeCoin → 500 Robux · 15.000 ExeCoin → 1.200 Robux. Proses pengiriman simulasi otomatis setelah saldo &amp; username lolos cek.</p>
+                  <p>Paket tetap: 5.999 ExeCoin → 500 Robux · 15.000 ExeCoin → 1.200 Robux. Setelah saldo dan username terverifikasi, Robux diproses lewat antrian resmi.</p>
                 </div>
               </div>
               <div class="event-topup-user-row">
@@ -5710,12 +6061,28 @@
                 <input type="text" id="robloxTopupUsername" class="inp-dark" placeholder="contoh: Builderman" autocomplete="username" maxlength="20">
               </div>
               <div id="robloxTopupProgress" class="event-topup-progress-panel" aria-live="polite">
-                <div class="lbl" id="robloxTopupProgressTitle">Mengirim Robux…</div>
-                <div class="sub" id="robloxTopupProgressDetail">Menghubungkan ke pipeline…</div>
-                <div class="event-topup-progress-bar">
-                  <div id="robloxTopupProgressFill" class="event-topup-progress-fill"></div>
+                <div class="event-topup-progress-topline"></div>
+                <div class="event-topup-progress-inner">
+                  <div class="event-topup-progress-headrow">
+                    <div class="rbx-prog-pulse" aria-hidden="true"><i class="fas fa-cube"></i></div>
+                    <div class="event-topup-progress-headtext">
+                      <div class="lbl" id="robloxTopupProgressTitle">Mengirim Robux…</div>
+                      <div class="sub" id="robloxTopupProgressDetail">Menyiapkan koneksi…</div>
+                    </div>
+                  </div>
+                  <div class="rbx-prog-chips">
+                    <span class="rbx-chip" id="robloxTopupChipRbx">— Robux</span>
+                    <span class="rbx-chip rbx-chip-dim" id="robloxTopupChipUser">@—</span>
+                    <span class="rbx-chip rbx-chip-dim" id="robloxTopupChipPaid">— ExeCoin</span>
+                  </div>
+                  <div class="event-topup-progress-bar-wrap">
+                    <div class="event-topup-progress-bar">
+                      <div id="robloxTopupProgressFill" class="event-topup-progress-fill"></div>
+                    </div>
+                    <div class="event-topup-progress-pct" id="robloxTopupProgressPct">0%</div>
+                  </div>
+                  <div class="rbx-prog-steps" id="robloxTopupStepDots"></div>
                 </div>
-                <div class="event-topup-progress-pct" id="robloxTopupProgressPct">0%</div>
               </div>
               <div class="event-topup-packs">
                 <div class="event-topup-card">
@@ -6715,10 +7082,30 @@
       const tab = document.getElementById(tabMap[id] || 'evTabDaily');
       if (tab) tab.classList.add('active');
       if (btn) btn.classList.add('active');
+      else {
+        const autoBtn = document.querySelector('.event-tab-btn[data-tab="' + id + '"]');
+        if (autoBtn) autoBtn.classList.add('active');
+      }
       if (id === 'ramadhan') {
         updateRamadhanProgress();
       }
       renderEventCenter();
+    }
+    function dismissExecoinRobuxInfoCard() {
+      try {
+        sessionStorage.setItem('exeRobuxBannerDismiss', '1');
+      } catch (e) {}
+      const card = document.getElementById('evExecoinRobuxCard');
+      if (card) card.classList.add('is-hidden');
+    }
+    function syncExecoinRobuxInfoCard() {
+      const card = document.getElementById('evExecoinRobuxCard');
+      if (!card) return;
+      let hide = false;
+      try {
+        hide = sessionStorage.getItem('exeRobuxBannerDismiss') === '1';
+      } catch (e) {}
+      card.classList.toggle('is-hidden', hide);
     }
 
     // ============================================================
@@ -7476,35 +7863,79 @@
       const pctEl = document.getElementById('robloxTopupProgressPct');
       const titleEl = document.getElementById('robloxTopupProgressTitle');
       const detailEl = document.getElementById('robloxTopupProgressDetail');
+      const chipRbx = document.getElementById('robloxTopupChipRbx');
+      const chipUser = document.getElementById('robloxTopupChipUser');
+      const chipPaid = document.getElementById('robloxTopupChipPaid');
+      const dotsWrap = document.getElementById('robloxTopupStepDots');
+      const paidNum = typeof paidCoins === 'number' ? paidCoins : parseInt(paidCoins, 10) || 0;
+      if (chipRbx) chipRbx.textContent = String(robuxAmount) + ' Robux';
+      if (chipUser) chipUser.textContent = '@' + username;
+      if (chipPaid) chipPaid.textContent = paidNum.toLocaleString('id-ID') + ' ExeCoin';
+      if (dotsWrap) {
+        const labels = ['Verifikasi', 'Antrian', 'Settlement', 'Transfer', 'Selesai'];
+        dotsWrap.innerHTML = '';
+        labels.forEach(function (lab) {
+          const s = document.createElement('span');
+          s.className = 'rbx-step';
+          s.textContent = lab;
+          dotsWrap.appendChild(s);
+        });
+      }
+      function setStepVisual(stepIndex) {
+        if (!dotsWrap) return;
+        const nodes = dotsWrap.querySelectorAll('.rbx-step');
+        nodes.forEach(function (node, k) {
+          node.classList.remove('active', 'done');
+          if (stepIndex >= nodes.length) {
+            node.classList.add('done');
+          } else if (k < stepIndex) {
+            node.classList.add('done');
+          } else if (k === stepIndex) {
+            node.classList.add('active');
+          }
+        });
+      }
       if (panel) panel.classList.add('show');
       if (fill) fill.style.width = '0%';
       if (pctEl) pctEl.textContent = '0%';
+      setStepVisual(0);
       const steps = [
-        { p: 12, t: 'Validasi order', d: 'Menautkan ke @' + username + '…' },
-        { p: 35, t: 'Antrian Robux', d: 'Mengalokasikan ' + robuxAmount + ' Robux…' },
-        { p: 58, t: 'Gateway pembayaran', d: paidCoins + ' ExeCoin sudah dikunci…' },
-        { p: 82, t: 'Pengiriman', d: 'Memproses transfer ke akun Roblox…' },
-        { p: 100, t: 'Selesai', d: 'Robux dikirim (simulasi). Cek inventaris Roblox kamu.' }
+        { p: 14, t: 'Verifikasi order', d: 'Mencocokkan username @' + username + ' dengan saldo ExeCoin…' },
+        { p: 36, t: 'Antrian distributor', d: 'Memasuki antrian pengiriman Robux untuk wilayah kamu…' },
+        { p: 58, t: 'Settlement ExeCoin', d: paidNum.toLocaleString('id-ID') + ' ExeCoin dikonfirmasi · mengalihkan ke saluran resmi…' },
+        { p: 80, t: 'Transfer ke Roblox', d: 'Menyinkronkan ' + robuxAmount + ' Robux ke akun Roblox kamu…' },
+        { p: 100, t: 'Pengiriman selesai', d: 'Robux telah dikreditkan. Periksa saldo Roblox di aplikasi atau roblox.com.' }
       ];
       let i = 0;
       const tick = () => {
         if (i >= steps.length) {
           robloxTopupBusy = false;
           setRobloxTopupButtonsDisabled(false);
-          if (titleEl) titleEl.textContent = 'Pengiriman selesai';
-          showToast('Sukses: ~' + robuxAmount + ' Robux dikirim ke ' + username, 'success');
+          if (titleEl) titleEl.textContent = 'Selesai';
+          if (detailEl) detailEl.textContent = 'Order berhasil · Robux seharusnya sudah terlihat di akun kamu.';
+          setStepVisual(99);
+          showSysNotify({
+            variant: 'success',
+            label: 'ROBUX',
+            title: 'Pengiriman selesai',
+            subtitle: String(robuxAmount) + ' Robux → @' + username,
+            meta: 'Periksa inventaris & saldo Robux di akun kamu',
+            duration: 4500
+          });
           return;
         }
-        const st = steps[i++];
+        const st = steps[i];
         if (fill) fill.style.width = st.p + '%';
         if (pctEl) pctEl.textContent = st.p + '%';
         if (titleEl) titleEl.textContent = st.t;
         if (detailEl) detailEl.textContent = st.d;
-        setTimeout(tick, 700);
+        setStepVisual(i);
+        i++;
+        setTimeout(tick, 720);
       };
-      if (titleEl) titleEl.textContent = 'Mengirim Robux…';
-      if (detailEl) detailEl.textContent = 'Memulai pipeline untuk ' + robuxAmount + ' Robux…';
-      setTimeout(tick, 400);
+      if (titleEl) titleEl.textContent = 'Memproses pengiriman…';
+      if (detailEl) detailEl.textContent = 'Menghubungkan ke layanan top-up untuk ' + robuxAmount + ' Robux…';
+      setTimeout(tick, 420);
     }
     function renderEventCenter() {
       if (!auth.currentUser || !userData) return;
@@ -7521,6 +7952,7 @@
         if (panel) panel.classList.remove('show');
         setRobloxTopupButtonsDisabled(false);
       }
+      syncExecoinRobuxInfoCard();
       updateEventSideFromTagDrop();
     }
     function getDailyKey() {
@@ -7704,7 +8136,14 @@
           };
           const name = questNames[id] || id;
           const typeLabel = type === 'daily' ? 'Harian' : 'Mingguan';
-          showToast(`[Misi ${typeLabel}] ${name} Selesai! 🎉`, 'success');
+          showSysNotify({
+            variant: 'quest',
+            label: 'QUEST',
+            title: 'Misi selesai',
+            subtitle: name + ' · ' + typeLabel,
+            meta: 'Buka Event & Quest untuk klaim ExeCoin',
+            duration: 4200
+          });
         }
         
         return { ...cur, cur: nextVal };
@@ -7766,7 +8205,14 @@
             iconEl.classList.add('gain');
             setTimeout(() => iconEl.classList.remove('gain'), 600);
           }
-          showToast('Kamu mendapatkan ' + def.reward + ' ExeCoin dari quest ' + def.title);
+          showSysNotify({
+            variant: 'success',
+            label: 'QUEST',
+            title: 'Hadiah diklaim',
+            subtitle: '+' + def.reward + ' ExeCoin dari ' + def.title,
+            meta: 'Saldo diperbarui',
+            duration: 4000
+          });
         });
       }).catch(() => {
         showToast('Gagal klaim quest');
@@ -7839,33 +8285,159 @@
     }
 
     // ============================================================
-    // TOAST
+    // SYSTEM NOTIFY (toast profesional)
     // ============================================================
-    function showToast(text, type = 'info') {
-      const container = document.getElementById('toast-container');
-      if (!container) return;
-      if (container.children.length >= 3) {
-        container.removeChild(container.firstElementChild);
+    function sysNotifyIconClass(variant, override) {
+      if (override) return 'fas ' + override;
+      if (variant === 'music') return 'fas fa-music';
+      if (variant === 'quest') return 'fas fa-flag-checkered';
+      if (variant === 'success') return 'fas fa-check';
+      if (variant === 'error') return 'fas fa-exclamation-triangle';
+      if (variant === 'event') return 'fas fa-bolt';
+      return 'fas fa-info-circle';
+    }
+    function dismissSysNotify(el) {
+      if (!el || !el.parentNode) return;
+      if (el._sysTmr) {
+        clearTimeout(el._sysTmr);
+        el._sysTmr = null;
       }
+      el.classList.remove('sys-notify--in');
+      el.classList.add('sys-notify--out');
+      setTimeout(function () {
+        if (el.parentNode) el.remove();
+      }, 420);
+    }
+    function showSysNotify(o) {
+      const stack = document.getElementById('sysNotifyStack');
+      if (!stack) return;
+      while (stack.children.length >= 4) {
+        const old = stack.firstElementChild;
+        if (old && old._sysTmr) clearTimeout(old._sysTmr);
+        if (old) old.remove();
+      }
+      const variant = o.variant || 'info';
+      const label = o.label != null ? o.label : 'SYSTEM';
+      const title = o.title != null ? o.title : '';
+      const subtitle = (o.subtitle != null ? o.subtitle : o.body) || '';
+      const meta = o.meta || '';
+      const dur = o.duration != null ? o.duration : (variant === 'music' ? 4600 : variant === 'error' ? 4200 : 3200);
+
       const el = document.createElement('div');
-      el.className = 'toast';
-      let icon = 'fa-info-circle';
-      if (type === 'success') icon = 'fa-check-circle';
-      else if (type === 'error') icon = 'fa-exclamation-triangle';
-      else if (type === 'event') icon = 'fa-bolt';
-      else {
-        if (text.includes('Playing')) icon = 'fa-music';
-        else if (text.includes('Favorit') || text.includes('heart') || text.includes('❤')) icon = 'fa-heart';
-        else if (text.includes('Shuffle') || text.includes('🔀')) icon = 'fa-random';
-        else if (text.includes('Repeat') || text.includes('🔁')) icon = 'fa-redo';
-        else if (text.includes('✅') || text.includes('berhasil')) icon = 'fa-check-circle';
-        else if (text.includes('Error') || text.includes('❌')) icon = 'fa-exclamation-triangle';
+      el.className = 'sys-notify sys-notify--' + variant;
+
+      const glow = document.createElement('div');
+      glow.className = 'sys-notify-glow';
+
+      const iconWrap = document.createElement('div');
+      iconWrap.className = 'sys-notify-icon';
+      const iconEl = document.createElement('i');
+      iconEl.className = sysNotifyIconClass(variant, o.icon);
+      iconWrap.appendChild(iconEl);
+
+      const content = document.createElement('div');
+      content.className = 'sys-notify-content';
+      const labEl = document.createElement('div');
+      labEl.className = 'sys-notify-label';
+      labEl.textContent = label;
+      content.appendChild(labEl);
+      if (title) {
+        const tEl = document.createElement('div');
+        tEl.className = 'sys-notify-title';
+        tEl.textContent = title;
+        content.appendChild(tEl);
       }
-      el.classList.add('toast-' + type);
-      el.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
-      container.appendChild(el);
-      setTimeout(() => el.classList.add('hide'), 2500);
-      setTimeout(() => el.remove(), 2900);
+      const subEl = document.createElement('div');
+      subEl.className = 'sys-notify-sub';
+      subEl.textContent = subtitle;
+      content.appendChild(subEl);
+      if (meta) {
+        const mEl = document.createElement('div');
+        mEl.className = 'sys-notify-meta';
+        mEl.textContent = meta;
+        content.appendChild(mEl);
+      }
+
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'sys-notify-close';
+      closeBtn.setAttribute('aria-label', 'Tutup');
+      closeBtn.textContent = '\u00d7';
+      closeBtn.addEventListener('click', function () {
+        dismissSysNotify(el);
+      });
+
+      el.appendChild(glow);
+      el.appendChild(iconWrap);
+      el.appendChild(content);
+      el.appendChild(closeBtn);
+      stack.appendChild(el);
+      requestAnimationFrame(function () {
+        el.classList.add('sys-notify--in');
+      });
+      el._sysTmr = setTimeout(function () {
+        dismissSysNotify(el);
+      }, dur);
+    }
+    function legacyToastToSysNotify(text, type) {
+      const t = String(text || '');
+      const low = t.toLowerCase();
+      let m = t.match(/now\s*playing:\s*(.+)$/i);
+      if (!m && low.includes('now playing')) {
+        const idx = low.indexOf('now playing');
+        const rest = t.slice(idx + 11).replace(/^[\s:🎵]+/i, '').trim();
+        if (rest) m = [null, rest];
+      }
+      if (m && m[1]) {
+        return {
+          variant: 'music',
+          label: 'PLAYBACK',
+          title: 'Now playing',
+          subtitle: m[1].trim(),
+          duration: 4800
+        };
+      }
+      if ((low.includes('misi') || low.includes('quest')) && low.includes('selesai')) {
+        return {
+          variant: 'quest',
+          label: 'QUEST',
+          title: 'Misi selesai',
+          subtitle: t.replace(/🎉/g, '').replace(/\s+/g, ' ').trim(),
+          duration: 4000
+        };
+      }
+      if (low.includes('execoin') && low.includes('quest') && (low.includes('dapat') || low.includes('mendapat'))) {
+        return {
+          variant: 'success',
+          label: 'QUEST',
+          title: 'Hadiah diklaim',
+          subtitle: t.trim(),
+          duration: 3800
+        };
+      }
+      if (type === 'error') {
+        return { variant: 'error', label: 'PERHATIAN', title: 'Terjadi masalah', subtitle: t.trim(), duration: 4200 };
+      }
+      if (type === 'event') {
+        return { variant: 'event', label: 'EVENT', title: 'ExeMusic', subtitle: t.trim(), duration: 3800 };
+      }
+      if (type === 'success') {
+        return { variant: 'success', label: 'SUKSES', title: 'Berhasil', subtitle: t.trim(), duration: 3400 };
+      }
+      if (low.includes('favorit') || low.includes('heart') || t.includes('\u2764')) {
+        return { variant: 'info', label: 'LIBRARY', title: 'Favorit', subtitle: t.trim(), duration: 2800, icon: 'fa-heart' };
+      }
+      if (low.includes('shuffle') || t.includes('\uD83D\uDD00')) {
+        return { variant: 'info', label: 'PLAYER', title: 'Shuffle', subtitle: t.trim(), duration: 2600, icon: 'fa-random' };
+      }
+      if (low.includes('repeat') || t.includes('\uD83D\uDD01')) {
+        return { variant: 'info', label: 'PLAYER', title: 'Repeat', subtitle: t.trim(), duration: 2600, icon: 'fa-redo' };
+      }
+      return { variant: 'info', label: 'SYSTEM', title: 'Pemberitahuan', subtitle: t.trim(), duration: 3000 };
+    }
+    function showToast(text, type) {
+      if (type === void 0) type = 'info';
+      showSysNotify(legacyToastToSysNotify(text, type));
     }
     function msg(m) { showToast(m); }
     function closeModal() {
@@ -8786,7 +9358,14 @@
         audio.play();
         document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
         document.getElementById('eq').classList.add('playing');
-        showToast(`🎵 Now Playing: ${songs[i].title}`);
+        showSysNotify({
+          variant: 'music',
+          label: 'PLAYBACK',
+          title: 'Now playing',
+          subtitle: songs[i].title || 'Tanpa judul',
+          meta: songs[i].by ? ('@' + songs[i].by) : '',
+          duration: 4800
+        });
       }
       updateFollowUI(); updateFavoriteUI(); updateBlacklistUI(); saveLastSong();
     }
