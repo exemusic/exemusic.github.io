@@ -58,6 +58,7 @@
       height: 100vh;
       display: flex; justify-content: center; align-items: center;
       overflow: hidden;
+      pointer-events: auto;
     }
 
     /* ============================================================
@@ -796,6 +797,9 @@
       cursor: pointer;
       font-size: 15px;
       transition: 0.2s;
+      pointer-events: auto;
+      position: relative;
+      z-index: 10;
     }
     #btnFeedback:hover {
       background: rgba(0,255,136,0.28);
@@ -5739,7 +5743,7 @@
         <button id="btnEvent" onclick="openEventCenter()" title="Event">
           <i class="fas fa-calendar-alt"></i>
         </button>
-        <button id="btnFeedback" onclick="openFeedbackModal()" title="Masukkan/Feedback">
+        <button id="btnFeedback" title="Masukkan/Feedback" style="pointer-events: auto; cursor: pointer;">
           <i class="fas fa-comment-dots"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
@@ -7546,11 +7550,14 @@
     // ============================================================
     // FEEDBACK SYSTEM - Modern UI with Anti-Spam
     // ============================================================
-    function openFeedbackModal() {
+    window.openFeedbackModal = function() {
+      console.log('openFeedbackModal called');
       if (!auth.currentUser) {
+        console.log('User not logged in');
         showToast('Login dulu untuk mengirim feedback', 'error');
         return;
       }
+      console.log('User logged in, opening modal');
       const modal = document.getElementById('modalFeedback');
       if (modal) {
         modal.style.display = 'flex';
@@ -7562,18 +7569,20 @@
         setTimeout(() => {
           document.getElementById('feedbackMessage').focus();
         }, 100);
+      } else {
+        console.log('Modal not found');
       }
-    }
+    };
 
-    function closeFeedbackModal() {
+    window.closeFeedbackModal = function() {
       const modal = document.getElementById('modalFeedback');
       if (modal) {
         modal.style.display = 'none';
         modal.style.zIndex = '';
       }
-    }
+    };
 
-    function showThankYouAnimation(username) {
+    window.showThankYouAnimation = function(username) {
       const overlay = document.getElementById('thankYouOverlay');
       const message = document.getElementById('thankYouMessage');
       if (overlay && message) {
@@ -7583,10 +7592,10 @@
           overlay.style.display = 'none';
         }, 3000);
       }
-    }
+    };
 
     // Initialize feedback form
-    document.addEventListener('DOMContentLoaded', function() {
+    function initFeedbackForm() {
       const feedbackForm = document.getElementById('feedbackForm');
       const feedbackMessage = document.getElementById('feedbackMessage');
       const charCount = document.getElementById('charCount');
@@ -7711,7 +7720,34 @@
           }
         });
       }
-    });
+    }
+
+    // Initialize feedback button
+    function initFeedbackButton() {
+      const btn = document.getElementById('btnFeedback');
+      if (btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Feedback button clicked');
+          window.openFeedbackModal();
+        });
+        console.log('Feedback button initialized');
+      } else {
+        console.log('Feedback button not found');
+      }
+    }
+
+    // Call init when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        initFeedbackButton();
+        initFeedbackForm();
+      });
+    } else {
+      initFeedbackButton();
+      initFeedbackForm();
+    }
 
     function openLeaderboard(defaultCategory = 'followers') {
       const eventModal = document.getElementById('modalEventCenter');
