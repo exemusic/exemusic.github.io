@@ -12651,5 +12651,42 @@
       navigator.clipboard.writeText(t).then(() => showToast('URL disalin!')); document.getElementById('modalAdminCopyUrl').style.display = 'none';
     }
   </script>
+  <script>
+    (function(){
+      function attachFallbackHandlers(){
+        try{
+          const fb = document.getElementById('btnFeedback');
+          if(fb){
+            fb.style.pointerEvents = 'auto'; fb.style.zIndex = '100100';
+            fb.addEventListener('click', function(e){
+              e && e.preventDefault && e.preventDefault();
+              e && e.stopPropagation && e.stopPropagation();
+              console.log('btnFeedback fallback clicked');
+              if (typeof window.openFeedbackModal === 'function') window.openFeedbackModal();
+              else console.warn('openFeedbackModal not defined');
+            });
+          }
+
+          const pt = document.getElementById('btnProfileTag');
+          if(pt){
+            pt.style.pointerEvents = 'auto'; pt.style.zIndex = '100100';
+            pt.addEventListener('click', function(e){
+              e && e.preventDefault && e.preventDefault();
+              e && e.stopPropagation && e.stopPropagation();
+              console.log('btnProfileTag fallback clicked');
+              if (typeof window.openTagSelector === 'function') window.openTagSelector();
+              else console.warn('openTagSelector not defined');
+            });
+          }
+
+          console.log('Fallback handlers attached for feedback and profile tag buttons');
+        }catch(err){
+          console.error('Error attaching fallback handlers', err);
+        }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attachFallbackHandlers);
+      else attachFallbackHandlers();
+    })();
+  </script>
 </body>
 </html>
