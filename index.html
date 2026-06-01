@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>test 3.3.2</title>
+  <title>ExeMusic 3.3.2</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   <script>
     (function () {
@@ -5803,7 +5803,7 @@
         <button id="btnEvent" onclick="openEventCenter()" title="Event">
           <i class="fas fa-calendar-alt"></i>
         </button>
-        <button id="btnFeedback" onclick="window.openFeedbackModal()" type="button" title="Masukkan/Feedback">
+        <button id="btnFeedback" type="button" title="Masukkan/Feedback">
           <i class="fas fa-comment-dots"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
@@ -6225,7 +6225,7 @@
         <div class="mp-actions">
           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
-          <button class="mp-btn mp-btn-sec" onclick="window.openTagSelector()"><i class="fas fa-tag"></i> Tag</button>
+          <button id="btnProfileTag" class="mp-btn mp-btn-sec"><i class="fas fa-tag"></i> Tag</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
           <button class="mp-btn" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.2)" onclick="clearExeLoginCookies(); auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
@@ -7796,14 +7796,27 @@
     }
 
     // Call init when DOM is ready
+    function initProfileTagButton() {
+      const btn = document.getElementById('btnProfileTag');
+      if (btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Profile Tag button clicked');
+          window.openTagSelector();
+        });
+      }
+    }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() {
         initFeedbackButton();
         initFeedbackForm();
+        initProfileTagButton();
       });
     } else {
       initFeedbackButton();
       initFeedbackForm();
+      initProfileTagButton();
     }
 
     function openLeaderboard(defaultCategory = 'followers') {
@@ -11459,19 +11472,23 @@
     }
     window.openTagSelector = function() {
       console.log('openTagSelector called');
-      if (!auth.currentUser || !userData) { msg('Login dulu!'); return; }
-      ensureCurrentTagInAlltag(auth.currentUser.uid, userData);
-      const all = userData.alltag || {};
-      let ownedKeys = Object.keys(all).filter(k => all[k]);
-      const currentTag = (userData.tag || 'none').toLowerCase();
-      if (currentTag !== 'none' && !ownedKeys.includes(currentTag)) {
-        ownedKeys = [currentTag, ...ownedKeys];
-      }
       const modal = document.getElementById('modalTagSelector');
       const curEl = document.getElementById('tagSelectorCurrent');
       const grid = document.getElementById('tagSelectorOwnedGrid');
       const info = document.getElementById('tagSelectorAllInfo');
-      if (!modal || !curEl || !grid || !info) return;
+      if (!modal || !curEl || !grid || !info) {
+        console.warn('Tag selector modal elements not found');
+        return;
+      }
+      const currentTag = (userData && userData.tag ? userData.tag : 'none').toLowerCase();
+      const all = userData && userData.alltag ? userData.alltag : {};
+      let ownedKeys = Object.keys(all).filter(k => all[k]);
+      if (currentTag !== 'none' && !ownedKeys.includes(currentTag)) {
+        ownedKeys.unshift(currentTag);
+      }
+      if (auth.currentUser && userData) {
+        ensureCurrentTagInAlltag(auth.currentUser.uid, userData);
+      }
       const cur = currentTag;
       curEl.innerHTML = cur === 'none' ? 'Tanpa tag aktif' : 'Tag aktif: ' + getTagHTML(cur);
       const owned = new Set(ownedKeys);
@@ -11488,7 +11505,10 @@
           if (!btn) return;
           const tag = btn.dataset.tag;
           const uid = auth.currentUser && auth.currentUser.uid;
-          if (!uid || !userData) return;
+          if (!uid || !userData) {
+            showToast('Login dulu untuk mengganti tag', 'error');
+            return;
+          }
           if (tag === 'none' || owned.has(tag)) {
             const updates = {};
             updates['users/' + uid + '/tag'] = tag === 'none' ? 'none' : tag;
@@ -11496,7 +11516,7 @@
               updates['users/' + uid + '/alltag/' + tag] = true;
             }
             db.ref().update(updates).then(() => {
-              document.getElementById('modalTagSelector').style.display = 'none';
+              modal.style.display = 'none';
               showToast('Tag diganti');
             });
           } else {
