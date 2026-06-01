@@ -5803,7 +5803,7 @@
         <button id="btnEvent" onclick="openEventCenter()" title="Event">
           <i class="fas fa-calendar-alt"></i>
         </button>
-        <button id="btnFeedback" type="button" title="Masukkan/Feedback" onclick="window.open('feedback.html','_blank','width=700,height=700')">
+        <button id="btnFeedback" type="button" title="Masukkan/Feedback" onclick="openFeedbackWindow()">
           <i class="fas fa-comment-dots"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
@@ -6225,7 +6225,7 @@
         <div class="mp-actions">
           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
-          <button id="btnProfileTag" class="mp-btn mp-btn-sec" onclick="window.open('tagselector.html','_blank','width=700,height=700')"><i class="fas fa-tag"></i> Tag</button>
+          <button id="btnProfileTag" class="mp-btn mp-btn-sec" onclick="openTagSelectorWindow()"><i class="fas fa-tag"></i> Tag</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
           <button class="mp-btn" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.2)" onclick="clearExeLoginCookies(); auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
@@ -12751,6 +12751,75 @@
       cancelBtn.addEventListener('click', function(){ overlay.style.display='none'; });
       document.getElementById('externalFrameClose').onclick = function(){ overlay.style.display='none'; };
     };
+    // Open standalone windows and pass initial data via property + postMessage
+    window.openTagSelectorWindow = function(){
+      try{
+        const w = window.open('tagselector.html','tagselectorWindow','width=700,height=700');
+        if(!w) return console.warn('Could not open tagselector window (popup blocked?)');
+        try{ w.__EXE_INIT = { TAG_META: window.TAG_META, userData: window.userData }; }catch(e){console.warn('set __EXE_INIT failed',e)}
+        try{ w.postMessage && w.postMessage({ type: 'exe_init', TAG_META: window.TAG_META, userData: window.userData }, '*'); }catch(e){}
+        w.focus();
+      }catch(err){ console.error('openTagSelectorWindow error', err); }
+    };
+
+    window.openFeedbackWindow = function(){
+      try{
+        const w = window.open('feedback.html','feedbackWindow','width=700,height=700');
+        if(!w) return console.warn('Could not open feedback window (popup blocked?)');
+        try{ w.__EXE_INIT = { userData: window.userData }; }catch(e){console.warn('set __EXE_INIT failed',e)}
+        try{ w.postMessage && w.postMessage({ type: 'exe_init', userData: window.userData }, '*'); }catch(e){}
+        w.focus();
+      }catch(err){ console.error('openFeedbackWindow error', err); }
+    };
+    // Listen for requests from child windows (tag changes, feedback)
+    window.addEventListener('message', async function(e){
+      try{
+        const d = e.data || {};
+        if(!d.type) return;
+        if(d.type === 'exe_tag_update'){
+          if(!auth.currentUser){
+            e.source && e.source.postMessage && e.source.postMessage({ type: 'exe_response', ok: false, msg: 'Login dulu' }, '*');
+            return;
+          }
+          const uid = auth.currentUser.uid;
+          const tag = d.tag;
+          const updates = {};
+          updates['users/' + uid + '/tag'] = tag === 'none' ? 'none' : tag;
+          if(tag !== 'none') updates['users/' + uid + '/alltag/' + tag] = true;
+          try{
+            await db.ref().update(updates);
+            e.source && e.source.postMessage && e.source.postMessage({ type: 'exe_response', ok: true, msg: 'Tag diganti' }, '*');
+            if(typeof showToast === 'function') showToast('Tag diganti','success');
+          }catch(err){
+            console.error('Tag update error', err);
+            e.source && e.source.postMessage && e.source.postMessage({ type: 'exe_response', ok: false, msg: 'Gagal mengganti tag' }, '*');
+          }
+        } else if(d.type === 'exe_submit_feedback'){
+          if(!auth.currentUser){
+            e.source && e.source.postMessage && e.source.postMessage({ type: 'exe_response', ok: false, msg: 'Login dulu' }, '*');
+            return;
+          }
+          const uid = auth.currentUser.uid;
+          const message = (d.message||'').trim();
+          if(!message){ e.source && e.source.postMessage && e.source.postMessage({ type: 'exe_response', ok: false, msg: 'Pesan kosong' }, '*'); return; }
+          try{
+            const today = new Date().toISOString().split('T')[0];
+            const feedbacksRef = db.ref('feedbacks');
+            const id = feedbacksRef.push().key;
+            const username = (userData && (userData.username||userData.displayName)) || 'User';
+            const timestamp = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+            await feedbacksRef.child(id).set({ userId: uid, username, message, timestamp, date: today, status: 'unread' });
+            try{ await db.ref('users/'+uid+'/feedback_'+today).set(true); }catch(e){}
+            e.source && e.source.postMessage && e.source.postMessage({ type: 'exe_response', ok: true, msg: 'Feedback terkirim' }, '*');
+            if(typeof showThankYouAnimation === 'function') showThankYouAnimation(username);
+            if(typeof showToast === 'function') showToast('Feedback berhasil dikirim!','success');
+          }catch(err){
+            console.error('Feedback save error', err);
+            e.source && e.source.postMessage && e.source.postMessage({ type: 'exe_response', ok: false, msg: 'Gagal mengirim feedback' }, '*');
+          }
+        }
+      }catch(err){ console.error('message handler error', err); }
+    });
 
     window.openTagSelectorFrame = function(){
       const overlay = document.getElementById('externalFrameOverlay');
