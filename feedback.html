@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Feedback - ExeMusic</title>
+  <style>
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#0b0b10;color:#e6fff0;padding:18px}
+    .card{max-width:760px;margin:24px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg,#071017,#0e0f14);box-shadow:0 6px 30px rgba(0,0,0,0.6)}
+    textarea{width:100%;min-height:200px;border-radius:8px;padding:12px;background:#071119;border:1px solid rgba(255,255,255,0.04);color:#dfffe4}
+    button{margin-top:12px;padding:10px 14px;border-radius:8px;border:none;background:#00ff88;color:#001;cursor:pointer}
+    .info{font-size:13px;color:#88c;margin-bottom:8px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Masukkan & Feedback</h2>
+    <div class="info">Isi masukan Anda. Halaman ini bekerja bersama aplikasi utama (buka dari ExeMusic).</div>
+    <textarea id="msg" maxlength="500" placeholder="Tulis masukan atau saran Anda di sini..."></textarea>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="send">Kirim Feedback</button>
+      <button id="close" style="background:rgba(255,255,255,0.02);color:#fff">Tutup</button>
+    </div>
+    <div id="status" style="margin-top:10px;color:#aee;font-size:13px"></div>
+  </div>
+
+  <script>
+    (function(){
+      const sendBtn = document.getElementById('send');
+      const closeBtn = document.getElementById('close');
+      const msgEl = document.getElementById('msg');
+      const status = document.getElementById('status');
+
+      function setStatus(t){ status.textContent = t; }
+
+      sendBtn.addEventListener('click', async function(){
+        const text = (msgEl.value||'').trim();
+        if(!text){ setStatus('Tulis pesan feedback dulu'); return; }
+        try{
+          if(window.opener && window.opener.db && window.opener.auth && window.opener.auth.currentUser){
+            const uid = window.opener.auth.currentUser.uid;
+            const today = new Date().toISOString().split('T')[0];
+            const feedbacksRef = window.opener.db.ref('feedbacks');
+            const id = feedbacksRef.push().key;
+            const username = (window.opener.userData && (window.opener.userData.username||window.opener.userData.displayName)) || 'User';
+            const timestamp = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+            await feedbacksRef.child(id).set({ userId: uid, username, message: text, timestamp, date: today, status: 'unread' });
+            // mark as sent today in opener user data if available
+            try{ if(window.opener.db && window.opener.db.ref) await window.opener.db.ref('users/'+uid+'/feedback_'+today).set(true); }catch(e){}
+            if(window.opener && typeof window.opener.showThankYouAnimation === 'function') window.opener.showThankYouAnimation(username);
+            if(window.opener && typeof window.opener.showToast === 'function') window.opener.showToast('Feedback berhasil dikirim!','success');
+            setStatus('Feedback terkirim. Terima kasih!');
+            setTimeout(()=> window.close(), 900);
+          } else {
+            setStatus('Halaman ini harus dibuka dari aplikasi ExeMusic agar dapat mengirim feedback.');
+          }
+        }catch(err){
+          console.error(err);
+          setStatus('Gagal mengirim: '+(err.message||err));
+        }
+      });
+
+      closeBtn.addEventListener('click', ()=> window.close());
+
+    })();
+  </script>
+</body>
+</html>

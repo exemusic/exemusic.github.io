@@ -5803,7 +5803,7 @@
         <button id="btnEvent" onclick="openEventCenter()" title="Event">
           <i class="fas fa-calendar-alt"></i>
         </button>
-        <button id="btnFeedback" type="button" title="Masukkan/Feedback" onclick="window.openFeedbackModal()">
+        <button id="btnFeedback" type="button" title="Masukkan/Feedback" onclick="window.open('feedback.html','_blank','width=700,height=700')">
           <i class="fas fa-comment-dots"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
@@ -6225,7 +6225,7 @@
         <div class="mp-actions">
           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
-          <button id="btnProfileTag" class="mp-btn mp-btn-sec" onclick="window.openTagSelector()"><i class="fas fa-tag"></i> Tag</button>
+          <button id="btnProfileTag" class="mp-btn mp-btn-sec" onclick="window.open('tagselector.html','_blank','width=700,height=700')"><i class="fas fa-tag"></i> Tag</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
           <button class="mp-btn" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.2)" onclick="clearExeLoginCookies(); auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
@@ -12662,8 +12662,8 @@
               e && e.preventDefault && e.preventDefault();
               e && e.stopPropagation && e.stopPropagation();
               console.log('btnFeedback fallback clicked');
-              if (typeof window.openFeedbackModal === 'function') window.openFeedbackModal();
-              else console.warn('openFeedbackModal not defined');
+              try{ window.open('feedback.html','_blank','width=700,height=700'); }
+              catch(err){ console.warn('Failed to open feedback.html', err); }
             });
           }
 
@@ -12674,8 +12674,8 @@
               e && e.preventDefault && e.preventDefault();
               e && e.stopPropagation && e.stopPropagation();
               console.log('btnProfileTag fallback clicked');
-              if (typeof window.openTagSelector === 'function') window.openTagSelector();
-              else console.warn('openTagSelector not defined');
+              try{ window.open('tagselector.html','_blank','width=700,height=700'); }
+              catch(err){ console.warn('Failed to open tagselector.html', err); }
             });
           }
 

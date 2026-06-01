@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pilih Tag - ExeMusic</title>
+  <style>
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#04050a;color:#e6fff0;padding:18px}
+    .card{max-width:760px;margin:24px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg,#071017,#0e0f14);box-shadow:0 6px 30px rgba(0,0,0,0.6)}
+    .tag-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .chip{padding:8px 12px;border-radius:999px;background:#071119;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+    .chip.owned{background:linear-gradient(90deg,#00ff88,#00d4ff);color:#001}
+    .chip.locked{opacity:0.4}
+    button{margin-top:12px;padding:10px 14px;border-radius:8px;border:none;background:#00ff88;color:#001;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>PILIH TAG</h2>
+    <div id="info">Memuat...</div>
+    <div class="tag-grid" id="grid"></div>
+    <div style="margin-top:12px">
+      <button id="close">Tutup</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const info = document.getElementById('info');
+      const grid = document.getElementById('grid');
+      const closeBtn = document.getElementById('close');
+
+      function render(meta, userAlltag, currentTag){
+        grid.innerHTML = '';
+        const keys = Object.keys(meta || {});
+        keys.forEach(k => {
+          const m = meta[k];
+          const owned = userAlltag && userAlltag[k];
+          const btn = document.createElement('button');
+          btn.className = 'chip ' + (owned ? 'owned' : 'locked');
+          btn.textContent = m.title || k.toUpperCase();
+          btn.dataset.tag = k;
+          btn.addEventListener('click', async function(){
+            const tag = this.dataset.tag;
+            if(!window.opener || !window.opener.auth || !window.opener.auth.currentUser){
+              alert('Buka melalui aplikasi ExeMusic dan login dulu.'); return;
+            }
+            const uid = window.opener.auth.currentUser.uid;
+            if(!owned && tag !== 'none'){
+              alert('Tag belum dimiliki'); return;
+            }
+            try{
+              const updates = {};
+              updates['users/'+uid+'/tag'] = tag === 'none' ? 'none' : tag;
+              if(tag !== 'none') updates['users/'+uid+'/alltag/'+tag] = true;
+              await window.opener.db.ref().update(updates);
+              if(window.opener && typeof window.opener.showToast === 'function') window.opener.showToast('Tag diganti','success');
+              window.close();
+            }catch(err){
+              console.error(err); alert('Gagal ganti tag: '+(err.message||err));
+            }
+          });
+          grid.appendChild(btn);
+        });
+      }
+
+      function init(){
+        if(window.opener && window.opener.TAG_META){
+          const meta = window.opener.TAG_META;
+          const userAlltag = (window.opener.userData && window.opener.userData.alltag) || {};
+          const currentTag = (window.opener.userData && window.opener.userData.tag) || 'none';
+          info.textContent = 'Pilih tag yang dimiliki untuk mengaktifkan.';
+          render(meta, userAlltag, currentTag);
+        } else {
+          info.textContent = 'Halaman ini harus dibuka dari aplikasi ExeMusic.';
+        }
+      }
+
+      closeBtn.addEventListener('click', ()=> window.close());
+      init();
+    })();
+  </script>
+</body>
+</html>
