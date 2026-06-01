@@ -5,79 +5,225 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Pilih Tag - ExeMusic</title>
   <style>
-    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#04050a;color:#e6fff0;padding:18px}
-    .card{max-width:760px;margin:24px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg,#071017,#0e0f14);box-shadow:0 6px 30px rgba(0,0,0,0.6)}
-    .tag-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-    .chip{padding:8px 12px;border-radius:999px;background:#071119;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
-    .chip.owned{background:linear-gradient(90deg,#00ff88,#00d4ff);color:#001}
-    .chip.locked{opacity:0.4}
-    button{margin-top:12px;padding:10px 14px;border-radius:8px;border:none;background:#00ff88;color:#001;cursor:pointer}
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #04050a, #0a0b14);
+      color: #e6fff0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .card {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 24px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #071017, #0e0f14);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(0, 255, 136, 0.1);
+    }
+    h2 { margin-bottom: 12px; color: #00ff88; font-size: 20px; letter-spacing: 1px; }
+    #info { 
+      font-size: 13px; 
+      color: #88c; 
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      background: rgba(0, 255, 136, 0.05);
+      border-radius: 8px;
+      border-left: 2px solid rgba(0, 255, 136, 0.3);
+    }
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      min-height: 50px;
+    }
+    .chip {
+      padding: 10px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #071119;
+      color: #e6fff0;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .chip:hover { background: rgba(0, 255, 136, 0.1); border-color: rgba(0, 255, 136, 0.3); }
+    .chip.owned {
+      background: linear-gradient(90deg, #00ff88, #00d4ff);
+      color: #001;
+      border: none;
+      font-weight: 600;
+    }
+    .chip.owned:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4); }
+    .chip.locked { opacity: 0.5; cursor: not-allowed; }
+    .chip.locked:hover { background: #071119; }
+    button#close {
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+    button#close:hover { background: rgba(255, 255, 255, 0.15); }
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(0, 255, 136, 0.2);
+      border-top: 2px solid #00ff88;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>PILIH TAG</h2>
-    <div id="info">Memuat...</div>
-    <div class="tag-grid" id="grid"></div>
-    <div style="margin-top:12px">
-      <button id="close">Tutup</button>
+    <div id="info">
+      <span class="spinner"></span> Menunggu data dari aplikasi ExeMusic...
     </div>
+    <div class="tag-grid" id="grid"></div>
+    <button id="close">Tutup</button>
   </div>
 
   <script>
-    (function(){
+    (function() {
       const info = document.getElementById('info');
       const grid = document.getElementById('grid');
       const closeBtn = document.getElementById('close');
+      
+      let initData = null;
+      let meta = {};
+      let userAlltag = {};
+      let currentTag = 'none';
 
-      function render(meta, userAlltag, currentTag){
+      function render() {
         grid.innerHTML = '';
         const keys = Object.keys(meta || {});
+        
+        if (keys.length === 0) {
+          grid.innerHTML = '<div style="color: #888; font-size: 12px; width: 100%;">Belum ada tag tersedia.</div>';
+          return;
+        }
+
         keys.forEach(k => {
-          const m = meta[k];
+          const m = meta[k] || { title: k.toUpperCase(), desc: '' };
           const owned = userAlltag && userAlltag[k];
           const btn = document.createElement('button');
           btn.className = 'chip ' + (owned ? 'owned' : 'locked');
           btn.textContent = m.title || k.toUpperCase();
+          btn.title = m.desc || '';
           btn.dataset.tag = k;
-          btn.addEventListener('click', async function(){
+          
+          btn.addEventListener('click', function() {
             const tag = this.dataset.tag;
-            if(!window.opener || !window.opener.auth || !window.opener.auth.currentUser){
-              alert('Buka melalui aplikasi ExeMusic dan login dulu.'); return;
+            if (!owned && tag !== 'none') {
+              info.textContent = '❌ Tag belum dimiliki. Lanjutkan ke event untuk membuka tag.';
+              return;
             }
-            const uid = window.opener.auth.currentUser.uid;
-            if(!owned && tag !== 'none'){
-              alert('Tag belum dimiliki'); return;
-            }
-            try{
-              const updates = {};
-              updates['users/'+uid+'/tag'] = tag === 'none' ? 'none' : tag;
-              if(tag !== 'none') updates['users/'+uid+'/alltag/'+tag] = true;
-              await window.opener.db.ref().update(updates);
-              if(window.opener && typeof window.opener.showToast === 'function') window.opener.showToast('Tag diganti','success');
-              window.close();
-            }catch(err){
-              console.error(err); alert('Gagal ganti tag: '+(err.message||err));
+            
+            info.innerHTML = '<span class="spinner"></span> Mengirim permintaan ganti tag...';
+            
+            try {
+              if (window.opener && window.opener.postMessage) {
+                console.log('[tagselector] Sending exe_tag_update:', tag);
+                window.opener.postMessage({ type: 'exe_tag_update', tag: tag }, '*');
+              } else {
+                info.textContent = '❌ Halaman ini harus dibuka dari aplikasi ExeMusic.';
+                console.warn('[tagselector] No window.opener.postMessage');
+              }
+            } catch (err) {
+              console.error('[tagselector] Error:', err);
+              info.textContent = '❌ Gagal mengirim permintaan: ' + (err.message || err);
             }
           });
+          
           grid.appendChild(btn);
         });
       }
 
-      function init(){
-        if(window.opener && window.opener.TAG_META){
-          const meta = window.opener.TAG_META;
-          const userAlltag = (window.opener.userData && window.opener.userData.alltag) || {};
-          const currentTag = (window.opener.userData && window.opener.userData.tag) || 'none';
-          info.textContent = 'Pilih tag yang dimiliki untuk mengaktifkan.';
-          render(meta, userAlltag, currentTag);
-        } else {
-          info.textContent = 'Halaman ini harus dibuka dari aplikasi ExeMusic.';
+      function handleInitPayload(payload) {
+        if (!payload) {
+          console.warn('[tagselector] Empty payload');
+          return;
         }
+        
+        console.log('[tagselector] Received init payload:', payload);
+        meta = payload.TAG_META || {};
+        userAlltag = (payload.userData && payload.userData.alltag) || {};
+        currentTag = (payload.userData && payload.userData.tag) || 'none';
+        
+        info.textContent = '✓ Pilih tag yang dimiliki untuk mengaktifkan.';
+        render();
       }
 
-      closeBtn.addEventListener('click', ()=> window.close());
-      init();
+      function init() {
+        console.log('[tagselector] init() called. __EXE_INIT:', window.__EXE_INIT);
+        
+        if (window.__EXE_INIT) {
+          console.log('[tagselector] Found __EXE_INIT');
+          handleInitPayload(window.__EXE_INIT);
+          return;
+        }
+        
+        if (window.opener && window.opener.TAG_META) {
+          console.log('[tagselector] Found opener.TAG_META');
+          handleInitPayload({ TAG_META: window.opener.TAG_META, userData: window.opener.userData });
+          return;
+        }
+        
+        console.log('[tagselector] Waiting for postMessage from opener...');
+        function onMsg(ev) {
+          const d = ev.data || {};
+          console.log('[tagselector] Received message:', d.type);
+          
+          if (d && d.type === 'exe_init') {
+            console.log('[tagselector] Got exe_init message');
+            window.removeEventListener('message', onMsg);
+            handleInitPayload(d);
+          }
+        }
+        
+        window.addEventListener('message', onMsg);
+        
+        setTimeout(() => {
+          if (!meta || Object.keys(meta).length === 0) {
+            if (window.opener && window.opener.TAG_META) {
+              console.log('[tagselector] Timeout, but found opener.TAG_META now');
+              handleInitPayload({ TAG_META: window.opener.TAG_META, userData: window.opener.userData });
+            } else {
+              console.warn('[tagselector] Timeout waiting for data');
+              info.textContent = '❌ Halaman ini harus dibuka dari aplikasi ExeMusic.';
+              info.innerHTML += '<br><small style="color: #666; margin-top: 8px;">Debug: No TAG_META received.</small>';
+            }
+          }
+        }, 2000);
+      }
+
+      window.addEventListener('message', function(ev) {
+        const d = ev.data || {};
+        console.log('[tagselector] Response message:', d.type, d.ok);
+        
+        if (d && d.type === 'exe_response') {
+          if (d.ok) {
+            info.textContent = '✓ ' + (d.msg || 'Tag diganti berhasil!');
+            setTimeout(() => window.close(), 800);
+          } else {
+            info.textContent = '❌ ' + (d.msg || 'Gagal mengganti tag.');
+          }
+        }
+      });
+
+      closeBtn.addEventListener('click', () => window.close());
+      
+      setTimeout(init, 50);
     })();
   </script>
 </body>

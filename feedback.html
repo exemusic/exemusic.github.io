@@ -5,63 +5,171 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Feedback - ExeMusic</title>
   <style>
-    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#0b0b10;color:#e6fff0;padding:18px}
-    .card{max-width:760px;margin:24px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg,#071017,#0e0f14);box-shadow:0 6px 30px rgba(0,0,0,0.6)}
-    textarea{width:100%;min-height:200px;border-radius:8px;padding:12px;background:#071119;border:1px solid rgba(255,255,255,0.04);color:#dfffe4}
-    button{margin-top:12px;padding:10px 14px;border-radius:8px;border:none;background:#00ff88;color:#001;cursor:pointer}
-    .info{font-size:13px;color:#88c;margin-bottom:8px}
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0b0b10, #0e0a16);
+      color: #e6fff0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .card {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 24px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #071017, #0e0f14);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(0, 255, 136, 0.1);
+    }
+    h2 { margin-bottom: 12px; color: #00ff88; font-size: 20px; letter-spacing: 1px; }
+    .info {
+      font-size: 13px;
+      color: #88c;
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      background: rgba(0, 255, 136, 0.05);
+      border-radius: 8px;
+      border-left: 2px solid rgba(0, 255, 136, 0.3);
+    }
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      border-radius: 8px;
+      padding: 12px;
+      background: #071119;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      color: #dfffe4;
+      font-family: inherit;
+      font-size: 13px;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+    textarea:focus { outline: none; border-color: rgba(0, 255, 136, 0.3); }
+    .buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      align-items: center;
+    }
+    button#send {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(90deg, #00ff88, #00d4ff);
+      color: #001;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+    button#send:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0, 255, 136, 0.3); }
+    button#send:disabled { opacity: 0.5; cursor: not-allowed; }
+    button#close {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+    button#close:hover { background: rgba(255, 255, 255, 0.15); }
+    #status {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #aee;
+      padding: 10px 12px;
+      background: rgba(0, 255, 136, 0.05);
+      border-radius: 8px;
+      min-height: 20px;
+    }
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(0, 255, 136, 0.2);
+      border-top: 2px solid #00ff88;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 4px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>Masukkan & Feedback</h2>
-    <div class="info">Isi masukan Anda. Halaman ini bekerja bersama aplikasi utama (buka dari ExeMusic).</div>
+    <div class="info">Kirim masukan Anda (1x/hari). Login diperlukan.</div>
     <textarea id="msg" maxlength="500" placeholder="Tulis masukan atau saran Anda di sini..."></textarea>
-    <div style="display:flex;gap:8px;align-items:center">
+    <div class="buttons">
       <button id="send">Kirim Feedback</button>
-      <button id="close" style="background:rgba(255,255,255,0.02);color:#fff">Tutup</button>
+      <button id="close">Tutup</button>
     </div>
-    <div id="status" style="margin-top:10px;color:#aee;font-size:13px"></div>
+    <div id="status"></div>
   </div>
 
   <script>
-    (function(){
+    (function() {
       const sendBtn = document.getElementById('send');
       const closeBtn = document.getElementById('close');
       const msgEl = document.getElementById('msg');
       const status = document.getElementById('status');
 
-      function setStatus(t){ status.textContent = t; }
+      function setStatus(t, isSpinner = false) {
+        if (isSpinner) status.innerHTML = '<span class="spinner"></span>' + t;
+        else status.textContent = t;
+      }
 
-      sendBtn.addEventListener('click', async function(){
-        const text = (msgEl.value||'').trim();
-        if(!text){ setStatus('Tulis pesan feedback dulu'); return; }
-        try{
-          if(window.opener && window.opener.db && window.opener.auth && window.opener.auth.currentUser){
-            const uid = window.opener.auth.currentUser.uid;
-            const today = new Date().toISOString().split('T')[0];
-            const feedbacksRef = window.opener.db.ref('feedbacks');
-            const id = feedbacksRef.push().key;
-            const username = (window.opener.userData && (window.opener.userData.username||window.opener.userData.displayName)) || 'User';
-            const timestamp = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-            await feedbacksRef.child(id).set({ userId: uid, username, message: text, timestamp, date: today, status: 'unread' });
-            // mark as sent today in opener user data if available
-            try{ if(window.opener.db && window.opener.db.ref) await window.opener.db.ref('users/'+uid+'/feedback_'+today).set(true); }catch(e){}
-            if(window.opener && typeof window.opener.showThankYouAnimation === 'function') window.opener.showThankYouAnimation(username);
-            if(window.opener && typeof window.opener.showToast === 'function') window.opener.showToast('Feedback berhasil dikirim!','success');
-            setStatus('Feedback terkirim. Terima kasih!');
-            setTimeout(()=> window.close(), 900);
+      window.addEventListener('message', function(ev) {
+        const d = ev.data || {};
+        console.log('[feedback] Response message:', d.type, d.ok);
+        
+        if (d && d.type === 'exe_response') {
+          if (d.ok) {
+            setStatus('✓ ' + (d.msg || 'Feedback terkirim. Terima kasih!'));
+            setTimeout(() => window.close(), 800);
           } else {
-            setStatus('Halaman ini harus dibuka dari aplikasi ExeMusic agar dapat mengirim feedback.');
+            setStatus('❌ ' + (d.msg || 'Gagal mengirim feedback.'));
+            sendBtn.disabled = false;
           }
-        }catch(err){
-          console.error(err);
-          setStatus('Gagal mengirim: '+(err.message||err));
         }
       });
 
-      closeBtn.addEventListener('click', ()=> window.close());
+      sendBtn.addEventListener('click', function() {
+        const text = (msgEl.value || '').trim();
+        if (!text) {
+          setStatus('❌ Tulis pesan feedback dulu');
+          return;
+        }
 
+        if (text.length > 500) {
+          setStatus('❌ Pesan terlalu panjang (max 500 karakter)');
+          return;
+        }
+
+        sendBtn.disabled = true;
+        setStatus('Mengirim feedback...', true);
+
+        try {
+          if (window.opener && window.opener.postMessage) {
+            console.log('[feedback] Sending exe_submit_feedback');
+            window.opener.postMessage({ type: 'exe_submit_feedback', message: text }, '*');
+          } else {
+            setStatus('❌ Halaman ini harus dibuka dari aplikasi ExeMusic.');
+            sendBtn.disabled = false;
+            console.warn('[feedback] No window.opener.postMessage');
+          }
+        } catch (err) {
+          console.error('[feedback] Error:', err);
+          setStatus('❌ Gagal mengirim: ' + (err.message || err));
+          sendBtn.disabled = false;
+        }
+      });
+
+      closeBtn.addEventListener('click', () => window.close());
+      setStatus('Siap mengirim feedback');
     })();
   </script>
 </body>
