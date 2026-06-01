@@ -5803,7 +5803,7 @@
         <button id="btnEvent" onclick="openEventCenter()" title="Event">
           <i class="fas fa-calendar-alt"></i>
         </button>
-        <button id="btnFeedback" type="button" title="Masukkan/Feedback" onclick="window.open('feedback.html','_blank','width=700,height=700')">
+        <button id="btnFeedback" type="button" title="Masukkan/Feedback" onclick="window.openFeedbackFrame()">
           <i class="fas fa-comment-dots"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
@@ -6225,7 +6225,7 @@
         <div class="mp-actions">
           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
-          <button id="btnProfileTag" class="mp-btn mp-btn-sec" onclick="window.open('tagselector.html','_blank','width=700,height=700')"><i class="fas fa-tag"></i> Tag</button>
+          <button id="btnProfileTag" class="mp-btn mp-btn-sec" onclick="window.openTagSelectorFrame()"><i class="fas fa-tag"></i> Tag</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
           <button class="mp-btn" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.2)" onclick="clearExeLoginCookies(); auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
@@ -12662,8 +12662,8 @@
               e && e.preventDefault && e.preventDefault();
               e && e.stopPropagation && e.stopPropagation();
               console.log('btnFeedback fallback clicked');
-              try{ window.open('feedback.html','_blank','width=700,height=700'); }
-              catch(err){ console.warn('Failed to open feedback.html', err); }
+              try{ if (typeof window.openFeedbackFrame === 'function') window.openFeedbackFrame(); else window.open('feedback.html','_blank','width=700,height=700'); }
+              catch(err){ console.warn('Failed to open feedback frame', err); }
             });
           }
 
@@ -12674,8 +12674,8 @@
               e && e.preventDefault && e.preventDefault();
               e && e.stopPropagation && e.stopPropagation();
               console.log('btnProfileTag fallback clicked');
-              try{ window.open('tagselector.html','_blank','width=700,height=700'); }
-              catch(err){ console.warn('Failed to open tagselector.html', err); }
+              try{ if (typeof window.openTagSelectorFrame === 'function') window.openTagSelectorFrame(); else window.open('tagselector.html','_blank','width=700,height=700'); }
+                catch(err){ console.warn('Failed to open tag selector frame', err); }
             });
           }
 
@@ -12687,6 +12687,106 @@
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attachFallbackHandlers);
       else attachFallbackHandlers();
     })();
+  </script>
+  <style>
+    /* Overlay for embedded external frames */
+    .external-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.86); display: none; z-index: 200000; align-items: center; justify-content: center; }
+    .external-frame { width: min(920px, calc(100vw - 28px)); max-height: 88vh; overflow-y: auto; background: linear-gradient(180deg,#071017,#0e0f14); border-radius: 16px; padding: 18px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
+    .external-frame .close-btn { position: absolute; right: 10px; top: 10px; background: transparent; border: none; color: #fff; font-size:22px; cursor:pointer }
+  </style>
+
+  <div id="externalFrameOverlay" class="external-overlay">
+    <div class="external-frame" id="externalFrame">
+      <button class="close-btn" id="externalFrameClose" title="Tutup">×</button>
+      <div id="externalFrameContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // Embedded-frame helpers: render feedback and tag selector inside overlay
+    window.openFeedbackFrame = function(){
+      const overlay = document.getElementById('externalFrameOverlay');
+      const content = document.getElementById('externalFrameContent');
+      if(!overlay || !content) return;
+      content.innerHTML = `
+        <h2 style="margin-top:0;color:var(--accent)">Masukkan & Feedback</h2>
+        <div style="font-size:13px;color:#88c;margin-bottom:8px">Kirim masukan (1x/hari). Login diperlukan.</div>
+        <textarea id="ef_msg" maxlength="500" placeholder="Tulis masukan atau saran Anda di sini..." style="width:100%;min-height:160px;border-radius:8px;padding:12px;background:#071119;border:1px solid rgba(255,255,255,0.03);color:#dfffe4"></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px"><button id="ef_send" style="background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;padding:10px 14px;border-radius:8px;color:#001;cursor:pointer">Kirim Feedback</button><button id="ef_cancel" style="background:rgba(255,255,255,0.02);border:none;padding:10px 14px;border-radius:8px;color:#fff;cursor:pointer">Batal</button></div>
+        <div id="ef_status" style="margin-top:10px;color:#aee;font-size:13px"></div>
+      `;
+      overlay.style.display = 'flex';
+      document.getElementById('externalFrameClose').focus();
+
+      const sendBtn = document.getElementById('ef_send');
+      const cancelBtn = document.getElementById('ef_cancel');
+      const msgEl = document.getElementById('ef_msg');
+      const status = document.getElementById('ef_status');
+
+      function setStatus(t){ if(status) status.textContent = t; }
+
+      sendBtn.addEventListener('click', async function(){
+        const text = (msgEl.value||'').trim();
+        if(!text){ setStatus('Tulis pesan feedback dulu'); return; }
+        try{
+          if(window.auth && window.auth.currentUser){
+            const uid = window.auth.currentUser.uid;
+            const today = new Date().toISOString().split('T')[0];
+            const feedbacksRef = window.db.ref('feedbacks');
+            const id = feedbacksRef.push().key;
+            const username = (window.userData && (window.userData.username||window.userData.displayName)) || 'User';
+            const timestamp = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+            await feedbacksRef.child(id).set({ userId: uid, username, message: text, timestamp, date: today, status: 'unread' });
+            try{ await window.db.ref('users/'+uid+'/feedback_'+today).set(true); }catch(e){}
+            if(window.showThankYouAnimation) window.showThankYouAnimation(username);
+            if(window.showToast) window.showToast('Feedback berhasil dikirim!','success');
+            setStatus('Feedback terkirim. Terima kasih!');
+            setTimeout(()=> overlay.style.display='none',900);
+          } else {
+            setStatus('Login dulu untuk mengirim feedback');
+          }
+        }catch(err){ console.error('Feedback send error',err); setStatus('Gagal mengirim: '+(err.message||err)); }
+      });
+
+      cancelBtn.addEventListener('click', function(){ overlay.style.display='none'; });
+      document.getElementById('externalFrameClose').onclick = function(){ overlay.style.display='none'; };
+    };
+
+    window.openTagSelectorFrame = function(){
+      const overlay = document.getElementById('externalFrameOverlay');
+      const content = document.getElementById('externalFrameContent');
+      if(!overlay || !content) return;
+      const currentTag = (window.userData && window.userData.tag ? window.userData.tag : 'none').toLowerCase();
+      const all = window.userData && window.userData.alltag ? window.userData.alltag : {};
+      let ownedKeys = Object.keys(all).filter(k => all[k]);
+      if (currentTag !== 'none' && !ownedKeys.includes(currentTag)) ownedKeys.unshift(currentTag);
+      const owned = new Set(ownedKeys);
+      const ownedChips = ownedKeys.length ? ownedKeys.map(k => { const meta = window.TAG_META && window.TAG_META[k] || { title: k.toUpperCase() }; return `<button class="chip owned" data-tag="${k}" style="margin:6px;padding:8px 12px;border-radius:999px;border:none;">${meta.title}</button>`; }).join('') : '<div style="color:#888; font-size:11px; margin-top:6px">Belum ada tag yang dimiliki</div>';
+      content.innerHTML = `
+        <h2 style="margin-top:0;color:var(--accent)">PILIH TAG</h2>
+        <div style="font-size:13px;color:#88c;margin-bottom:8px">Tag milikmu</div>
+        <div id="ef_tag_grid" style="display:flex;flex-wrap:wrap;gap:8px">${ownedChips}<button class="chip" data-tag="none" style="margin:6px;padding:8px 12px;border-radius:999px;border:none;">TANPA TAG</button></div>
+        <div style="margin-top:12px;font-size:13px;color:#9aa" id="ef_tag_info">Klik tag untuk mengganti.</div>
+      `;
+      overlay.style.display = 'flex';
+      document.getElementById('externalFrameClose').onclick = function(){ overlay.style.display='none'; };
+
+      const grid = document.getElementById('ef_tag_grid');
+      grid.addEventListener('click', function(e){
+        const btn = e.target.closest('button'); if(!btn) return;
+        const tag = btn.dataset.tag;
+        if(!window.auth || !window.auth.currentUser){ if(window.showToast) window.showToast('Login dulu untuk mengganti tag','error'); return; }
+        const uid = window.auth.currentUser.uid;
+        if(tag === 'none' || owned.has(tag)){
+          const updates = {};
+          updates['users/' + uid + '/tag'] = tag === 'none' ? 'none' : tag;
+          if(tag !== 'none') updates['users/' + uid + '/alltag/' + tag] = true;
+          window.db.ref().update(updates).then(() => { overlay.style.display='none'; if(window.showToast) window.showToast('Tag diganti','success'); }).catch(err=>{ console.error(err); if(window.showToast) window.showToast('Gagal mengganti tag','error'); });
+        } else {
+          if(window.showToast) window.showToast('Tag ini belum kamu dapatkan','warning');
+        }
+      });
+    };
   </script>
 </body>
 </html>
