@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 3.3.2</title>
+  <title>test 3.3.2</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   <script>
     (function () {
@@ -7625,35 +7625,16 @@
       if (statusText) {
         statusText.textContent = auth.currentUser ? 'Silakan kirim masukan Anda.' : 'Login diperlukan untuk mengirim feedback.';
       }
-      // Reset form
       const form = document.getElementById('feedbackForm');
       if (form) form.reset();
       const charCount = document.getElementById('charCount');
       if (charCount) charCount.textContent = '0';
-      // Focus on textarea
       setTimeout(() => {
         const textarea = document.getElementById('feedbackMessage');
         if (textarea) textarea.focus();
       }, 100);
       if (!auth.currentUser) {
         showToast('Login dulu untuk mengirim feedback', 'error');
-      }
-      const modal = document.getElementById('feedbackOverlay');
-      if (modal) {
-        modal.style.display = 'flex';
-        modal.style.zIndex = '100050';
-        // Reset form
-        const form = document.getElementById('feedbackForm');
-        if (form) form.reset();
-        const charCount = document.getElementById('charCount');
-        if (charCount) charCount.textContent = '0';
-        // Focus on textarea
-        setTimeout(() => {
-          const textarea = document.getElementById('feedbackMessage');
-          if (textarea) textarea.focus();
-        }, 100);
-      } else {
-        console.log('Modal not found');
       }
     };
 
