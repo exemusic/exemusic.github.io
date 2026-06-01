@@ -805,6 +805,30 @@
       background: rgba(0,255,136,0.28);
       color: #fff;
       box-shadow: 0 0 16px rgba(0,255,136,0.45);
+      transform: translateY(-1px);
+    }
+    .feedback-status {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #a3f7c5;
+      background: rgba(0,255,136,0.1);
+      border: 1px solid rgba(0,255,136,0.2);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .feedback-status.error {
+      color: #ffb3b3;
+      background: rgba(255,51,51,0.1);
+      border-color: rgba(255,51,51,0.25);
+    }
+    .tag-selector-sheet {
+      max-width: 640px;
+      padding: 24px;
+      background: rgba(8,10,20,0.98);
+      border: 1px solid rgba(0,255,136,0.18);
+      box-shadow: 0 0 40px rgba(0,255,136,0.12);
+      border-radius: 18px;
     }
     #btnEvent {
       width: 40px; height: 40px;
@@ -5779,7 +5803,7 @@
         <button id="btnEvent" onclick="openEventCenter()" title="Event">
           <i class="fas fa-calendar-alt"></i>
         </button>
-        <button id="btnFeedback" onclick="openFeedbackModal()" type="button" title="Masukkan/Feedback">
+        <button id="btnFeedback" onclick="window.openFeedbackModal()" type="button" title="Masukkan/Feedback">
           <i class="fas fa-comment-dots"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
@@ -6201,7 +6225,7 @@
         <div class="mp-actions">
           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
-          <button class="mp-btn mp-btn-sec" onclick="openTagSelector()"><i class="fas fa-tag"></i> Tag</button>
+          <button class="mp-btn mp-btn-sec" onclick="window.openTagSelector()"><i class="fas fa-tag"></i> Tag</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
           <button class="mp-btn" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.2)" onclick="clearExeLoginCookies(); auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
@@ -6785,6 +6809,7 @@
       <div class="feedback-content">
         <div class="feedback-info">
           <p><i class="fas fa-info-circle"></i> Masukkan Anda sangat berharga untuk pengembangan ExeMusic. Kirim feedback maksimal 1x per hari.</p>
+          <div id="feedbackStatusText" class="feedback-status">Login diperlukan untuk mengirim feedback.</div>
         </div>
         <form id="feedbackForm" class="feedback-form">
           <div class="feedback-field">
@@ -7589,12 +7614,30 @@
     // ============================================================
     window.openFeedbackModal = function() {
       console.log('openFeedbackModal called');
-      if (!auth.currentUser) {
-        console.log('User not logged in');
-        showToast('Login dulu untuk mengirim feedback', 'error');
+      const modal = document.getElementById('feedbackOverlay');
+      if (!modal) {
+        console.warn('Feedback modal element tidak ditemukan');
         return;
       }
-      console.log('User logged in, opening modal');
+      modal.style.display = 'flex';
+      modal.style.zIndex = '100050';
+      const statusText = document.getElementById('feedbackStatusText');
+      if (statusText) {
+        statusText.textContent = auth.currentUser ? 'Silakan kirim masukan Anda.' : 'Login diperlukan untuk mengirim feedback.';
+      }
+      // Reset form
+      const form = document.getElementById('feedbackForm');
+      if (form) form.reset();
+      const charCount = document.getElementById('charCount');
+      if (charCount) charCount.textContent = '0';
+      // Focus on textarea
+      setTimeout(() => {
+        const textarea = document.getElementById('feedbackMessage');
+        if (textarea) textarea.focus();
+      }, 100);
+      if (!auth.currentUser) {
+        showToast('Login dulu untuk mengirim feedback', 'error');
+      }
       const modal = document.getElementById('feedbackOverlay');
       if (modal) {
         modal.style.display = 'flex';
@@ -11433,7 +11476,8 @@
       currentProfileUid = null;
       applyProfileUrl(true);
     }
-    function openTagSelector() {
+    window.openTagSelector = function() {
+      console.log('openTagSelector called');
       if (!auth.currentUser || !userData) { msg('Login dulu!'); return; }
       ensureCurrentTagInAlltag(auth.currentUser.uid, userData);
       const all = userData.alltag || {};
@@ -11490,7 +11534,7 @@
       }).join('');
       info.innerHTML = rows;
       modal.style.display = 'flex';
-    }
+    };
 
     // ============================================================
     // NOTIFICATIONS - CLEAR
