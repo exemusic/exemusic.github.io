@@ -6925,6 +6925,8 @@
     const auth = firebase.auth();
     const db = firebase.database();
     const storage = firebase.storage();
+    window.auth = auth;
+    window.db = db;
 
     // ============================================================
     // SUPABASE CONFIGURATION - v3.2.3
@@ -9851,6 +9853,7 @@
       if (u) {
         db.ref('users/' + u.uid).on('value', snap => {
           userData = snap.val();
+          window.userData = userData;
           if (!userData) { dismissLoader(); return; }
           if (userData.banned === true) { document.getElementById('bannedScreen').style.display = 'flex'; auth.signOut(); return; }
 
@@ -9940,6 +9943,7 @@
         });
         setupTagDropWatcher();
       } else {
+        window.userData = null;
         clearExeLoginCookies();
         stopUploadCooldownWatcher();
         if (tagDropInterval) {
@@ -11877,6 +11881,7 @@
       'exe-sahur': { title: 'EXE-SAHUR', desc: '🌙 SECRET TAG: Upload lagu jam 03:00-05:00 (waktu sahur) - Auto grant jika enabled' },
       realaccount: { title: 'REAL ACCOUNT', desc: 'Tag untuk akun asli yang terverifikasi' }
     };
+    window.TAG_META = TAG_META;
     let adSelectedUserUid = null;
 
     function initTagDropSelect() {
@@ -12656,26 +12661,32 @@
       function attachFallbackHandlers(){
         try{
           const fb = document.getElementById('btnFeedback');
-          if(fb){
+          if(fb && !fb.hasAttribute('onclick')){
             fb.style.pointerEvents = 'auto'; fb.style.zIndex = '100100';
             fb.addEventListener('click', function(e){
               e && e.preventDefault && e.preventDefault();
               e && e.stopPropagation && e.stopPropagation();
               console.log('btnFeedback fallback clicked');
-              try{ window.open('feedback.html','_blank','width=700,height=700'); }
-              catch(err){ console.warn('Failed to open feedback.html', err); }
+              if (typeof window.openFeedbackFrame === 'function') {
+                window.openFeedbackFrame();
+              } else {
+                window.location.href = 'feedback.html';
+              }
             });
           }
 
           const pt = document.getElementById('btnProfileTag');
-          if(pt){
+          if(pt && !pt.hasAttribute('onclick')){
             pt.style.pointerEvents = 'auto'; pt.style.zIndex = '100100';
             pt.addEventListener('click', function(e){
               e && e.preventDefault && e.preventDefault();
               e && e.stopPropagation && e.stopPropagation();
               console.log('btnProfileTag fallback clicked');
-              try{ window.open('tagselector.html','_blank','width=700,height=700'); }
-              catch(err){ console.warn('Failed to open tagselector.html', err); }
+              if (typeof window.openTagSelectorFrame === 'function') {
+                window.openTagSelectorFrame();
+              } else {
+                window.location.href = 'tagselector.html';
+              }
             });
           }
 
@@ -12729,15 +12740,15 @@
         const text = (msgEl.value||'').trim();
         if(!text){ setStatus('Tulis pesan feedback dulu'); return; }
         try{
-          if(window.auth && window.auth.currentUser){
-            const uid = window.auth.currentUser.uid;
+          if(auth && auth.currentUser){
+            const uid = auth.currentUser.uid;
             const today = new Date().toISOString().split('T')[0];
-            const feedbacksRef = window.db.ref('feedbacks');
+            const feedbacksRef = db.ref('feedbacks');
             const id = feedbacksRef.push().key;
-            const username = (window.userData && (window.userData.username||window.userData.displayName)) || 'User';
+            const username = (userData && (userData.username||userData.displayName)) || 'User';
             const timestamp = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
             await feedbacksRef.child(id).set({ userId: uid, username, message: text, timestamp, date: today, status: 'unread' });
-            try{ await window.db.ref('users/'+uid+'/feedback_'+today).set(true); }catch(e){}
+            try{ await db.ref('users/'+uid+'/feedback_'+today).set(true); }catch(e){}
             if(window.showThankYouAnimation) window.showThankYouAnimation(username);
             if(window.showToast) window.showToast('Feedback berhasil dikirim!','success');
             setStatus('Feedback terkirim. Terima kasih!');
@@ -12757,12 +12768,12 @@
       const overlay = document.getElementById('externalFrameOverlay');
       const content = document.getElementById('externalFrameContent');
       if(!overlay || !content) return;
-      const currentTag = (window.userData && window.userData.tag ? window.userData.tag : 'none').toLowerCase();
-      const all = window.userData && window.userData.alltag ? window.userData.alltag : {};
+      const currentTag = (userData && userData.tag ? userData.tag : 'none').toLowerCase();
+      const all = userData && userData.alltag ? userData.alltag : {};
       let ownedKeys = Object.keys(all).filter(k => all[k]);
       if (currentTag !== 'none' && !ownedKeys.includes(currentTag)) ownedKeys.unshift(currentTag);
       const owned = new Set(ownedKeys);
-      const ownedChips = ownedKeys.length ? ownedKeys.map(k => { const meta = window.TAG_META && window.TAG_META[k] || { title: k.toUpperCase() }; return `<button class="chip owned" data-tag="${k}" style="margin:6px;padding:8px 12px;border-radius:999px;border:none;">${meta.title}</button>`; }).join('') : '<div style="color:#888; font-size:11px; margin-top:6px">Belum ada tag yang dimiliki</div>';
+      const ownedChips = ownedKeys.length ? ownedKeys.map(k => { const meta = TAG_META && TAG_META[k] || { title: k.toUpperCase() }; return `<button class="chip owned" data-tag="${k}" style="margin:6px;padding:8px 12px;border-radius:999px;border:none;">${meta.title}</button>`; }).join('') : '<div style="color:#888; font-size:11px; margin-top:6px">Belum ada tag yang dimiliki</div>';
       content.innerHTML = `
         <h2 style="margin-top:0;color:var(--accent)">PILIH TAG</h2>
         <div style="font-size:13px;color:#88c;margin-bottom:8px">Tag milikmu</div>
@@ -12776,13 +12787,13 @@
       grid.addEventListener('click', function(e){
         const btn = e.target.closest('button'); if(!btn) return;
         const tag = btn.dataset.tag;
-        if(!window.auth || !window.auth.currentUser){ if(window.showToast) window.showToast('Login dulu untuk mengganti tag','error'); return; }
-        const uid = window.auth.currentUser.uid;
+        if(!auth || !auth.currentUser){ if(window.showToast) window.showToast('Login dulu untuk mengganti tag','error'); return; }
+        const uid = auth.currentUser.uid;
         if(tag === 'none' || owned.has(tag)){
           const updates = {};
           updates['users/' + uid + '/tag'] = tag === 'none' ? 'none' : tag;
           if(tag !== 'none') updates['users/' + uid + '/alltag/' + tag] = true;
-          window.db.ref().update(updates).then(() => { overlay.style.display='none'; if(window.showToast) window.showToast('Tag diganti','success'); }).catch(err=>{ console.error(err); if(window.showToast) window.showToast('Gagal mengganti tag','error'); });
+          db.ref().update(updates).then(() => { overlay.style.display='none'; if(window.showToast) window.showToast('Tag diganti','success'); }).catch(err=>{ console.error(err); if(window.showToast) window.showToast('Gagal mengganti tag','error'); });
         } else {
           if(window.showToast) window.showToast('Tag ini belum kamu dapatkan','warning');
         }
