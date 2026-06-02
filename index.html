@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 3.3.3</title>
+  <title>ExeMusic 3.3.2</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   <script>
     (function () {
@@ -2578,12 +2578,16 @@
        FOOTER NAV
     ============================================================ */
     .footer {
-      margin-top: auto; display: flex; justify-content: space-between;
+      margin-top: auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
       background: rgba(0,0,0,0.4);
       border: 1px solid rgba(255,255,255,0.05);
-      padding: 13px 25px; border-radius: 20px; flex-shrink: 0; z-index: 10;
+      padding: 13px 18px; border-radius: 20px; flex-shrink: 0; z-index: 10;
     }
-    .footer button { background: none; border: none; color: white; font-size: 17px; opacity: 0.4; cursor: pointer; transition: 0.2s; }
+    .footer button {
+      background: none; border: none; color: white; font-size: 17px;
+      opacity: 0.4; cursor: pointer; transition: 0.2s;
+      flex: 1 1 0; min-width: 0;
+    }
     .footer button:hover { opacity: 0.8; }
     .active-btn { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px var(--accent); }
 
@@ -5054,9 +5058,14 @@
       .app { 
         width: 100vw !important;
         max-width: 100vw !important;
-        height: 100vh !important;
+        min-height: 100vh !important;
+        height: auto !important;
         border-radius: 0 !important;
-        padding: 16px !important;
+        padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 16px)) !important;
+        box-sizing: border-box;
+      }
+      .footer {
+        padding-bottom: calc(13px + env(safe-area-inset-bottom, 10px)) !important;
       }
       .event-center-sheet {
         width: calc(100vw - 20px) !important;
@@ -5373,14 +5382,14 @@
         <div class="logo" id="typing"></div>
         <div class="logo-shine"></div>
       </div>
-      <div class="status" id="status">Initializing...</div>
+      <div class="status" id="status">Memuat ExeMusic...</div>
       <div class="progress-bar">
         <div class="progress-track">
           <div class="progress-fill" id="progressFill"></div>
         </div>
         <div class="progress-thumb" id="percent">0%</div>
       </div>
-      <div class="hint">Efek shiny responsif dan halus untuk loading screen ExeMusic.</div>
+      <div class="hint">Sedang menyiapkan pengalaman audio Anda. Mohon tunggu sebentar.</div>
     </div>
   </div>
 
@@ -5944,7 +5953,6 @@
         <div class="mp-actions">
           <button class="mp-btn mp-btn-sec" onclick="openChangeNameModal()"><i class="fas fa-edit"></i> Edit</button>
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
-          <button id="btnProfileTag" class="mp-btn mp-btn-sec" onclick="openTagSelector()"><i class="fas fa-tag"></i> Tag</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
           <button class="mp-btn" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.2)" onclick="clearExeLoginCookies(); auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
