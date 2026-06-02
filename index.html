@@ -1427,321 +1427,6 @@
       border: 1px solid rgba(75,85,99,0.95);
     }
 
-    /* Top-up game (Roblox) — Event & Quest */
-    .event-topup-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .event-topup-head {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(224,30,90,0.12), rgba(0,162,255,0.08));
-      border: 1px solid rgba(224,30,90,0.35);
-    }
-    .event-topup-head-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: rgba(224,30,90,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      color: #fff;
-    }
-    .event-topup-head-text h4 {
-      font-size: 13px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.5px;
-    }
-    .event-topup-head-text p {
-      font-size: 10px;
-      color: #9ca3af;
-      margin-top: 2px;
-      line-height: 1.4;
-    }
-    .event-topup-user-row label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: #9ca3af;
-      display: block;
-      margin-bottom: 4px;
-    }
-    .event-topup-user-row input.inp-dark {
-      width: 100%;
-      max-width: 100%;
-    }
-    .event-topup-packs {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .event-topup-card {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 10px;
-      align-items: center;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(15,23,42,0.95);
-      border: 1px solid rgba(55,65,81,0.9);
-    }
-    .event-topup-card-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #f9fafb;
-    }
-    .event-topup-card-title span {
-      color: #38bdf8;
-    }
-    .event-topup-card-meta {
-      font-size: 10px;
-      color: #9ca3af;
-      margin-top: 4px;
-    }
-    .event-topup-card-meta strong {
-      color: #fbbf24;
-    }
-    .event-topup-go {
-      font-size: 10px;
-      padding: 8px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(224,30,90,0.55);
-      background: linear-gradient(135deg, rgba(224,30,90,0.35), rgba(185,28,28,0.25));
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .event-topup-go:hover {
-      box-shadow: 0 0 16px rgba(224,30,90,0.35);
-    }
-    .event-topup-go:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    .event-topup-card--gamepass {
-      border: 1px solid rgba(251,191,36,0.35);
-      background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(15,23,42,0.6));
-      border-radius: 14px;
-      padding: 10px 10px;
-    }
-    .event-topup-card--gamepass .event-topup-card-title span.gp-pill {
-      display: inline-block;
-      margin-left: 6px;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 0.6px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(251,191,36,0.2);
-      border: 1px solid rgba(251,191,36,0.55);
-      color: #fde68a;
-      vertical-align: middle;
-    }
-    .event-topup-stock {
-      font-size: 10px;
-      font-weight: 700;
-      color: #fca5a5;
-      margin-top: 6px;
-      letter-spacing: 0.3px;
-    }
-    .event-topup-stock.ok {
-      color: #86efac;
-    }
-    .event-topup-restock {
-      font-size: 9px;
-      color: #94a3b8;
-      margin-top: 2px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .event-topup-progress-panel {
-      display: none;
-      flex-direction: column;
-      gap: 0;
-      padding: 0;
-      border-radius: 16px;
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(155deg, rgba(12,14,28,0.99) 0%, rgba(6,8,18,0.99) 50%, rgba(10,12,24,0.99) 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-        0 0 0 1px rgba(224,30,90,0.12) inset,
-        0 16px 40px rgba(0,0,0,0.45),
-        0 0 48px rgba(224,30,90,0.08);
-    }
-    .event-topup-progress-panel.show {
-      display: flex;
-    }
-    .event-topup-progress-panel.rbx-mode-gamepass .event-topup-progress-topline {
-      background: linear-gradient(90deg, transparent, #fbbf24, #f97316, #fb7185, transparent);
-      background-size: 200% 100%;
-    }
-    .event-topup-progress-topline {
-      height: 3px;
-      width: 100%;
-      background: linear-gradient(90deg, transparent, #e01e5a, #00a2ff, #22c55e, transparent);
-      background-size: 200% 100%;
-      animation: rbxToplineMove 2.2s linear infinite;
-    }
-    @keyframes rbxToplineMove {
-      to { background-position: 200% 0; }
-    }
-    .event-topup-progress-inner {
-      padding: 14px 14px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .event-topup-progress-headrow {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .rbx-prog-pulse {
-      flex-shrink: 0;
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: #fff;
-      background: linear-gradient(145deg, rgba(224,30,90,0.45), rgba(0,162,255,0.2));
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 0 24px rgba(224,30,90,0.25);
-      position: relative;
-    }
-    .rbx-prog-pulse::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 18px;
-      border: 2px solid rgba(34,197,94,0.25);
-      animation: rbxRingPulse 1.4s ease-out infinite;
-      pointer-events: none;
-    }
-    @keyframes rbxRingPulse {
-      0% { transform: scale(1); opacity: 0.9; }
-      100% { transform: scale(1.15); opacity: 0; }
-    }
-    .event-topup-progress-headtext { min-width: 0; flex: 1; }
-    .event-topup-progress-panel .lbl {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      color: #f8fafc;
-      letter-spacing: 0.4px;
-      line-height: 1.2;
-    }
-    .event-topup-progress-panel .sub {
-      font-size: 11px;
-      color: rgba(148,163,184,0.95);
-      line-height: 1.45;
-      margin-top: 4px;
-    }
-    .rbx-prog-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .rbx-chip {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: rgba(34,197,94,0.12);
-      border: 1px solid rgba(34,197,94,0.35);
-      color: #86efac;
-    }
-    .rbx-chip-dim {
-      background: rgba(51,65,85,0.5);
-      border-color: rgba(100,116,139,0.45);
-      color: #cbd5e1;
-    }
-    .event-topup-progress-bar-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .event-topup-progress-bar {
-      position: relative;
-      flex: 1;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(15,23,42,0.95);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: inset 0 1px 8px rgba(0,0,0,0.5);
-    }
-    .event-topup-progress-fill {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #e01e5a, #f97316, #22c55e, #38bdf8);
-      background-size: 160% 100%;
-      transition: width 0.32s cubic-bezier(0.33, 1, 0.68, 1);
-      box-shadow: 0 0 18px rgba(34,197,94,0.35);
-    }
-    .event-topup-progress-panel.show .event-topup-progress-fill {
-      animation: rbxBarShimmer 1.8s ease-in-out infinite;
-    }
-    @keyframes rbxBarShimmer {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-    .event-topup-progress-pct {
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      color: #4ade80;
-      min-width: 38px;
-      text-align: right;
-      text-shadow: 0 0 12px rgba(74,222,128,0.35);
-    }
-    .rbx-prog-steps {
-      display: flex;
-      gap: 5px;
-      margin-top: 2px;
-    }
-    .rbx-step {
-      flex: 1;
-      text-align: center;
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      text-transform: uppercase;
-      color: rgba(100,116,139,0.85);
-      padding: 7px 3px;
-      border-radius: 10px;
-      background: rgba(30,41,59,0.65);
-      border: 1px solid rgba(51,65,85,0.6);
-      transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
-    }
-    .rbx-step.active {
-      color: #f8fafc;
-      border-color: rgba(56,189,248,0.65);
-      background: linear-gradient(180deg, rgba(56,189,248,0.2), rgba(15,23,42,0.9));
-      box-shadow: 0 0 14px rgba(56,189,248,0.2);
-    }
-    .rbx-step.done {
-      color: #bbf7d0;
-      border-color: rgba(34,197,94,0.55);
-      background: rgba(34,197,94,0.12);
-    }
     @media (max-width: 900px) {
       .event-center-layout {
         grid-template-columns: minmax(0, 1fr);
@@ -1765,13 +1450,6 @@
       .event-quest-action,
       .event-shop-action {
         align-items: flex-start;
-      }
-      .event-topup-card {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .event-topup-go {
-        width: 100%;
-        justify-content: center;
       }
     }
 
@@ -4440,6 +4118,209 @@
     .about-dev-link:hover { color: #7df9ff; }
 
     /* ============================================================
+       EXEPREMIUM STYLING - Shiny Green Effect v3.3.2
+    ============================================================ */
+    .premium-modal-body {
+      background: linear-gradient(135deg, rgba(10, 50, 20, 0.4) 0%, rgba(5, 25, 10, 0.5) 100%);
+      border: 2px solid #00ff88;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 0 60px rgba(0, 255, 136, 0.3), inset 0 0 30px rgba(0, 255, 136, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .premium-modal-body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 136, 0.05) 50%, transparent 70%);
+      animation: shimmer 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes shimmer {
+      0%, 100% { transform: translate(-100%, -100%) rotate(45deg); }
+      50% { transform: translate(100%, 100%) rotate(45deg); }
+    }
+    
+    .premium-header {
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .premium-header h2 {
+      font-size: 32px;
+      color: #00ff88;
+      text-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+    .premium-header p {
+      color: #b3b3b3;
+      font-size: 14px;
+    }
+
+    .premium-packages {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .premium-card {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.05) 0%, rgba(0, 212, 255, 0.03) 100%);
+      border: 2px solid #00ff88;
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+    .premium-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4), 0 0 30px rgba(0, 255, 136, 0.2);
+      border-color: #7df9ff;
+    }
+    .premium-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00ff88, transparent);
+      animation: slide 3s ease-in-out infinite;
+    }
+    @keyframes slide {
+      0%, 100% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+    }
+
+    .premium-card-content { position: relative; z-index: 1; }
+    .premium-package-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #00ff88;
+      margin-bottom: 8px;
+    }
+    .premium-price {
+      font-size: 24px;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .premium-price-period {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 16px;
+    }
+    .premium-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 16px 0;
+    }
+    .premium-features li {
+      font-size: 13px;
+      color: #d0d0d0;
+      margin-bottom: 8px;
+      padding-left: 20px;
+      position: relative;
+    }
+    .premium-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #00ff88;
+      font-weight: bold;
+    }
+
+    .premium-btn {
+      background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+      color: #000;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+    }
+    .premium-btn:hover {
+      box-shadow: 0 10px 40px rgba(0, 255, 136, 0.6);
+      transform: scale(1.05);
+    }
+    .premium-btn:active {
+      transform: scale(0.98);
+    }
+
+    .premium-benefit-detail {
+      background: rgba(0, 255, 136, 0.08);
+      border-left: 4px solid #00ff88;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-size: 13px;
+      color: #d0d0d0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .premium-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #00ff88, #00d4ff);
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+    .premium-offer-banner {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(3, 20, 10, 0.92);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      border-radius: 18px;
+      box-shadow: 0 10px 40px rgba(0, 255, 136, 0.18);
+      cursor: pointer;
+      min-width: 260px;
+      max-width: 320px;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .premium-offer-banner.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (max-width: 580px) {
+      .premium-offer-banner {
+        right: 12px;
+        left: 12px;
+        bottom: 12px;
+        min-width: auto;
+      }
+    }
+
+    /* ============================================================
        GAMING STYLE ENHANCEMENTS - v3.2.3
     ============================================================ */
     .event-quest-btn-gaming {
@@ -6019,6 +5900,7 @@
           <button class="mp-btn mp-btn-sec" onclick="openChangePasswordModal()"><i class="fas fa-lock"></i> Pass</button>
           <button class="mp-btn mp-btn-sec" id="btnProfileMusic" style="display:none" onclick="toggleProfileMusicInput()"><i class="fas fa-music"></i> Music</button>
           <button class="mp-btn mp-btn-sec" onclick="shareProfile(auth.currentUser&&auth.currentUser.uid, userData&&userData.username)"><i class="fas fa-share"></i> Share</button>
+          <button class="mp-btn" style="background: linear-gradient(135deg, #00ff88, #00d4ff); color: #000; border: none; font-weight: 700;" onclick="openExePremiumModal()"><i class="fas fa-star"></i> Upgrade Premium</button>
           <button class="mp-btn" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.2)" onclick="clearExeLoginCookies(); auth.signOut(); location.reload()"><i class="fas fa-sign-out-alt"></i></button>
         </div>
         <div id="profileMusicRow" style="width:100%; padding:0 18px 8px; display:none">
@@ -6170,10 +6052,83 @@
         <p style="margin-top:12px; color:#ddd">
           📱 WhatsApp — <a href="https://wa.me/62895329018240" target="_blank" class="about-dev-link">click here</a><br>
            Use Boombox — <a href="javascript:void(0)" onclick="openBoomboxTutorial()" class="about-dev-link">click here</a><br>
-           Update info — <a href="javascript:void(0)" onclick="openUpdateInfo()" class="about-dev-link">click here</a>
+           Update info — <a href="javascript:void(0)" onclick="openUpdateInfo()" class="about-dev-link">click here</a><br>
+           Premium Upgrade — <a href="javascript:void(0)" onclick="openExePremiumModal()" class="about-dev-link">cek paket</a>
         </p>
         <p style="font-size:11px; color:#555; margin-top:10px">Dibuat oleh <a href="?profile_userid=GsU6ThLD9gb5P3k8RS87ro553Ks2" class="about-dev-link">Hexky</a><br>© 2026 ExeMusic</p>
         <button onclick="closeModal()" class="btn-act">SAYA MENGERTI</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="premium-offer-banner" id="premiumOfferBanner" onclick="openExePremiumModal()">
+    <div>
+      <div style="font-size:13px; font-weight:700; color:#fff;">Upgrade ke ExePremium</div>
+      <div style="font-size:11px; color:#b3b3b3; margin-top:4px;">Nikmati theme hijau premium, badge eksklusif, upload tambah</div>
+    </div>
+    <button style="background: linear-gradient(135deg, #00ff88, #00d4ff); border: none; color: #000; padding: 10px 12px; border-radius: 10px; font-weight:700;">Upgrade</button>
+  </div>
+
+  <!-- ExePremium Modal -->
+  <div class="modal" id="modalExePremium" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet" style="max-height: 90vh; overflow-y: auto;">
+      <div class="premium-modal-body">
+        <div class="premium-header">
+          <h2>✨ ExePremium</h2>
+          <p>Unlock Premium Features & Exclusive Benefits</p>
+        </div>
+
+        <div class="premium-packages" id="premiumPackagesContainer">
+          <!-- Premium packages akan di-render by JavaScript -->
+        </div>
+
+        <div class="premium-benefit-detail">
+          <strong>📌 BENEFIT COMPARISON:</strong><br><br>
+          <strong style="color: #00ff88;">ExePremium:</strong> Badge + Premium Tags + Green Shiny Theme + Upload 2 Music/Day<br><br>
+          <strong style="color: #00d4ff;">ExePremium Plus:</strong> All Premium features + VIP features + Priority Support + Custom Role + Verified Badge + Gift Premium
+        </div>
+
+        <button onclick="closeModal()" class="btn-act" style="margin-top: 16px; width: 100%;">TUTUP</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalPremiumCheckout" onclick="if(event.target==this)this.style.display='none'">
+    <div class="sheet" style="max-height: 90vh; overflow-y: auto;">
+      <div class="premium-modal-body">
+        <div class="premium-header">
+          <h2>💳 Pembayaran</h2>
+          <p id="checkoutPackageName">ExePremium</p>
+        </div>
+
+        <div style="position: relative; z-index: 1;">
+          <div style="background: rgba(0, 255, 136, 0.1); border: 2px dashed #00ff88; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 14px; color: #999; margin-bottom: 10px;">QR Code akan tampil di sini</div>
+            <div id="checkoutQRCode" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+              <div style="color: #666;">Generating QR Code...</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+            <strong style="color: #00d4ff;">📋 Detail Transaksi:</strong>
+            <div style="font-size: 13px; color: #d0d0d0; margin-top: 8px; line-height: 1.6;">
+              <div>Paket: <span id="checkoutPackageLabel">ExePremium</span></div>
+              <div>Harga: Rp<span id="checkoutPrice">9.900</span></div>
+              <div>Durasi: <span id="checkoutDuration">1 Bulan</span></div>
+              <div style="margin-top: 8px; color: #00ff88;">Invoice ID: <code id="checkoutInvoiceId" style="font-size: 11px;">--</code></div>
+            </div>
+          </div>
+
+          <div style="font-size: 12px; color: #999; text-align: center; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+            <i class="fas fa-info-circle"></i> Scan QR code dengan aplikasi e-wallet favorit kamu (Dana, OVO, GCash, etc)<br>
+            Pembayaran akan diproses otomatis dalam hitungan detik
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <button onclick="closePremiumCheckout()" class="btn-act">BATAL</button>
+            <button onclick="checkPremiumStatus()" class="btn-act" style="background: linear-gradient(135deg, #00ff88, #00d4ff); color: #000; border: none;">CEK STATUS</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -7076,6 +7031,19 @@
       if (u && u.vip) return 'permanent';
       if (u && u.trialvip && u.trialvip.expireAt && now < u.trialvip.expireAt) return 'trial';
       return false;
+    }
+    function getPremiumStatus(u) {
+      const now = Date.now();
+      if (!u) return { status: 'none', daysLeft: 0, isPremium: false, isPremiumPlus: false };
+      if (u.exepremium && u.exepremium.endTime && now < u.exepremium.endTime) {
+        const daysLeft = Math.ceil((u.exepremium.endTime - now) / (24 * 60 * 60 * 1000));
+        return { status: 'premium', daysLeft, isPremium: true, isPremiumPlus: false };
+      }
+      if (u.exepremiumplus && u.exepremiumplus.endTime && now < u.exepremiumplus.endTime) {
+        const daysLeft = Math.ceil((u.exepremiumplus.endTime - now) / (24 * 60 * 60 * 1000));
+        return { status: 'premiumplus', daysLeft, isPremium: false, isPremiumPlus: true };
+      }
+      return { status: 'none', daysLeft: 0, isPremium: false, isPremiumPlus: false };
     }
     function computeQuestTags(u, folCount, flgCount) {
       const tags = {};
@@ -8511,6 +8479,196 @@
       currentProfileUid = null;
       applyProfileUrl(true);
     }
+
+    function renderExePremiumPackages() {
+      const packages = [
+        {
+          id: 'exepremium',
+          label: 'ExePremium',
+          price: '9.900',
+          duration: '1 Bulan',
+          description: 'Badge ExePremium, premium tag, tema hijau shiny, upload 2 music/hari',
+          features: [
+            'Badge ExePremium',
+            'Unlock premium tag baru',
+            'Tema profile & app shiny hijau',
+            'Upload 2 music/hari',
+            'Unlock theme premium di main app'
+          ]
+        },
+        {
+          id: 'exepremiumplus',
+          label: 'ExePremium Plus',
+          price: '19.900',
+          duration: '1 Bulan',
+          description: 'Semua fitur Premium + VIP semua + prioritas support + gift premium',
+          features: [
+            'Semua fitur ExePremium',
+            'Semua fitur VIP',
+            'Upload lagu seperti VIP',
+            'Prioritas support',
+            '2 tag eksklusif: Beta Access, ExePremium+',
+            'Verified badge walau foll di bawah 50',
+            'Gift Premium ke teman',
+            'Request custom role ke admin'
+          ]
+        }
+      ];
+      const container = document.getElementById('premiumPackagesContainer');
+      if (!container) return;
+      container.innerHTML = packages.map(pkg => {
+        return '<div class="premium-card" onclick="startPremiumCheckout(\'' + pkg.id + '\')">' +
+          '<div class="premium-card-content">' +
+          '<div class="premium-package-name">' + pkg.label + '</div>' +
+          '<div class="premium-price">Rp' + pkg.price + '</div>' +
+          '<div class="premium-price-period">/ bulan</div>' +
+          '<div style="font-size:14px; color:#d0d0d0; margin-bottom:14px;">' + pkg.description + '</div>' +
+          '<ul class="premium-features">' + pkg.features.map(feature => '<li>' + feature + '</li>').join('') + '</ul>' +
+          '<button type="button" class="premium-btn">Pilih Paket</button>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+    }
+
+    async function startPremiumCheckout(packageId) {
+      if (!auth.currentUser) {
+        showToast('Login dulu sebelum upgrade premium.', 'warning');
+        return;
+      }
+      const settings = {
+        exepremium: { label: 'ExePremium', price: 9900, duration: '1 Bulan' },
+        exepremiumplus: { label: 'ExePremium Plus', price: 19900, duration: '1 Bulan' }
+      };
+      const config = settings[packageId];
+      if (!config) return;
+      const modal = document.getElementById('modalPremiumCheckout');
+      const checkoutName = document.getElementById('checkoutPackageName');
+      const checkoutLabel = document.getElementById('checkoutPackageLabel');
+      const checkoutPrice = document.getElementById('checkoutPrice');
+      const checkoutDuration = document.getElementById('checkoutDuration');
+      const checkoutInvoice = document.getElementById('checkoutInvoiceId');
+      const qrContainer = document.getElementById('checkoutQRCode');
+      if (!modal || !checkoutName || !checkoutLabel || !checkoutPrice || !checkoutDuration || !checkoutInvoice || !qrContainer) return;
+
+      checkoutName.textContent = config.label;
+      checkoutLabel.textContent = config.label;
+      checkoutPrice.textContent = config.price;
+      checkoutDuration.textContent = config.duration;
+      checkoutInvoice.textContent = 'Membuat invoice...';
+      qrContainer.innerHTML = '<div style="color:#999">Menyiapkan invoice...</div>';
+      modal.style.display = 'block';
+
+      try {
+        const response = await fetch('/.netlify/functions/createPayment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: config.price, packageId, uid: auth.currentUser ? auth.currentUser.uid : null, description: config.label })
+        });
+        const data = await response.json();
+        if (!data || !data.invoiceId || !data.qrCodeUrl) {
+          throw new Error('Gagal membuat invoice');
+        }
+        checkoutInvoice.textContent = data.invoiceId;
+        qrContainer.innerHTML = '<img src="' + data.qrCodeUrl + '" alt="QRIS" style="max-width:100%; max-height:100%; border-radius: 12px;" />';
+        localStorage.setItem('exePremiumInvoice', JSON.stringify({ invoiceId: data.invoiceId, packageId }));
+      } catch (err) {
+        qrContainer.innerHTML = '<div style="color:#ff6666">Gagal membuat QR. Coba lagi.</div>';
+        checkoutInvoice.textContent = 'ERROR';
+        console.error(err);
+      }
+    }
+
+    async function checkPremiumStatus() {
+      if (!auth.currentUser) {
+        showToast('Login dulu untuk memeriksa status pembayaran.', 'warning');
+        return;
+      }
+      const invoiceRaw = localStorage.getItem('exePremiumInvoice');
+      if (!invoiceRaw) {
+        showToast('Invoice tidak ditemukan. Buat order terlebih dahulu.', 'warning');
+        return;
+      }
+      let invoice;
+      try {
+        invoice = JSON.parse(invoiceRaw);
+      } catch (e) {
+        invoice = null;
+      }
+      if (!invoice || !invoice.invoiceId) {
+        showToast('Invoice tidak valid.', 'warning');
+        return;
+      }
+      try {
+        await loadCurrentUserData();
+        const premium = getPremiumStatus(userData);
+        if (premium.isPremium || premium.isPremiumPlus) {
+          showToast('Pembayaran terdeteksi. Status Premium sudah aktif.', 'success');
+          localStorage.removeItem('exePremiumInvoice');
+          closePremiumCheckout();
+        } else {
+          showToast('Belum terbayar. Silakan cek lagi setelah pembayaran.', 'warning');
+        }
+      } catch (err) {
+        showToast('Gagal memeriksa status pembayaran.', 'error');
+        console.error(err);
+      }
+    }
+
+    function applyPremiumProfileUI() {
+      if (!userData) return;
+      const premium = getPremiumStatus(userData);
+      const badge = document.getElementById('pBadge');
+      const status = document.getElementById('pVipStatus');
+      const tagDisplay = document.getElementById('pTagDisplay');
+      if (premium.isPremiumPlus) {
+        if (badge) badge.innerHTML = '<span class="premium-badge">ExePremium+</span> <span class="premium-badge" style="background:#00d4ff;">Beta Access</span>';
+        if (status) status.textContent = 'Status: ExePremium Plus • ' + premium.daysLeft + ' hari tersisa';
+      } else if (premium.isPremium) {
+        if (badge) badge.innerHTML = '<span class="premium-badge">ExePremium</span>';
+        if (status) status.textContent = 'Status: ExePremium • ' + premium.daysLeft + ' hari tersisa';
+      } else {
+        if (badge) badge.innerHTML = '';
+        if (status) status.textContent = 'Status: NONVIP';
+      }
+      if (tagDisplay) {
+        tagDisplay.innerHTML = premium.isPremiumPlus ? '<span class="premium-badge">VIP + Premium</span>' : premium.isPremium ? '<span class="premium-badge">Premium</span>' : '';
+      }
+    }
+
+    function canUploadMusicToday() {
+      if (!userData) return 1;
+      const premium = getPremiumStatus(userData);
+      if (premium.isPremiumPlus || premium.isPremium) return 2;
+      return 1;
+    }
+
+    function loadCurrentUserData() {
+      if (!auth.currentUser) return;
+      return db.ref('users/' + auth.currentUser.uid).once('value').then(snap => {
+        userData = snap.val() || {};
+        applyPremiumProfileUI();
+        return userData;
+      }).catch(() => {
+        return null;
+      });
+    }
+
+    async function showPremiumOffer() {
+      const banner = document.getElementById('premiumOfferBanner');
+      if (!banner) return;
+      if (auth.currentUser) {
+        await loadCurrentUserData();
+      }
+      const premium = getPremiumStatus(userData);
+      if (premium.isPremium || premium.isPremiumPlus) return;
+      banner.classList.add('show');
+      setTimeout(() => banner.classList.remove('show'), 12000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderExePremiumPackages();
+      setTimeout(showPremiumOffer, 9000);
+    });
 
     // ============================================================
     // CAPSULE MENU - v3.2.3
@@ -10724,6 +10882,11 @@
     function openAbout() { document.getElementById('modalAbout').style.display = 'block'; }
     function openUpdateInfo() { document.getElementById('modalUpdateInfo').style.display = 'block'; }
     function openBoomboxTutorial() { document.getElementById('modalBoombox').style.display = 'block'; }
+    function openExePremiumModal() {
+      renderExePremiumPackages();
+      document.getElementById('modalExePremium').style.display = 'block';
+    }
+    function closePremiumCheckout() { document.getElementById('modalPremiumCheckout').style.display = 'none'; }
     function openTutorial() { document.getElementById('tutorialOverlay').style.display = 'flex'; }
     function closeTutorial() { const o = document.getElementById('tutorialOverlay'); o.style.display = 'none'; const v = document.getElementById('tutorialVideo'); if (v) { const src = v.src; v.src = src; } }
     async function submitUploadRequest(isGuest) {
@@ -11846,6 +12009,14 @@
             </div>
           </div>
           <div>
+            <div style="font-size:11px;color:#666;margin-bottom:6px;font-weight:700">PREMIUM MANAGEMENT</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="swal2-confirm swal2-styled" style="background:#00ff88;color:#000;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adAddExePremium('${uid}')">+ ExePremium</button>
+              <button class="swal2-confirm swal2-styled" style="background:#00d4ff;color:#000;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adAddExePremiumPlus('${uid}')">+ ExePremium+</button>
+              <button class="swal2-confirm swal2-styled" style="background:#555;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adRemoveExePremium('${uid}')">REMOVE PREMIUM</button>
+            </div>
+          </div>
+          <div>
             <div style="font-size:11px;color:#666;margin-bottom:6px;font-weight:700">FOLLOWERS</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <button class="swal2-confirm swal2-styled" style="background:#2e7d32;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:8px;cursor:pointer" onclick="adFakeDelta('${uid}',1)">+1</button>
@@ -11878,6 +12049,43 @@
           const expireAt = Date.now() + d * 24 * 60 * 60 * 1000;
           db.ref('users/' + uid + '/trialvip').set({ expireAt }).then(() => { addLog('TrialVIP ' + d + 'd: ' + uid); showToast('✅ VIP Trial ' + d + ' hari!'); adLoadData(); });
         });
+    }
+
+    function adAddExePremium(uid) {
+      Swal.fire({ title: 'Tambah ExePremium (hari)', input: 'number', inputLabel: 'Berapa hari?', inputAttributes: { min: 1, max: 365 }, background: '#0d0d15', color: '#fff' })
+        .then(r => {
+          const d = parseInt(r.value, 10); if (!d || d <= 0) return;
+          const endTime = Date.now() + d * 24 * 60 * 60 * 1000;
+          db.ref('users/' + uid + '/exepremium').set({ endTime, updatedAt: Date.now() }).then(() => {
+            addLog('ExePremium ' + d + 'd: ' + uid);
+            showToast('✅ ExePremium aktif selama ' + d + ' hari!');
+            adLoadData();
+          });
+        });
+    }
+
+    function adAddExePremiumPlus(uid) {
+      Swal.fire({ title: 'Tambah ExePremium Plus (hari)', input: 'number', inputLabel: 'Berapa hari?', inputAttributes: { min: 1, max: 365 }, background: '#0d0d15', color: '#fff' })
+        .then(r => {
+          const d = parseInt(r.value, 10); if (!d || d <= 0) return;
+          const endTime = Date.now() + d * 24 * 60 * 60 * 1000;
+          db.ref('users/' + uid + '/exepremiumplus').set({ endTime, updatedAt: Date.now() }).then(() => {
+            addLog('ExePremiumPlus ' + d + 'd: ' + uid);
+            showToast('✅ ExePremium Plus aktif selama ' + d + ' hari!');
+            adLoadData();
+          });
+        });
+    }
+
+    function adRemoveExePremium(uid) {
+      const updates = {};
+      updates['users/' + uid + '/exepremium'] = null;
+      updates['users/' + uid + '/exepremiumplus'] = null;
+      db.ref().update(updates).then(() => {
+        addLog('Remove Premium: ' + uid);
+        showToast('✅ Premium dihapus dari user');
+        adLoadData();
+      });
     }
 
     function adRemoveVip(uid) {
