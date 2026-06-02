@@ -2630,7 +2630,10 @@
     .sheet {
       position: absolute; bottom: 0; width: 100%; max-width: 400px; left: 50%; transform: translateX(-50%);
       background: linear-gradient(180deg, #121220, #0a0a16);
-      border-radius: 28px 28px 0 0; padding: 24px; max-height: 88vh; overflow-y: auto;
+      border-radius: 28px 28px 0 0;
+      padding: 24px 24px calc(24px + env(safe-area-inset-bottom, 18px));
+      max-height: calc(100vh - env(safe-area-inset-top, 20px));
+      overflow-y: auto;
       box-shadow: 0 -10px 50px rgba(0,0,0,0.6), 0 -1px 0 rgba(0,255,136,0.1);
       border-top: 1px solid rgba(0,255,136,0.1);
       animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -2638,6 +2641,17 @@
     @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
     .sheet::-webkit-scrollbar { width: 4px; }
     .sheet::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.3); border-radius: 10px; }
+
+    .request-status {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: rgba(0,255,255,0.06);
+      color: #c0f7ff;
+      font-size: 12px;
+      line-height: 1.4;
+    }
 
     /* ============================================================
        SUPABASE FILE UPLOAD - v3.2.3
@@ -6103,18 +6117,18 @@
         </div>
         <div id="requestFormUser" style="display:none">
           <div class="rules-warn"><b>⚠️ PERHATIAN:</b> Akses upload harus disetujui admin atau lewat VIP. Kirim request jika ingin mengupload lagu.</div>
-          <input id="rqTitle" class="inp-dark" placeholder="Judul Lagu - Artist">
-          <input id="rqUrl" class="inp-dark" placeholder="Link MP3 (Top4Top)">
-          <textarea id="rqMessage" class="inp-dark" placeholder="Tulis pesan ke admin, misal: min saya mau upload lagu ini bisa kan?" style="min-height:100px;"></textarea>
+          <input id="rqTitle" class="inp-dark" placeholder="Nama Lagu (optional)">
+          <textarea id="rqMessage" class="inp-dark" placeholder="Kirim pesan ke admin, bisa sertakan link kalau ada" style="min-height:100px;"></textarea>
+          <div id="requestStatusUser" class="request-status">Belum ada request pending.</div>
           <button onclick="submitUploadRequest(false)" class="btn-act" style="background:#00bcd4; color:#fff">KIRIM REQUEST</button>
           <div class="upload-request-info" style="margin-top:12px; font-size:12px; color:#bbb">Request upload akan kadaluarsa dalam 7 hari. Tunggu admin meninjau dan memberi jawaban.</div>
         </div>
       </div>
       <div id="uploadFormGuest">
-        <input id="guestName" class="inp-dark" placeholder="Nama Anda">
-        <input id="guestLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
-        <input id="guestUrl" class="inp-dark" placeholder="Link MP3 Top4Top">
-        <textarea id="guestMessage" class="inp-dark" placeholder="Tulis pesan ke admin, misal: min saya mau upload lagu ini bisa kan?" style="min-height:100px;"></textarea>
+        <input id="guestName" class="inp-dark" placeholder="Nama Kamu">
+        <input id="guestLagu" class="inp-dark" placeholder="Nama Lagu (optional)">
+        <textarea id="guestMessage" class="inp-dark" placeholder="Kirim pesan ke admin, bisa sertakan link kalau ada" style="min-height:100px;"></textarea>
+        <div id="requestStatusGuest" class="request-status">Belum ada request pending.</div>
         <button onclick="submitUploadRequest(true)" class="btn-act" style="background:#00bcd4; color:#fff">KIRIM REQUEST</button>
       </div>
     </div>
@@ -6169,16 +6183,8 @@
       <div class="about-box">
         <h3>📋 Update Info v3.3.2</h3>
         <p><b>Version:</b> 3.3.2</p>
-        <p><b>Date:</b> 20 April 2026</p>
-        <p><b>Changelog (ringkas):</b></p>
-        <ul class="about-features">
-          <li><b>Top Up Robux — Game Pass (pending)</b> – Paket 320 ExeCoin: set Game Pass 143 Robux, kamu dapat 100 Robux setelah pajak; estimasi hingga 5 hari. Stok global <b>2 slot/hari (WIB)</b>, restock tiap <b>00.00 WIB</b>.</li>
-          <li><b>Leaderboard</b> – Tombol dipindah ke header; UI &amp; stylesheet modal diperbarui; perbaikan layout yang sebelumnya terkunci oleh aturan CSS global.</li>
-          <li><b>Event Center</b> – Tampilan glass/modern v3.3.2 (tab, panel, sisi).</li>
-          <li><b>ExeCoin tampilan</b> – Singkatan 1k–999k; nilai ≥1M ditampilkan sebagai 999k+ (nilai asli di database tetap utuh).</li>
-          <li><b>Gate &amp; notifikasi sistem</b> – Tetap aktif dari versi sebelumnya; penyempurnaan minor alur UI.</li>
-          <li><b>Firebase</b> – Untuk stok Game Pass harian, izinkan user terautentikasi menulis ke path <code>shopStocks/robuxGamepassDaily</code> (struktur: <code>dateKey</code> + <code>sold</code>).</li>
-        </ul>
+        <p><b>Date:</b> 2 Juni 2026</p>
+        <p><b>Changelog (ringkas):</b> None</p>
         <button onclick="closeModal()" class="btn-act">TUTUP</button>
       </div>
     </div>
@@ -10100,7 +10106,7 @@
       selectedFile = null;
       isUploading = false;
       removeSelectedFile();
-      const fields = ['rLagu', 'rUrl', 'rqTitle', 'rqUrl', 'rqMessage', 'guestName', 'guestLagu', 'guestUrl', 'guestMessage'];
+      const fields = ['rLagu', 'rUrl', 'rqTitle', 'rqMessage', 'guestName', 'guestLagu', 'guestMessage'];
       fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
       document.getElementById('uploadProgress').classList.remove('active');
       switchUploadTab('file');
@@ -11059,6 +11065,43 @@
       if (getVipStatus(data)) return true;
       return false;
     }
+    function getPendingUploadRequest() {
+      const raw = localStorage.getItem('exeUploadRequestPending');
+      if (!raw) return null;
+      try {
+        const pending = JSON.parse(raw);
+        if (!pending || !pending.expiresAt) throw new Error('invalid');
+        if (Date.now() > pending.expiresAt) {
+          localStorage.removeItem('exeUploadRequestPending');
+          return null;
+        }
+        return pending;
+      } catch (err) {
+        localStorage.removeItem('exeUploadRequestPending');
+        return null;
+      }
+    }
+    function formatPendingExpiry(timestamp) {
+      return new Date(timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+    }
+    function updateRequestStatusUI() {
+      const pending = getPendingUploadRequest();
+      const statusText = pending ? `Status request: PENDING. Tunggu admin meninjau sampai ${formatPendingExpiry(pending.expiresAt)}.` : 'Belum ada request pending.';
+      const statusUser = document.getElementById('requestStatusUser');
+      const statusGuest = document.getElementById('requestStatusGuest');
+      if (statusUser) statusUser.textContent = statusText;
+      if (statusGuest) statusGuest.textContent = statusText;
+      const userBtn = document.querySelector('#requestFormUser button');
+      const guestBtn = document.querySelector('#uploadFormGuest button');
+      if (userBtn) {
+        userBtn.disabled = !!pending;
+        userBtn.textContent = pending ? 'PENDING...' : 'KIRIM REQUEST';
+      }
+      if (guestBtn) {
+        guestBtn.disabled = !!pending;
+        guestBtn.textContent = pending ? 'PENDING...' : 'KIRIM REQUEST';
+      }
+    }
     function openReq() {
       const modal = document.getElementById('modalReq');
       const uploadFormUser = document.getElementById('uploadFormUser');
@@ -11082,6 +11125,7 @@
         uploadFormGuest.style.display = 'block';
       }
       modal.style.display = 'block';
+      updateRequestStatusUI();
     }
     function openAbout() { document.getElementById('modalAbout').style.display = 'block'; }
     function openUpdateInfo() { document.getElementById('modalUpdateInfo').style.display = 'block'; }
@@ -11091,6 +11135,8 @@
     async function submitUploadRequest(isGuest) {
       const now = Date.now();
       const expiresAt = now + 7 * 24 * 60 * 60 * 1000;
+      const existing = getPendingUploadRequest();
+      if (existing) return msg('Kamu masih punya request pending. Tunggu admin meninjau dulu.');
       let payload = {
         status: 'pending',
         type: 'upload',
@@ -11103,31 +11149,27 @@
       if (isGuest) {
         const name = document.getElementById('guestName').value.trim();
         const title = document.getElementById('guestLagu').value.trim();
-        const url = document.getElementById('guestUrl').value.trim();
         const message = document.getElementById('guestMessage').value.trim();
-        if (!name || !title || !url || !message) return msg('Isi semua data request guest!');
+        if (!name || !message) return msg('Isi nama dan pesan request! Nama lagu boleh kosong.');
         payload.requesterName = name;
-        payload.title = title;
-        payload.url = url;
+        if (title) payload.title = title;
         payload.message = message;
       } else {
         if (!auth.currentUser || !userData) return msg('Login dulu untuk request upload.');
         const title = document.getElementById('rqTitle').value.trim();
-        const url = document.getElementById('rqUrl').value.trim();
         const message = document.getElementById('rqMessage').value.trim();
-        if (!title || !url || !message) return msg('Isi semua data request upload!');
+        if (!message) return msg('Isi pesan request ke admin. Nama lagu bisa kosong.');
         if (!auth.currentUser || !userData) return msg('Login dulu untuk request upload.');
         if (isUploadAuthorized(userData)) return msg('Kamu sudah bisa upload langsung.');
         payload.uid = auth.currentUser.uid;
         payload.requesterName = userData.username || 'User';
-        payload.title = title;
-        payload.url = url;
+        if (title) payload.title = title;
         payload.message = message;
       }
 
       try {
         const reqRef = await db.ref('requests').push(payload);
-        localStorage.setItem('exeUploadRequestPending', JSON.stringify({ requestId: reqRef.key, expiresAt }));
+        localStorage.setItem('exeUploadRequestPending', JSON.stringify({ requestId: reqRef.key, expiresAt, status: 'pending' }));
         msg('✅ Request terkirim. Tunggu admin meninjau dalam 7 hari.');
         resetUploadForm();
         document.getElementById('modalReq').style.display = 'none';
