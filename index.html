@@ -6235,16 +6235,6 @@
             <button class="event-tab-btn active" data-tab="daily" onclick="switchEventTab('daily', this)"><i class="fas fa-sun"></i> Tugas Harian</button>
             <button class="event-tab-btn" data-tab="weekly" onclick="switchEventTab('weekly', this)"><i class="fas fa-calendar-week"></i> Misi Mingguan</button>
             <button class="event-tab-btn" data-tab="shop" onclick="switchEventTab('shop', this)"><i class="fas fa-store"></i> Toko ExeCoin</button>
-            <button class="event-tab-btn" data-tab="topup" onclick="switchEventTab('topup', this)"><i class="fas fa-cube"></i> Top Up Game</button>
-          </div>
-          <div id="evExecoinRobuxCard" class="event-execoin-info-card">
-            <div class="event-execoin-info-icon"><i class="fas fa-coins"></i></div>
-            <div class="event-execoin-info-body">
-              <div class="event-execoin-info-title">ExeCoin bisa dipakai top-up Robux</div>
-              <div class="event-execoin-info-desc">Tab <b>Top Up Game</b>: instant Robux, atau paket <b>Game Pass pending ~5 hari</b> (320 ExeCoin, stok 2/hari WIB). Pastikan username benar.</div>
-            </div>
-            <button type="button" class="event-execoin-info-go" onclick="switchEventTab('topup', null)">Buka top up</button>
-            <button type="button" class="event-execoin-info-dismiss" onclick="dismissExecoinRobuxInfoCard()" title="Sembunyikan">×</button>
           </div>
           <div id="evTabDaily" class="event-tab-view active">
             <div class="event-tab-caption">Reset tiap 24 jam untuk semua akun.</div>
@@ -6257,75 +6247,6 @@
           <div id="evTabShop" class="event-tab-view">
             <div class="event-tab-caption">Tukar ExeCoin dengan tag eksklusif dan VIP.</div>
             <div id="evShopList" class="event-quest-list"></div>
-          </div>
-          <div id="evTabTopup" class="event-tab-view">
-            <div class="event-tab-caption">Tukar ExeCoin ke Robux (Roblox). Pastikan username Roblox benar.</div>
-            <div class="event-quest-list event-topup-wrap">
-              <div class="event-topup-head">
-                <div class="event-topup-head-icon"><i class="fas fa-cube"></i></div>
-                <div class="event-topup-head-text">
-                  <h4>ROBLOX — Top Up via ExeCoin</h4>
-                  <p>Paket tetap: 5.999 ExeCoin → 500 Robux · 15.000 ExeCoin → 1.200 Robux. Setelah saldo dan username terverifikasi, Robux diproses lewat antrian resmi.</p>
-                </div>
-              </div>
-              <div class="event-topup-user-row">
-                <label for="robloxTopupUsername">Username Roblox</label>
-                <input type="text" id="robloxTopupUsername" class="inp-dark" placeholder="contoh: Builderman" autocomplete="username" maxlength="20">
-              </div>
-              <div id="robloxTopupProgress" class="event-topup-progress-panel" aria-live="polite">
-                <div class="event-topup-progress-topline"></div>
-                <div class="event-topup-progress-inner">
-                  <div class="event-topup-progress-headrow">
-                    <div class="rbx-prog-pulse" aria-hidden="true"><i class="fas fa-cube"></i></div>
-                    <div class="event-topup-progress-headtext">
-                      <div class="lbl" id="robloxTopupProgressTitle">Mengirim Robux…</div>
-                      <div class="sub" id="robloxTopupProgressDetail">Menyiapkan koneksi…</div>
-                    </div>
-                  </div>
-                  <div class="rbx-prog-chips">
-                    <span class="rbx-chip" id="robloxTopupChipRbx">— Robux</span>
-                    <span class="rbx-chip rbx-chip-dim" id="robloxTopupChipUser">@—</span>
-                    <span class="rbx-chip rbx-chip-dim" id="robloxTopupChipPaid">— ExeCoin</span>
-                  </div>
-                  <div class="event-topup-progress-bar-wrap">
-                    <div class="event-topup-progress-bar">
-                      <div id="robloxTopupProgressFill" class="event-topup-progress-fill"></div>
-                    </div>
-                    <div class="event-topup-progress-pct" id="robloxTopupProgressPct">0%</div>
-                  </div>
-                  <div class="rbx-prog-steps" id="robloxTopupStepDots"></div>
-                </div>
-              </div>
-              <div class="event-topup-packs">
-                <div class="event-topup-card">
-                  <div>
-                    <div class="event-topup-card-title"><span>500</span> Robux</div>
-                    <div class="event-topup-card-meta">Harga: <strong>5.999</strong> ExeCoin</div>
-                  </div>
-                  <button type="button" class="event-topup-go" id="robloxBtn500" onclick="startRobloxTopupFromUi(500, 5999)">Cek &amp; kirim</button>
-                </div>
-                <div class="event-topup-card">
-                  <div>
-                    <div class="event-topup-card-title"><span>1.200</span> Robux</div>
-                    <div class="event-topup-card-meta">Harga: <strong>15.000</strong> ExeCoin</div>
-                  </div>
-                  <button type="button" class="event-topup-go" id="robloxBtn1200" onclick="startRobloxTopupFromUi(1200, 15000)">Cek &amp; kirim</button>
-                </div>
-                <div class="event-topup-card event-topup-card--gamepass">
-                  <div>
-                    <div class="event-topup-card-title">
-                      <span>100</span> Robux <span class="gp-pill">Game Pass · pending ~5 hari</span>
-                    </div>
-                    <div class="event-topup-card-meta">
-                      Set Game Pass: <strong>143</strong> Robux — Kamu dapat: <strong>100</strong> Robux (setelah pajak). Harga <strong>320</strong> ExeCoin.
-                    </div>
-                    <div class="event-topup-stock" id="robloxGpStockLine">Stock hari ini (WIB): …</div>
-                    <div class="event-topup-restock" id="robloxGpRestockLine">Restock jam 00.00 WIB · countdown: …</div>
-                  </div>
-                  <button type="button" class="event-topup-go" id="robloxBtnGp" onclick="startRobloxGamepassTopupFromUi()">Rebut slot</button>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
         <div class="event-center-sidepanel">
@@ -7344,7 +7265,6 @@
       }
       if (!modal) return;
       modal.style.display = 'block';
-      ensureRobloxGamepassStockListener();
       loadUserQuests().then(() => {
         renderEventCenter();
       });
@@ -7356,8 +7276,7 @@
         'daily': 'evTabDaily',
         'weekly': 'evTabWeekly',
         'ramadhan': 'evTabRamadhan',
-        'shop': 'evTabShop',
-        'topup': 'evTabTopup'
+        'shop': 'evTabShop'
       };
       const tab = document.getElementById(tabMap[id] || 'evTabDaily');
       if (tab) tab.classList.add('active');
@@ -7371,23 +7290,6 @@
       }
       renderEventCenter();
     }
-    function dismissExecoinRobuxInfoCard() {
-      try {
-        sessionStorage.setItem('exeRobuxBannerDismiss', '1');
-      } catch (e) {}
-      const card = document.getElementById('evExecoinRobuxCard');
-      if (card) card.classList.add('is-hidden');
-    }
-    function syncExecoinRobuxInfoCard() {
-      const card = document.getElementById('evExecoinRobuxCard');
-      if (!card) return;
-      let hide = false;
-      try {
-        hide = sessionStorage.getItem('exeRobuxBannerDismiss') === '1';
-      } catch (e) {}
-      card.classList.toggle('is-hidden', hide);
-    }
-
     // ============================================================
     // LEADERBOARD SYSTEM - v3.3.2
     // ============================================================
@@ -8103,304 +8005,6 @@
     function fmt(s) { if (isNaN(s)) return '0:00'; let m = Math.floor(s / 60), sec = Math.floor(s % 60); return m + ':' + (sec < 10 ? '0' + sec : sec); }
     function addLog(msg) { db.ref('logs').push({ msg, time: new Date().toLocaleTimeString() }); }
 
-    let robloxTopupBusy = false;
-    const RBX_GP_STOCK_PATH = 'shopStocks/robuxGamepassDaily';
-    const RBX_GP_DAILY_CAP = 2;
-    const RBX_GP_PRICE = 320;
-    function isValidRobloxUsername(name) {
-      const s = String(name || '').trim();
-      if (s.length < 3 || s.length > 20) return false;
-      return /^[A-Za-z0-9_]+$/.test(s);
-    }
-    function getJakartaYmd(d) {
-      return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d || new Date());
-    }
-    function getNextJakartaMidnightMs() {
-      const ymd = getJakartaYmd(new Date());
-      const start = new Date(ymd + 'T00:00:00+07:00').getTime();
-      const now = Date.now();
-      if (now < start) return start;
-      return start + 86400000;
-    }
-    function formatCountdownHms(ms) {
-      if (ms <= 0) return '00:00:00';
-      const s = Math.floor(ms / 1000);
-      const h = Math.floor(s / 3600);
-      const m = Math.floor((s % 3600) / 60);
-      const sec = s % 60;
-      return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
-    }
-    function normalizeGpDaily(val) {
-      const today = getJakartaYmd();
-      let sold = 0;
-      if (val && typeof val === 'object' && val.dateKey === today && typeof val.sold === 'number') sold = val.sold;
-      sold = Math.min(RBX_GP_DAILY_CAP, Math.max(0, sold));
-      return { sold: sold, remaining: RBX_GP_DAILY_CAP - sold };
-    }
-    function updateRobloxGamepassStockUi() {
-      const line = document.getElementById('robloxGpStockLine');
-      if (!line) return;
-      const rest = document.getElementById('robloxGpRestockLine');
-      const btn = document.getElementById('robloxBtnGp');
-      const st = normalizeGpDaily(window._rbxGpDaily);
-      const left = st.remaining;
-      if (line) {
-        line.textContent = 'Stock hari ini (WIB): ' + left + ' / ' + RBX_GP_DAILY_CAP + ' slot';
-        line.classList.toggle('ok', left > 0);
-      }
-      const ms = Math.max(0, getNextJakartaMidnightMs() - Date.now());
-      if (rest) rest.textContent = 'Restock jam 00.00 WIB · countdown: ' + formatCountdownHms(ms);
-      const coins = userData && typeof userData.coins === 'number' ? userData.coins : (userData && userData.coins) || 0;
-      if (btn && !robloxTopupBusy) {
-        btn.disabled = left <= 0 || coins < RBX_GP_PRICE;
-      }
-    }
-    function ensureRobloxGamepassStockListener() {
-      if (!db || window._rbxGpListenerStarted) return;
-      window._rbxGpListenerStarted = true;
-      try {
-        db.ref(RBX_GP_STOCK_PATH).on('value', function (snap) {
-          window._rbxGpDaily = snap.val();
-          updateRobloxGamepassStockUi();
-        });
-      } catch (e) {}
-      if (!window._rbxGpUiTimer) {
-        window._rbxGpUiTimer = setInterval(updateRobloxGamepassStockUi, 1000);
-      }
-    }
-    function setRobloxTopupButtonsDisabled(dis) {
-      ['robloxBtn500', 'robloxBtn1200', 'robloxBtnGp'].forEach(function (id) {
-        const b = document.getElementById(id);
-        if (b) b.disabled = !!dis;
-      });
-      if (!dis) updateRobloxGamepassStockUi();
-    }
-    function startRobloxGamepassTopupFromUi() {
-      if (robloxTopupBusy) return;
-      if (!auth.currentUser || !userData) {
-        msg('Login dulu untuk top up');
-        return;
-      }
-      const raw = document.getElementById('robloxTopupUsername');
-      const username = raw ? String(raw.value || '').trim() : '';
-      if (!isValidRobloxUsername(username)) {
-        showToast('Username Roblox tidak valid (3–20 karakter, huruf/angka/_ saja)', 'error');
-        return;
-      }
-      const coins = userData.coins || 0;
-      if (coins < RBX_GP_PRICE) {
-        showToast('ExeCoin belum cukup (min. ' + formatExecoinDisplay(RBX_GP_PRICE) + ')', 'error');
-        return;
-      }
-      const stPre = normalizeGpDaily(window._rbxGpDaily);
-      if (stPre.remaining <= 0) {
-        showToast('Stock paket Game Pass habis hari ini. Restock 00.00 WIB.', 'error');
-        return;
-      }
-      const uid = auth.currentUser.uid;
-      const stockRef = db.ref(RBX_GP_STOCK_PATH);
-      const coinsRef = db.ref('users/' + uid + '/coins');
-      robloxTopupBusy = true;
-      setRobloxTopupButtonsDisabled(true);
-      showToast('Memeriksa slot & saldo…', 'info');
-      stockRef.transaction(function (cur) {
-        const today = getJakartaYmd();
-        let sold = 0;
-        if (cur && typeof cur === 'object' && cur.dateKey === today && typeof cur.sold === 'number') sold = cur.sold;
-        if (sold >= RBX_GP_DAILY_CAP) return;
-        return { dateKey: today, sold: sold + 1 };
-      }).then(function (res) {
-        if (!res.committed) {
-          robloxTopupBusy = false;
-          setRobloxTopupButtonsDisabled(false);
-          showToast('Slot habis — orang lain lebih dulu. Coba setelah restock.', 'error');
-          return;
-        }
-        return coinsRef.transaction(function (c) {
-          const base = typeof c === 'number' ? c : 0;
-          if (base < RBX_GP_PRICE) return;
-          return base - RBX_GP_PRICE;
-        }).then(function (res2) {
-          if (!res2.committed) {
-            stockRef.transaction(function (c) {
-              const today = getJakartaYmd();
-              if (!c || typeof c !== 'object' || c.dateKey !== today || typeof c.sold !== 'number' || c.sold <= 0) return c;
-              return { dateKey: today, sold: c.sold - 1 };
-            });
-            robloxTopupBusy = false;
-            setRobloxTopupButtonsDisabled(false);
-            showToast('ExeCoin tidak cukup', 'error');
-            return;
-          }
-          return coinsRef.once('value').then(function (cs) {
-            userData.coins = cs.val() || 0;
-            const balEl = document.getElementById('evCoinBalance');
-            if (balEl) balEl.textContent = formatExecoinDisplay(userData.coins);
-            runRobloxTopupProgress(username, 100, RBX_GP_PRICE, 'gamepass');
-          });
-        });
-      }).catch(function () {
-        robloxTopupBusy = false;
-        setRobloxTopupButtonsDisabled(false);
-        showToast('Gagal memproses order Game Pass', 'error');
-      });
-    }
-    function startRobloxTopupFromUi(robuxAmount, priceExeCoin) {
-      if (robloxTopupBusy) return;
-      if (!auth.currentUser || !userData) {
-        msg('Login dulu untuk top up');
-        return;
-      }
-      const raw = document.getElementById('robloxTopupUsername');
-      const username = raw ? String(raw.value || '').trim() : '';
-      if (!isValidRobloxUsername(username)) {
-        showToast('Username Roblox tidak valid (3–20 karakter, huruf/angka/_ saja)', 'error');
-        return;
-      }
-      const coins = userData.coins || 0;
-      if (coins < priceExeCoin) {
-        showToast('ExeCoin belum cukup untuk paket ini', 'error');
-        return;
-      }
-      const uid = auth.currentUser.uid;
-      const coinsRef = db.ref('users/' + uid + '/coins');
-      robloxTopupBusy = true;
-      setRobloxTopupButtonsDisabled(true);
-      showToast('Memeriksa username & saldo…', 'info');
-      coinsRef.transaction(cur => {
-        const base = typeof cur === 'number' ? cur : 0;
-        if (base < priceExeCoin) return;
-        return base - priceExeCoin;
-      }).then(res => {
-        if (!res.committed) {
-          robloxTopupBusy = false;
-          setRobloxTopupButtonsDisabled(false);
-          showToast('ExeCoin belum cukup', 'error');
-          return;
-        }
-        return coinsRef.once('value').then(csnap => {
-          userData.coins = csnap.val() || 0;
-          const balEl = document.getElementById('evCoinBalance');
-          if (balEl) balEl.textContent = formatExecoinDisplay(userData.coins);
-          runRobloxTopupProgress(username, robuxAmount, priceExeCoin, 'instant');
-        });
-      }).catch(() => {
-        robloxTopupBusy = false;
-        setRobloxTopupButtonsDisabled(false);
-        showToast('Gagal memproses top up', 'error');
-      });
-    }
-    function runRobloxTopupProgress(username, robuxAmount, paidCoins, mode) {
-      if (mode === void 0) mode = 'instant';
-      const isGp = mode === 'gamepass';
-      const panel = document.getElementById('robloxTopupProgress');
-      const fill = document.getElementById('robloxTopupProgressFill');
-      const pctEl = document.getElementById('robloxTopupProgressPct');
-      const titleEl = document.getElementById('robloxTopupProgressTitle');
-      const detailEl = document.getElementById('robloxTopupProgressDetail');
-      const chipRbx = document.getElementById('robloxTopupChipRbx');
-      const chipUser = document.getElementById('robloxTopupChipUser');
-      const chipPaid = document.getElementById('robloxTopupChipPaid');
-      const dotsWrap = document.getElementById('robloxTopupStepDots');
-      const paidNum = typeof paidCoins === 'number' ? paidCoins : parseInt(paidCoins, 10) || 0;
-      if (panel) panel.classList.toggle('rbx-mode-gamepass', isGp);
-      if (chipRbx) chipRbx.textContent = isGp ? (String(robuxAmount) + ' Robux (net)') : (String(robuxAmount) + ' Robux');
-      if (chipUser) chipUser.textContent = '@' + username;
-      if (chipPaid) chipPaid.textContent = (paidNum >= 1000 ? formatExecoinDisplay(paidNum) : String(paidNum)) + ' ExeCoin';
-      if (dotsWrap) {
-        const labels = isGp
-          ? ['Slot', 'Bayar', 'Game Pass', 'Pending', 'Antrian']
-          : ['Verifikasi', 'Antrian', 'Settlement', 'Transfer', 'Selesai'];
-        dotsWrap.innerHTML = '';
-        labels.forEach(function (lab) {
-          const s = document.createElement('span');
-          s.className = 'rbx-step';
-          s.textContent = lab;
-          dotsWrap.appendChild(s);
-        });
-      }
-      function setStepVisual(stepIndex) {
-        if (!dotsWrap) return;
-        const nodes = dotsWrap.querySelectorAll('.rbx-step');
-        nodes.forEach(function (node, k) {
-          node.classList.remove('active', 'done');
-          if (stepIndex >= nodes.length) {
-            node.classList.add('done');
-          } else if (k < stepIndex) {
-            node.classList.add('done');
-          } else if (k === stepIndex) {
-            node.classList.add('active');
-          }
-        });
-      }
-      if (panel) panel.classList.add('show');
-      if (fill) fill.style.width = '0%';
-      if (pctEl) pctEl.textContent = '0%';
-      setStepVisual(0);
-      const steps = isGp
-        ? [
-            { p: 16, t: 'Slot & username', d: 'Mengamankan 1 slot stok harian (WIB) untuk @' + username + '…' },
-            { p: 38, t: 'Settlement ExeCoin', d: formatExecoinDisplay(paidNum) + ' ExeCoin dikunci untuk order Game Pass…' },
-            { p: 56, t: 'Set Game Pass 143', d: 'Menerapkan konfigurasi Game Pass (list 143 Robux) ke pipeline Roblox…' },
-            { p: 78, t: 'Pending verifikasi', d: 'Estimasi hingga 5 hari kerja sistem Roblox sebelum payout 100 Robux (net).' },
-            { p: 100, t: 'Order aktif', d: 'Order tercatat. Pantau saldo Roblox kamu; payout mengikuti status Game Pass.' }
-          ]
-        : [
-            { p: 14, t: 'Verifikasi order', d: 'Mencocokkan username @' + username + ' dengan saldo ExeCoin…' },
-            { p: 36, t: 'Antrian distributor', d: 'Memasuki antrian pengiriman Robux untuk wilayah kamu…' },
-            { p: 58, t: 'Settlement ExeCoin', d: (paidNum >= 1000 ? formatExecoinDisplay(paidNum) : paidNum.toLocaleString('id-ID')) + ' ExeCoin dikonfirmasi · mengalihkan ke saluran resmi…' },
-            { p: 80, t: 'Transfer ke Roblox', d: 'Menyinkronkan ' + robuxAmount + ' Robux ke akun Roblox kamu…' },
-            { p: 100, t: 'Pengiriman selesai', d: 'Robux telah dikreditkan. Periksa saldo Roblox di aplikasi atau roblox.com.' }
-          ];
-      let i = 0;
-      const tick = () => {
-        if (i >= steps.length) {
-          robloxTopupBusy = false;
-          setRobloxTopupButtonsDisabled(false);
-          if (isGp) {
-            if (titleEl) titleEl.textContent = 'Order terpasang';
-            if (detailEl) detailEl.textContent = 'Game Pass dalam antrian verifikasi; perkiraan hingga 5 hari.';
-            setStepVisual(99);
-            showSysNotify({
-              variant: 'success',
-              label: 'GAME PASS',
-              title: 'Order aktif',
-              subtitle: '100 Robux (net) → @' + username,
-              meta: 'Set 143 Robux · 320 ExeCoin · tunggu settlement Roblox',
-              duration: 5200
-            });
-          } else {
-            if (titleEl) titleEl.textContent = 'Selesai';
-            if (detailEl) detailEl.textContent = 'Order berhasil · Robux seharusnya sudah terlihat di akun kamu.';
-            setStepVisual(99);
-            showSysNotify({
-              variant: 'success',
-              label: 'ROBUX',
-              title: 'Pengiriman selesai',
-              subtitle: String(robuxAmount) + ' Robux → @' + username,
-              meta: 'Periksa inventaris & saldo Robux di akun kamu',
-              duration: 4500
-            });
-          }
-          return;
-        }
-        const st = steps[i];
-        if (fill) fill.style.width = st.p + '%';
-        if (pctEl) pctEl.textContent = st.p + '%';
-        if (titleEl) titleEl.textContent = st.t;
-        if (detailEl) detailEl.textContent = st.d;
-        setStepVisual(i);
-        i++;
-        setTimeout(tick, 720);
-      };
-      if (titleEl) titleEl.textContent = isGp ? 'Memproses order Game Pass…' : 'Memproses pengiriman…';
-      if (detailEl) {
-        detailEl.textContent = isGp
-          ? ('Menautkan slot harian + ' + formatExecoinDisplay(paidNum) + ' ExeCoin untuk alur Game Pass…')
-          : ('Menghubungkan ke layanan top-up untuk ' + robuxAmount + ' Robux…');
-      }
-      setTimeout(tick, 420);
-    }
     function renderEventCenter() {
       if (!auth.currentUser || !userData) return;
       const coinsEl = document.getElementById('evCoinBalance');
@@ -8411,16 +8015,6 @@
       if (dailyEl) dailyEl.innerHTML = buildDailyQuestsHtml();
       if (weeklyEl) weeklyEl.innerHTML = buildWeeklyQuestsHtml();
       if (shopEl) shopEl.innerHTML = buildShopHtml();
-      if (!robloxTopupBusy) {
-        const panel = document.getElementById('robloxTopupProgress');
-        if (panel) {
-          panel.classList.remove('show', 'rbx-mode-gamepass');
-        }
-        setRobloxTopupButtonsDisabled(false);
-      }
-      ensureRobloxGamepassStockListener();
-      updateRobloxGamepassStockUi();
-      syncExecoinRobuxInfoCard();
       updateEventSideFromTagDrop();
     }
     function getDailyKey() {
