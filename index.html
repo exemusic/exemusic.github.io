@@ -5678,6 +5678,7 @@
         <button class="admin-nav-btn active" onclick="switchAdminView('dash', this)"><i class="fas fa-th-large"></i> DASH</button>
         <button class="admin-nav-btn" onclick="switchAdminView('users', this)"><i class="fas fa-users"></i> USERS</button>
         <button class="admin-nav-btn" onclick="switchAdminView('songs', this)"><i class="fas fa-music"></i> SONGS</button>
+        <button class="admin-nav-btn" onclick="switchAdminView('requests', this)"><i class="fas fa-inbox"></i> REQUESTS</button>
         <button class="admin-nav-btn" onclick="switchAdminView('notif', this)"><i class="fas fa-paper-plane"></i> NOTIF</button>
         <button class="admin-nav-btn" onclick="switchAdminView('visual', this)"><i class="fas fa-palette"></i> VISUAL</button>
         <button class="admin-nav-btn" onclick="switchAdminView('theme', this)"><i class="fas fa-moon"></i> THEME</button>
@@ -5863,6 +5864,18 @@
             <button class="admin-btn admin-btn-green admin-btn-full" onclick="adManualAdd()">UPLOAD TO DATABASE</button>
           </div>
           <input class="admin-search" placeholder="Cari lagu..." id="adSongSearch" oninput="adFilterSongs(this.value)">
+        </div>
+
+        <div id="adv-requests" class="admin-view">
+          <div class="admin-card">
+            <h3><i class="fas fa-inbox"></i> UPLOAD REQUESTS</h3>
+            <p style="font-size:12px; color:#bbb; margin-bottom:10px">Request upload akan kadaluarsa otomatis setelah 7 hari. Admin dapat accept dan memberi pesan balik.</p>
+            <input class="admin-search" placeholder="Cari request..." id="adReqSearch" oninput="adFilterRequests(this.value)" style="width:100%; margin-bottom:10px">
+            <div id="adRequestList" class="admin-request-list">
+              <div style="text-align:center; padding:30px; color:#444; font-size:13px">Memuat request...</div>
+            </div>
+          </div>
+        </div>
           <div id="adSongList"></div>
         </div>
 
@@ -6037,61 +6050,72 @@
       <div class="rules-warn"><b>⚠️ PERHATIAN:</b> Dilarang upload konten SARA, pornografi audio, atau earrape. Pelanggaran = <b>BANNED PERMANENT</b>!</div>
       <p style="font-size:12px; color:#88c; margin:10px 0">Belum tau cara buat Top4Top? <span class="tutorial-link" onclick="openTutorial()">klik disini</span></p>
       <div id="uploadFormUser" style="display:none">
-        <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
-        
-        <!-- Upload Tabs -->
-        <div class="upload-tabs">
-          <button class="upload-tab-btn active" onclick="switchUploadTab('file')" id="tabFileBtn">
-            <i class="fas fa-cloud-upload-alt"></i> Upload File
-          </button>
-          <button class="upload-tab-btn" onclick="switchUploadTab('url')" id="tabUrlBtn">
-            <i class="fas fa-link"></i> Pakai Link
-          </button>
-        </div>
-        
-        <!-- File Upload Section -->
-        <div id="uploadSectionFile" class="upload-section active">
-          <input type="file" id="supabaseFileInput" accept="audio/*" onchange="handleFileSelect(this)">
-          <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('supabaseFileInput').click()">
-            <div class="file-upload-icon"><i class="fas fa-music"></i></div>
-            <div class="file-upload-text">Klik atau drag file lagu kesini</div>
-            <div class="file-upload-hint">Max 50MB (MP3, WAV, M4A, OGG)</div>
+        <div id="uploadAllowedSection">
+          <input id="rLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
+          
+          <!-- Upload Tabs -->
+          <div class="upload-tabs">
+            <button class="upload-tab-btn active" onclick="switchUploadTab('file')" id="tabFileBtn">
+              <i class="fas fa-cloud-upload-alt"></i> Upload File
+            </button>
+            <button class="upload-tab-btn" onclick="switchUploadTab('url')" id="tabUrlBtn">
+              <i class="fas fa-link"></i> Pakai Link
+            </button>
           </div>
-          <div id="fileSelectedInfo" class="file-selected-info" style="display:none">
-            <div>
-              <div class="file-selected-name" id="fileSelectedName">filename.mp3</div>
-              <div class="file-selected-size" id="fileSelectedSize">0 MB</div>
+          
+          <!-- File Upload Section -->
+          <div id="uploadSectionFile" class="upload-section active">
+            <input type="file" id="supabaseFileInput" accept="audio/*" onchange="handleFileSelect(this)">
+            <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('supabaseFileInput').click()">
+              <div class="file-upload-icon"><i class="fas fa-music"></i></div>
+              <div class="file-upload-text">Klik atau drag file lagu kesini</div>
+              <div class="file-upload-hint">Max 50MB (MP3, WAV, M4A, OGG)</div>
             </div>
-            <button class="file-remove-btn" onclick="removeSelectedFile(event)"><i class="fas fa-times"></i></button>
-          </div>
-          <div id="uploadProgress" class="upload-progress-wrap">
-            <div class="upload-progress-bar">
-              <div class="upload-progress-fill" id="uploadProgressFill"></div>
+            <div id="fileSelectedInfo" class="file-selected-info" style="display:none">
+              <div>
+                <div class="file-selected-name" id="fileSelectedName">filename.mp3</div>
+                <div class="file-selected-size" id="fileSelectedSize">0 MB</div>
+              </div>
+              <button class="file-remove-btn" onclick="removeSelectedFile(event)"><i class="fas fa-times"></i></button>
             </div>
-            <div class="upload-progress-text" id="uploadProgressText">Mengupload...</div>
+            <div id="uploadProgress" class="upload-progress-wrap">
+              <div class="upload-progress-bar">
+                <div class="upload-progress-fill" id="uploadProgressFill"></div>
+              </div>
+              <div class="upload-progress-text" id="uploadProgressText">Mengupload...</div>
+            </div>
+            <div id="uploadError" class="upload-error"></div>
           </div>
-          <div id="uploadError" class="upload-error"></div>
-        </div>
-        
-        <!-- URL Section (Hidden by default) -->
-        <div id="uploadSectionUrl" class="upload-section">
-          <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top)">
-        </div>
-        
-        <button onclick="confirmAndSave()" class="btn-act" id="postBtn">POST SEKARANG</button>
-        <div id="uploadCdCard" class="upload-cd-card">
-          <div class="upload-cd-row">
-            <span class="upload-cd-label">COOLDOWN</span>
-            <span id="uploadCdTimer" class="upload-cd-timer">00:00</span>
+          
+          <!-- URL Section (Hidden by default) -->
+          <div id="uploadSectionUrl" class="upload-section">
+            <input id="rUrl" class="inp-dark" placeholder="Link MP3 (Top4Top)">
           </div>
-          <div class="upload-cd-sub" id="uploadCdSub">Menunggu...</div>
+          
+          <button onclick="confirmAndSave()" class="btn-act" id="postBtn">POST SEKARANG</button>
+          <div id="uploadCdCard" class="upload-cd-card">
+            <div class="upload-cd-row">
+              <span class="upload-cd-label">COOLDOWN</span>
+              <span id="uploadCdTimer" class="upload-cd-timer">00:00</span>
+            </div>
+            <div class="upload-cd-sub" id="uploadCdSub">Menunggu...</div>
+          </div>
+        </div>
+        <div id="requestFormUser" style="display:none">
+          <div class="rules-warn"><b>⚠️ PERHATIAN:</b> Akses upload harus disetujui admin atau lewat VIP. Kirim request jika ingin mengupload lagu.</div>
+          <input id="rqTitle" class="inp-dark" placeholder="Judul Lagu - Artist">
+          <input id="rqUrl" class="inp-dark" placeholder="Link MP3 (Top4Top)">
+          <textarea id="rqMessage" class="inp-dark" placeholder="Tulis pesan ke admin, misal: min saya mau upload lagu ini bisa kan?" style="min-height:100px;"></textarea>
+          <button onclick="submitUploadRequest(false)" class="btn-act" style="background:#00bcd4; color:#fff">KIRIM REQUEST</button>
+          <div class="upload-request-info" style="margin-top:12px; font-size:12px; color:#bbb">Request upload akan kadaluarsa dalam 7 hari. Tunggu admin meninjau dan memberi jawaban.</div>
         </div>
       </div>
       <div id="uploadFormGuest">
         <input id="guestName" class="inp-dark" placeholder="Nama Anda">
         <input id="guestLagu" class="inp-dark" placeholder="Judul Lagu - Artist">
         <input id="guestUrl" class="inp-dark" placeholder="Link MP3 Top4Top">
-        <button onclick="sendWA()" class="btn-act" style="background:#25D366; color:white">WHATSAPP REQUEST</button>
+        <textarea id="guestMessage" class="inp-dark" placeholder="Tulis pesan ke admin, misal: min saya mau upload lagu ini bisa kan?" style="min-height:100px;"></textarea>
+        <button onclick="submitUploadRequest(true)" class="btn-act" style="background:#00bcd4; color:#fff">KIRIM REQUEST</button>
       </div>
     </div>
   </div>
@@ -6945,7 +6969,7 @@
     let userCache = {};
     let isFirstTimeUser = false;
     let trendingSongs = {};
-    let adAllUsers = [], adAllSongs = [];
+    let adAllUsers = [], adAllSongs = [], adAllRequests = [];
     let adminLoaded = false;
     let adminDrag = { active: false, offsetX: 0, offsetY: 0 };
     let adminMode = 'normal';
@@ -10076,8 +10100,8 @@
       selectedFile = null;
       isUploading = false;
       removeSelectedFile();
-      document.getElementById('rLagu').value = '';
-      document.getElementById('rUrl').value = '';
+      const fields = ['rLagu', 'rUrl', 'rqTitle', 'rqUrl', 'rqMessage', 'guestName', 'guestLagu', 'guestUrl', 'guestMessage'];
+      fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
       document.getElementById('uploadProgress').classList.remove('active');
       switchUploadTab('file');
       const postBtn = document.getElementById('postBtn');
@@ -10101,6 +10125,10 @@
       if (!auth.currentUser || !userData) return msg('Login dulu!');
       if (userData.banUpload) {
         msg('Akun ini dibanned dari upload');
+        return;
+      }
+      if (!isUploadAuthorized(userData)) {
+        msg('Akses upload tertutup. Silakan kirim request ke admin.');
         return;
       }
 
@@ -11024,13 +11052,90 @@
       btn.innerHTML = isBlacklisted ? '<i class="fas fa-check"></i>' : '<i class="fas fa-ban"></i>';
       btn.title = isBlacklisted ? 'Unblacklist Song' : 'Blacklist Song';
     }
-    function openReq() { document.getElementById('modalReq').style.display = 'block'; }
+    function isUploadAuthorized(data) {
+      if (!data) return false;
+      if (data.role === 'admin' || data.role === 'owner') return true;
+      if (data.uploadAllowed === true) return true;
+      if (getVipStatus(data)) return true;
+      return false;
+    }
+    function openReq() {
+      const modal = document.getElementById('modalReq');
+      const uploadFormUser = document.getElementById('uploadFormUser');
+      const requestFormUser = document.getElementById('requestFormUser');
+      const uploadFormGuest = document.getElementById('uploadFormGuest');
+      if (!modal || !uploadFormUser || !requestFormUser || !uploadFormGuest) return;
+      uploadFormGuest.style.display = 'none';
+      if (auth.currentUser && userData) {
+        const canUpload = isUploadAuthorized(userData);
+        if (canUpload) {
+          uploadFormUser.style.display = 'block';
+          requestFormUser.style.display = 'none';
+          document.getElementById('postBtn').textContent = 'POST SEKARANG';
+        } else {
+          uploadFormUser.style.display = 'none';
+          requestFormUser.style.display = 'block';
+        }
+      } else {
+        uploadFormUser.style.display = 'none';
+        requestFormUser.style.display = 'none';
+        uploadFormGuest.style.display = 'block';
+      }
+      modal.style.display = 'block';
+    }
     function openAbout() { document.getElementById('modalAbout').style.display = 'block'; }
     function openUpdateInfo() { document.getElementById('modalUpdateInfo').style.display = 'block'; }
     function openBoomboxTutorial() { document.getElementById('modalBoombox').style.display = 'block'; }
     function openTutorial() { document.getElementById('tutorialOverlay').style.display = 'flex'; }
     function closeTutorial() { const o = document.getElementById('tutorialOverlay'); o.style.display = 'none'; const v = document.getElementById('tutorialVideo'); if (v) { const src = v.src; v.src = src; } }
-    function sendWA() { window.open('https://wa.me/62895329018240?text=Halo Admin, saya ' + document.getElementById('guestName').value + ' ingin upload: ' + document.getElementById('guestLagu').value); }
+    async function submitUploadRequest(isGuest) {
+      const now = Date.now();
+      const expiresAt = now + 7 * 24 * 60 * 60 * 1000;
+      let payload = {
+        status: 'pending',
+        type: 'upload',
+        createdAt: now,
+        expiresAt,
+        response: '',
+        requesterType: isGuest ? 'guest' : 'user'
+      };
+
+      if (isGuest) {
+        const name = document.getElementById('guestName').value.trim();
+        const title = document.getElementById('guestLagu').value.trim();
+        const url = document.getElementById('guestUrl').value.trim();
+        const message = document.getElementById('guestMessage').value.trim();
+        if (!name || !title || !url || !message) return msg('Isi semua data request guest!');
+        payload.requesterName = name;
+        payload.title = title;
+        payload.url = url;
+        payload.message = message;
+      } else {
+        if (!auth.currentUser || !userData) return msg('Login dulu untuk request upload.');
+        const title = document.getElementById('rqTitle').value.trim();
+        const url = document.getElementById('rqUrl').value.trim();
+        const message = document.getElementById('rqMessage').value.trim();
+        if (!title || !url || !message) return msg('Isi semua data request upload!');
+        if (!auth.currentUser || !userData) return msg('Login dulu untuk request upload.');
+        if (isUploadAuthorized(userData)) return msg('Kamu sudah bisa upload langsung.');
+        payload.uid = auth.currentUser.uid;
+        payload.requesterName = userData.username || 'User';
+        payload.title = title;
+        payload.url = url;
+        payload.message = message;
+      }
+
+      try {
+        const reqRef = await db.ref('requests').push(payload);
+        localStorage.setItem('exeUploadRequestPending', JSON.stringify({ requestId: reqRef.key, expiresAt }));
+        msg('✅ Request terkirim. Tunggu admin meninjau dalam 7 hari.');
+        resetUploadForm();
+        document.getElementById('modalReq').style.display = 'none';
+      } catch (err) {
+        console.error('Request upload error:', err);
+        msg('Gagal mengirim request. Coba lagi.');
+      }
+    }
     function shareProfile(uid, username) { if (!uid) return; navigator.clipboard.writeText(window.location.origin + window.location.pathname + '?profile_userid=' + uid); showToast('Link profil @' + (username || 'user') + ' disalin'); }
     function closeProfileModal() {
       const modal = document.getElementById('modalProfile');
@@ -11422,6 +11527,7 @@
       document.getElementById('adv-' + id).classList.add('active');
       btn.classList.add('active');
       if (id === 'songs') renderAdminSongs();
+      if (id === 'requests') renderAdminRequests();
       if (id === 'dash') {
         document.getElementById('adCountS').innerText = songs.length;
         db.ref('users').once('value').then(s => { document.getElementById('adCountU').innerText = s.numChildren(); });
@@ -11544,6 +11650,11 @@
         adAllSongs = Object.keys(data).map(key => ({ key, ...data[key] }));
         document.getElementById('adCountS').innerText = adAllSongs.length;
       });
+      db.ref('requests').on('value', snap => {
+        const data = snap.val() || {};
+        adAllRequests = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        adRenderRequests(adAllRequests);
+      });
       // Logs - realtime
       db.ref('logs').limitToLast(50).on('value', snap => {
         const box = document.getElementById('adLogBox');
@@ -11653,6 +11764,100 @@
     function adFilterSongs(q) {
       const filtered = adAllSongs.filter(s => s.title.toLowerCase().includes(q.toLowerCase()) || (s.by || '').toLowerCase().includes(q.toLowerCase()));
       adRenderSongs(filtered);
+    }
+
+    function renderAdminRequests() {
+      if (adAllRequests.length > 0) { adRenderRequests(adAllRequests); return; }
+      db.ref('requests').once('value').then(snap => {
+        adAllRequests = [];
+        snap.forEach(c => adAllRequests.push({ id: c.key, ...c.val() }));
+        adRenderRequests(adAllRequests);
+      });
+    }
+
+    function adRenderRequests(list) {
+      const box = document.getElementById('adRequestList');
+      if (!box) return;
+      if (!list.length) {
+        box.innerHTML = '<div style="text-align:center;padding:30px;color:#444">Tidak ada request upload.</div>';
+        return;
+      }
+      const now = Date.now();
+      box.innerHTML = list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).map(r => {
+        const expires = r.expiresAt ? new Date(r.expiresAt).toLocaleString() : 'N/A';
+        const created = r.createdAt ? new Date(r.createdAt).toLocaleString() : 'N/A';
+        const status = (r.status || 'pending').toUpperCase();
+        const pending = r.status === 'pending';
+        const expired = pending && r.expiresAt && now > r.expiresAt;
+        const badge = pending ? '<span style="color:#fff;background:#4caf50;padding:2px 6px;border-radius:4px;font-size:11px">PENDING</span>'
+          : (r.status === 'accepted' ? '<span style="color:#fff;background:#009688;padding:2px 6px;border-radius:4px;font-size:11px">ACCEPTED</span>'
+          : '<span style="color:#fff;background:#f44336;padding:2px 6px;border-radius:4px;font-size:11px">REJECTED</span>');
+        const actionButtons = pending ? `
+          <button class="admin-btn admin-btn-green" onclick="adHandleRequestAction('${r.id}','accept')" style="padding:6px 10px;font-size:11px">ACCEPT</button>
+          <button class="admin-btn admin-btn-red" onclick="adHandleRequestAction('${r.id}','reject')" style="padding:6px 10px;font-size:11px">REJECT</button>
+        ` : '';
+        const requester = r.requesterType === 'guest' ? `Guest: ${escapeHtml(r.requesterName || 'Guest')}` : `User: @${escapeHtml(r.requesterName || 'User')} (${escapeHtml(r.uid || '')})`;
+        return `<div class="admin-request-row" style="margin-bottom:12px;padding:14px;border:1px solid rgba(255,255,255,0.08);border-radius:12px;">
+          <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px">
+            <div style="font-weight:700;color:#fff">${escapeHtml(r.title || 'Request upload')}</div>
+            <div style="display:flex;gap:8px;align-items:center">${badge}${expired ? '<span style="color:#fdd835;font-size:11px;">EXPIRED</span>' : ''}</div>
+          </div>
+          <div style="font-size:13px;color:#bbb;line-height:1.5;">
+            <div><strong>Requester:</strong> ${requester}</div>
+            <div><strong>URL:</strong> ${escapeHtml(r.url || '')}</div>
+            <div><strong>Message:</strong> ${escapeHtml(r.message || '')}</div>
+            <div><strong>Dibuat:</strong> ${created}</div>
+            <div><strong>Kadaluarsa:</strong> ${expires}</div>
+            ${r.response ? `<div><strong>Admin Response:</strong> ${escapeHtml(r.response)}</div>` : ''}
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">${actionButtons}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function adFilterRequests(q) {
+      const filtered = adAllRequests.filter(r => {
+        const text = `${r.requesterName || ''} ${r.uid || ''} ${r.title || ''} ${r.url || ''} ${r.message || ''}`.toLowerCase();
+        return text.includes(q.toLowerCase());
+      });
+      adRenderRequests(filtered);
+    }
+
+    function adHandleRequestAction(id, action) {
+      const request = adAllRequests.find(r => r.id === id);
+      if (!request) return;
+      if (request.status && request.status !== 'pending') {
+        return showToast('Request sudah diproses.');
+      }
+      const title = action === 'accept' ? 'Accept request?' : 'Reject request?';
+      const confirmText = action === 'accept'
+        ? 'Admin akan menandai request sebagai diterima.'
+        : 'Admin akan menolak request ini.';
+      Swal.fire({
+        title,
+        text: confirmText,
+        input: 'textarea',
+        inputLabel: 'Pesan respon (opsional)',
+        inputPlaceholder: 'Tulis pesan untuk user...',
+        showCancelButton: true,
+        confirmButtonText: action === 'accept' ? 'Accept' : 'Reject',
+        background: '#0d0d15',
+        color: '#fff'
+      }).then(result => {
+        if (!result.isConfirmed) return;
+        const update = {
+          status: action === 'accept' ? 'accepted' : 'rejected',
+          response: result.value ? result.value.trim() : '',
+          processedAt: Date.now()
+        };
+        db.ref('requests/' + id).update(update).then(() => {
+          addLog(`Request ${action}ed: ${id}`);
+          showToast(`Request ${action === 'accept' ? 'diterima' : 'ditolak'}.`);
+        }).catch(err => {
+          console.error('Request update error:', err);
+          msg('Gagal memproses request. Coba lagi.');
+        });
+      });
     }
 
     function adDelSong(id) {
