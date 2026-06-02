@@ -12268,7 +12268,7 @@
         if(!user){ showToast('Silakan login terlebih dahulu'); return; }
         listEl.innerHTML = '<div style="color:rgba(255,255,255,0.5)">Memuat tag...</div>';
         try{
-          const snap = await db.ref('Users/' + user.uid + '/alltag').once('value');
+          const snap = await db.ref('users/' + user.uid + '/alltag').once('value');
           const all = snap && snap.val() ? snap.val() : {};
           // filter only true values
           const keys = Object.keys(all).filter(k => all[k] === true || all[k] === 'true');
@@ -12297,8 +12297,8 @@
       window.useTagV2 = function(tagKey){
         const user = auth && auth.currentUser;
         if(!user){ showToast('Silakan login terlebih dahulu'); return; }
-        // set user's active tag under Users/uid/tag
-        db.ref('Users/' + user.uid + '/tag').set(tagKey).then(()=>{
+        // set user's active tag under users/uid/tag
+        db.ref('users/' + user.uid + '/tag').set(tagKey).then(()=>{
           showToast('Tag aktif diubah');
           // update UI display if exists
           if(document.getElementById('pTagDisplay')){
