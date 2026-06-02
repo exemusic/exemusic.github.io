@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ExeMusic 3.3.2</title>
+  <title>ExeMusic 3.3.3</title>
   <link rel="icon" type="image/png" href="exemusicicon.png">
   <script>
     (function () {
@@ -62,162 +62,192 @@
     }
 
     /* ============================================================
-       LOADING SCREEN - GAME STYLE
+       LOADING SCREEN - SHINY RESPONSIVE
     ============================================================ */
-    #gameLoadScreen {
-      position: fixed; inset: 0; z-index: 99999;
-      background: radial-gradient(ellipse at 50% -20%, rgba(0,212,255,0.15), transparent 60%),
-                  radial-gradient(ellipse at 80% 100%, rgba(0,255,136,0.1), transparent 50%),
-                  linear-gradient(180deg, #030308 0%, #06060f 50%, #030308 100%);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      transition: opacity 0.8s ease, transform 0.8s ease;
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at top, rgba(30,215,96,0.12), transparent 28%),
+                  linear-gradient(180deg, #050608 0%, #020204 48%, #080a12 100%);
     }
-    #gameLoadScreen.fade-out {
-      opacity: 0;
-      transform: scale(1.05);
+
+    #loader .stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
       pointer-events: none;
     }
 
-    .load-logo-wrap {
-      position: relative;
-      margin-bottom: 40px;
-    }
-    .load-logo-ring {
-      width: 110px; height: 110px; border-radius: 50%;
-      border: 2px solid transparent;
-      background: linear-gradient(#030308, #030308) padding-box,
-                  linear-gradient(135deg, var(--accent), var(--accent2), var(--purple)) border-box;
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-      animation: ringPulse 2s ease-in-out infinite;
-    }
-    @keyframes ringPulse {
-      0%, 100% { box-shadow: 0 0 15px rgba(0,255,136,0.3), inset 0 0 15px rgba(0,255,136,0.05); }
-      50% { box-shadow: 0 0 35px rgba(0,255,136,0.6), 0 0 60px rgba(0,212,255,0.2), inset 0 0 25px rgba(0,255,136,0.1); }
-    }
-    .load-logo-ring-outer {
-      position: absolute; inset: -8px; border-radius: 50%;
-      border: 1px solid rgba(0,255,136,0.2);
-      animation: ringOuterSpin 8s linear infinite;
-    }
-    @keyframes ringOuterSpin {
-      to { transform: rotate(360deg); }
-    }
-    .load-logo-ring-outer::before {
-      content: '';
-      position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
-    }
-    .load-logo-icon {
-      font-size: 40px; color: var(--accent);
-      text-shadow: 0 0 20px var(--accent);
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 0 10px rgba(255,255,255,0.22);
+      opacity: 0;
+      animation: twinkle 4s ease-in-out infinite;
     }
 
-    .load-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 32px; font-weight: 700;
-      letter-spacing: 6px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    .star:nth-child(odd) {
+      opacity: 0.65;
+      box-shadow: none;
+    }
+
+    .loader-card {
+      position: relative;
+      z-index: 2;
+      width: min(680px, 100%);
+      border-radius: 32px;
+      background: rgba(10,12,20,0.86);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 40px 120px rgba(0,0,0,0.45);
+      padding: clamp(30px, 5vw, 48px);
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .loader-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(30,215,96,0.08), transparent 22%),
+                  radial-gradient(circle at bottom right, rgba(0,212,255,0.08), transparent 18%);
+      pointer-events: none;
+    }
+
+    .logo-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      position: relative;
+      font-size: clamp(3.2rem, 9vw, 6.4rem);
+      font-weight: 900;
+      letter-spacing: -0.26rem;
+      line-height: 0.95;
+      text-transform: uppercase;
+      color: transparent;
+      background: linear-gradient(90deg, rgba(255,255,255,0.96), rgba(30,215,96,1), rgba(255,255,255,0.96));
+      background-size: 220% 100%;
       -webkit-background-clip: text;
       background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .load-subtitle {
-      font-size: 11px; color: rgba(255,255,255,0.3);
-      letter-spacing: 3px; text-transform: uppercase;
-      font-family: 'JetBrains Mono', monospace;
-      margin-bottom: 50px;
+      animation: logoShine 4s ease-in-out infinite;
     }
 
-    .load-bar-wrap {
-      width: 320px; max-width: 90vw;
-      margin-bottom: 16px;
+    .logo-shine {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.45), transparent 75%);
+      transform: translateX(-150%);
+      filter: blur(10px);
+      pointer-events: none;
+      animation: shineSweep 3s ease-in-out infinite;
     }
-    .load-bar-track {
-      width: 100%; height: 6px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 10px;
-      position: relative;
+
+    .status {
+      margin-top: 20px;
+      font-size: clamp(0.85rem, 1vw, 1rem);
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .progress-bar {
+      margin: 32px auto 0;
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .progress-track {
+      flex: 1 1 260px;
+      min-width: 260px;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.18);
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-    .load-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
-      background-size: 200% 100%;
-      border-radius: 10px;
-      width: 0%;
-      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
-      animation: barShimmer 1.5s linear infinite;
     }
-    @keyframes barShimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+
+    .progress-fill {
+      position: absolute;
+      inset: 0;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(30,215,96,1), rgba(179,255,204,0.95));
+      box-shadow: 0 0 20px rgba(30,215,96,0.5);
+      overflow: hidden;
     }
-    .load-bar-fill::after {
+
+    .progress-fill::before {
       content: '';
-      position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-      width: 12px; height: 12px; border-radius: 50%;
-      background: white;
-      box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent2);
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      transform: translateX(-100%);
+      animation: progressLight 1.8s ease-in-out infinite;
     }
-    .load-bar-glow {
-      position: absolute; inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(0,255,136,0.15), transparent);
-      animation: glowSlide 1.5s ease-in-out infinite;
+
+    .progress-thumb {
+      min-width: 64px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: clamp(0.88rem, 1vw, 1rem);
+      font-weight: 700;
+      backdrop-filter: blur(10px);
+      text-align: center;
     }
-    @keyframes glowSlide {
+
+    .hint {
+      margin-top: 18px;
+      color: rgba(255,255,255,0.55);
+      font-size: clamp(0.8rem, 0.95vw, 0.95rem);
+      line-height: 1.6;
+    }
+
+    @keyframes logoShine {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes shineSweep {
+      0% { transform: translateX(-150%); }
+      50% { transform: translateX(120%); }
+      100% { transform: translateX(120%); }
+    }
+
+    @keyframes progressLight {
       0% { transform: translateX(-100%); }
       100% { transform: translateX(100%); }
     }
 
-    .load-info-row {
-      display: flex; justify-content: space-between;
-      align-items: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-    }
-    .load-status { color: rgba(255,255,255,0.4); letter-spacing: 1px; }
-    .load-percent {
-      font-weight: 700; font-size: 16px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.15; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.25); }
     }
 
-    .load-dots {
-      display: flex; gap: 8px; margin-top: 30px;
+    @media (max-width: 540px) {
+      .loader-card { padding: 24px; }
+      .logo { font-size: clamp(2.5rem, 14vw, 4.8rem); letter-spacing: -0.18rem; }
+      .progress-bar { gap: 12px; }
+      .progress-track { min-width: 220px; }
+      .progress-thumb { min-width: 54px; padding: 7px 14px; }
     }
-    .load-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      animation: dotPulse 1.2s ease-in-out infinite;
-    }
-    .load-dot:nth-child(1) { animation-delay: 0s; }
-    .load-dot:nth-child(2) { animation-delay: 0.2s; }
-    .load-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes dotPulse {
-      0%, 100% { background: rgba(255,255,255,0.15); transform: scale(1); }
-      50% { background: var(--accent); transform: scale(1.4); box-shadow: 0 0 8px var(--accent); }
-    }
-
-    /* corner decorations */
-    .load-corner {
-      position: absolute;
-      width: 30px; height: 30px;
-      border-color: rgba(0,255,136,0.3);
-      border-style: solid;
-    }
-    .load-corner.tl { top: 20px; left: 20px; border-width: 2px 0 0 2px; }
-    .load-corner.tr { top: 20px; right: 20px; border-width: 2px 2px 0 0; }
-    .load-corner.bl { bottom: 20px; left: 20px; border-width: 0 0 2px 2px; }
-    .load-corner.br { bottom: 20px; right: 20px; border-width: 0 2px 2px 0; }
 
     /* ============================================================
        VELLY TAG - PINK HEARTS EFFECT
@@ -788,40 +818,6 @@
     #btnNotif:hover { background: var(--accent); color: black; border-color: var(--accent); }
     #btnNotif .notif-badge { position: absolute; top: -2px; right: -2px; min-width: 17px; height: 17px; background: var(--danger); border-radius: 9px; font-size: 9px; font-weight: 700; display: none; align-items: center; justify-content: center; padding: 0 3px; }
     #btnNotif .notif-badge.show { display: flex; }
-    #btnFeedback {
-      width: 40px; height: 40px;
-      background: rgba(0,255,136,0.12);
-      border: 1px solid rgba(0,255,136,0.45);
-      border-radius: 50%;
-      color: var(--accent);
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-      transition: 0.2s;
-      position: relative;
-      z-index: 10;
-    }
-    #btnFeedback:hover {
-      background: rgba(0,255,136,0.28);
-      color: #fff;
-      box-shadow: 0 0 16px rgba(0,255,136,0.45);
-      transform: translateY(-1px);
-    }
-    .feedback-status {
-      margin-top: 10px;
-      font-size: 11px;
-      color: #a3f7c5;
-      background: rgba(0,255,136,0.1);
-      border: 1px solid rgba(0,255,136,0.2);
-      border-radius: 10px;
-      padding: 8px 10px;
-      text-align: center;
-    }
-    .feedback-status.error {
-      color: #ffb3b3;
-      background: rgba(255,51,51,0.1);
-      border-color: rgba(255,51,51,0.25);
-    }
     .tag-selector-sheet {
       max-width: 640px;
       padding: 24px;
@@ -2116,255 +2112,6 @@
     }
 
     /* ============================================================
-       FEEDBACK MODAL - Modern UI
-    ============================================================ */
-    .feedback-sheet {
-      background: linear-gradient(145deg, rgba(18,18,28,0.97) 0%, rgba(8,10,20,0.98) 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04) inset;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      width: 90%;
-      max-width: 500px;
-      max-height: 80vh;
-      overflow: hidden;
-      animation: feedbackSheetIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
-    }
-    @keyframes feedbackSheetIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-    .feedback-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .feedback-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--accent);
-      font-family: 'Rajdhani', sans-serif;
-      letter-spacing: 1px;
-    }
-    .feedback-title i {
-      font-size: 20px;
-    }
-    .feedback-close {
-      background: none;
-      border: none;
-      color: #888;
-      font-size: 24px;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 8px;
-      transition: 0.2s;
-    }
-    .feedback-close:hover {
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-    }
-    .feedback-content {
-      padding: 24px;
-    }
-    .feedback-info {
-      background: rgba(0,255,136,0.1);
-      border: 1px solid rgba(0,255,136,0.2);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      color: #e5e7eb;
-      line-height: 1.5;
-    }
-    .feedback-info i {
-      color: var(--accent);
-      margin-right: 8px;
-    }
-    .feedback-form {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .feedback-field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .feedback-field label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #f8fafc;
-      font-family: 'Rajdhani', sans-serif;
-      letter-spacing: 0.5px;
-    }
-    .feedback-field textarea {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 16px;
-      color: #f8fafc;
-      font-size: 14px;
-      line-height: 1.5;
-      resize: vertical;
-      min-height: 120px;
-      transition: 0.2s;
-      font-family: 'Exo 2', sans-serif;
-    }
-    .feedback-field textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(0,255,136,0.1);
-    }
-    .feedback-field textarea::placeholder {
-      color: #9ca3af;
-    }
-    .char-count {
-      text-align: right;
-      font-size: 12px;
-      color: #6b7280;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .btn-feedback-submit {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none;
-      border-radius: 12px;
-      padding: 16px 24px;
-      color: #000;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-family: 'Rajdhani', sans-serif;
-      letter-spacing: 1px;
-    }
-    .btn-feedback-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,255,136,0.4);
-    }
-    .btn-feedback-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    /* THANK YOU ANIMATION */
-    .thank-you-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(10px);
-    }
-    .thank-you-card {
-      background: linear-gradient(145deg, rgba(18,18,28,0.97) 0%, rgba(8,10,20,0.98) 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 40px 32px;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-      animation: thankYouIn 0.6s cubic-bezier(0.175,0.885,0.32,1.275);
-      max-width: 400px;
-      width: 90%;
-    }
-    @keyframes thankYouIn {
-      from {
-        opacity: 0;
-        transform: scale(0.8) translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-    .thank-you-icon {
-      font-size: 48px;
-      color: var(--accent);
-      margin-bottom: 20px;
-      animation: heartPulse 1.5s ease-in-out infinite;
-    }
-    @keyframes heartPulse {
-      0%, 100% {
-        transform: scale(1);
-        color: var(--accent);
-      }
-      50% {
-        transform: scale(1.1);
-        color: #ff69b4;
-      }
-    }
-    .thank-you-card h3 {
-      color: #f8fafc;
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      font-family: 'Rajdhani', sans-serif;
-      letter-spacing: 1px;
-    }
-    .thank-you-card p {
-      color: #e5e7eb;
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    @media (max-width: 640px) {
-      .feedback-sheet {
-        width: calc(100% - 20px);
-        margin: 20px auto;
-        max-height: 85vh;
-      }
-      .feedback-header {
-        padding: 16px 20px;
-      }
-      .feedback-content {
-        padding: 20px;
-      }
-      .feedback-info {
-        padding: 12px;
-        font-size: 13px;
-      }
-      .feedback-field textarea {
-        padding: 14px;
-        min-height: 100px;
-      }
-      .btn-feedback-submit {
-        padding: 14px 20px;
-        font-size: 15px;
-      }
-      .thank-you-card {
-        padding: 32px 24px;
-      }
-      .thank-you-icon {
-        font-size: 40px;
-      }
-      .thank-you-card h3 {
-        font-size: 20px;
-      }
-      .thank-you-card p {
-        font-size: 14px;
-      }
-    }
-
-    /* ============================================================
        CREATOR PANEL V2 - v3.2.3 (Side Panel - Draggable)
     ============================================================ */
     .creator-panel-overlay {
@@ -2841,19 +2588,6 @@
     .active-btn { color: var(--accent) !important; opacity: 1 !important; text-shadow: 0 0 10px var(--accent); }
 
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
-    #feedbackOverlay {
-      position: fixed;
-      inset: 0;
-      display: none;
-      z-index: 100050;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      overflow-y: auto;
-    }
     #modalLeaderboard.modal {
       z-index: 100050 !important;
       align-items: center;
@@ -5632,33 +5366,21 @@
   </div>
 
   <!-- LOADING SCREEN -->
-  <div id="gameLoadScreen">
-    <div class="load-corner tl"></div>
-    <div class="load-corner tr"></div>
-    <div class="load-corner bl"></div>
-    <div class="load-corner br"></div>
-    <div class="load-logo-wrap">
-      <div class="load-logo-ring">
-        <div class="load-logo-ring-outer"></div>
-        <div class="load-logo-icon"><i class="fas fa-music"></i></div>
+  <div id="loader">
+    <div class="stars" id="stars"></div>
+    <div class="loader-card">
+      <div class="logo-wrap">
+        <div class="logo" id="typing"></div>
+        <div class="logo-shine"></div>
       </div>
-    </div>
-    <div class="load-title">ExeMusic</div>
-    <div class="load-subtitle">v3.2.3 · Premium Audio</div>
-    <div class="load-bar-wrap">
-      <div class="load-bar-track">
-        <div class="load-bar-fill" id="loadBarFill"></div>
-        <div class="load-bar-glow"></div>
+      <div class="status" id="status">Initializing...</div>
+      <div class="progress-bar">
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-thumb" id="percent">0%</div>
       </div>
-    </div>
-    <div class="load-info-row load-bar-wrap">
-      <span class="load-status" id="loadStatus">INITIALIZING...</span>
-      <span class="load-percent" id="loadPercent">0%</span>
-    </div>
-    <div class="load-dots">
-      <div class="load-dot"></div>
-      <div class="load-dot"></div>
-      <div class="load-dot"></div>
+      <div class="hint">Efek shiny responsif dan halus untuk loading screen ExeMusic.</div>
     </div>
   </div>
 
@@ -5802,9 +5524,6 @@
         </button>
         <button id="btnEvent" onclick="openEventCenter()" title="Event">
           <i class="fas fa-calendar-alt"></i>
-        </button>
-        <button id="btnFeedback" type="button" title="Masukkan/Feedback" onclick="openFeedbackModal()">
-          <i class="fas fa-comment-dots"></i>
         </button>
         <button id="btnAdmin" onclick="openAdminPanel()" title="Admin Panel">
           <i class="fas fa-shield-alt"></i>
@@ -6796,43 +6515,13 @@
     </div>
   </div>
 
-  <!-- FEEDBACK MODAL -->
-  <div id="feedbackOverlay" class="feedback-overlay" onclick="if(event.target==this)closeFeedbackModal()">
-    <div class="feedback-sheet">
-      <div class="feedback-header">
-        <div class="feedback-title">
-          <i class="fas fa-comment-dots"></i>
-          <span>MASUKKAN & FEEDBACK</span>
-        </div>
-        <button type="button" class="feedback-close" onclick="closeFeedbackModal()" title="Tutup">×</button>
+  <div class="tutorial-overlay" id="tutorialOverlay">
+    <div class="tutorial-card">
+      <button class="close-btn" onclick="closeTutorial()">×</button>
+      <h3>Tutorial Upload via Top4Top</h3>
+      <div class="video-container">
+        <iframe id="tutorialVideo" src="https://www.youtube.com/embed/eLNvOj2lFNk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
-      <div class="feedback-content">
-        <div class="feedback-info">
-          <p><i class="fas fa-info-circle"></i> Masukkan Anda sangat berharga untuk pengembangan ExeMusic. Kirim feedback maksimal 1x per hari.</p>
-          <div id="feedbackStatusText" class="feedback-status">Login diperlukan untuk mengirim feedback.</div>
-        </div>
-        <form id="feedbackForm" class="feedback-form">
-          <div class="feedback-field">
-            <label for="feedbackMessage">Pesan Feedback</label>
-            <textarea id="feedbackMessage" placeholder="Tulis masukan atau saran Anda di sini..." maxlength="500" required></textarea>
-            <div class="char-count"><span id="charCount">0</span>/500</div>
-          </div>
-          <button type="submit" class="btn-feedback-submit">
-            <i class="fas fa-paper-plane"></i> Kirim Feedback
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- THANK YOU ANIMATION -->
-  <div class="thank-you-overlay" id="thankYouOverlay">
-    <div class="thank-you-card">
-      <div class="thank-you-icon">
-        <i class="fas fa-heart"></i>
-      </div>
-      <h3>Terima Kasih!</h3>
-      <p id="thankYouMessage">Feedback Anda telah diterima, [username].</p>
     </div>
   </div>
 
@@ -6946,47 +6635,78 @@
     // LOADING SCREEN LOGIC
     // ============================================================
     const loadSteps = [
-      { pct: 8, msg: 'INITIALIZING...' },
-      { pct: 20, msg: 'CONNECTING DATABASE...' },
-      { pct: 38, msg: 'LOADING AUDIO ENGINE...' },
-      { pct: 55, msg: 'FETCHING SONGS...' },
-      { pct: 72, msg: 'SYNCING PROFILE...' },
-      { pct: 88, msg: 'PREPARING UI...' },
+      { pct: 12, msg: 'INITIALIZING MODULES...' },
+      { pct: 30, msg: 'LOADING SOUNDS...' },
+      { pct: 52, msg: 'PREPARING INTERFACE...' },
+      { pct: 70, msg: 'SYNCING ASSETS...' },
+      { pct: 88, msg: 'ALMOST READY...' },
       { pct: 100, msg: 'READY!' }
     ];
-    let loadIdx = 0;
-    function advanceLoader(targetPct, msg) {
-      const bar = document.getElementById('loadBarFill');
-      const pctEl = document.getElementById('loadPercent');
-      const statusEl = document.getElementById('loadStatus');
-      if (statusEl) statusEl.textContent = msg;
-      if (bar) bar.style.width = targetPct + '%';
-      if (pctEl) pctEl.textContent = targetPct + '%';
+
+    const typing = document.getElementById('typing');
+    const percent = document.getElementById('percent');
+    const statusText = document.getElementById('status');
+    const progressFill = document.getElementById('progressFill');
+    const loader = document.getElementById('loader');
+    const stars = document.getElementById('stars');
+
+    function createStars(count) {
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2.5 + 0.8;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.animationDuration = `${3 + Math.random() * 3}s`;
+        star.style.animationDelay = `${Math.random() * 4}s`;
+        star.style.opacity = `${0.2 + Math.random() * 0.75}`;
+        stars.appendChild(star);
+      }
     }
+
+    function typeLogo() {
+      const logoText = 'EXEMUSIC';
+      let index = 0;
+      const interval = setInterval(() => {
+        typing.textContent += logoText[index];
+        index += 1;
+        if (index >= logoText.length) clearInterval(interval);
+      }, 120);
+    }
+
+    function setLoaderProgress(pct, msg) {
+      if (progressFill) progressFill.style.width = pct + '%';
+      if (percent) percent.textContent = pct + '%';
+      if (statusText) statusText.textContent = msg;
+    }
+
     function runLoadSequence() {
       let idx = 0;
-      function next() {
+      const next = () => {
         if (idx >= loadSteps.length) return;
-        const s = loadSteps[idx++];
-        advanceLoader(s.pct, s.msg);
-        if (idx < loadSteps.length) setTimeout(next, 350 + Math.random() * 200);
-      }
+        const step = loadSteps[idx++];
+        setLoaderProgress(step.pct, step.msg);
+        if (idx < loadSteps.length) setTimeout(next, 350 + Math.random() * 220);
+        else setTimeout(finishLoader, 650);
+      };
       next();
     }
-    function dismissLoader() {
-      advanceLoader(100, 'READY!');
+
+    function finishLoader() {
+      if (!loader) return;
+      loader.style.transition = 'opacity 0.9s ease, visibility 0.9s ease';
+      loader.style.opacity = '0';
+      loader.style.visibility = 'hidden';
       setTimeout(() => {
-        const screen = document.getElementById('gameLoadScreen');
-        if (screen) {
-          screen.classList.add('fade-out');
-          setTimeout(() => { 
-            screen.style.display = 'none';
-            // Show welcome animation after loading completes
-            showWelcomeAnimation();
-          }, 800);
-        }
-      }, 400);
+        loader.remove();
+        if (typeof showWelcomeAnimation === 'function') showWelcomeAnimation();
+      }, 900);
     }
+
+    createStars(48);
+    typeLogo();
     runLoadSequence();
 
     let heartsInterval = null;
@@ -7611,193 +7331,6 @@
       }
     }
 
-    // ============================================================
-    // FEEDBACK SYSTEM - Modern UI with Anti-Spam
-    // ============================================================
-    window.openFeedbackModal = function() {
-      console.log('openFeedbackModal called');
-      const modal = document.getElementById('feedbackOverlay');
-      if (!modal) {
-        console.warn('Feedback modal element tidak ditemukan');
-        return;
-      }
-      modal.style.display = 'flex';
-      modal.style.zIndex = '100050';
-      const statusText = document.getElementById('feedbackStatusText');
-      if (statusText) {
-        statusText.textContent = auth.currentUser ? 'Silakan kirim masukan Anda.' : 'Login diperlukan untuk mengirim feedback.';
-      }
-      const form = document.getElementById('feedbackForm');
-      if (form) form.reset();
-      const charCount = document.getElementById('charCount');
-      if (charCount) charCount.textContent = '0';
-      setTimeout(() => {
-        const textarea = document.getElementById('feedbackMessage');
-        if (textarea) textarea.focus();
-      }, 100);
-      if (!auth.currentUser) {
-        showToast('Login dulu untuk mengirim feedback', 'error');
-      }
-    };
-
-    window.closeFeedbackModal = function() {
-      const modal = document.getElementById('feedbackOverlay');
-      if (modal) {
-        modal.style.display = 'none';
-        modal.style.zIndex = '';
-      }
-    };
-
-    window.showThankYouAnimation = function(username) {
-      const overlay = document.getElementById('thankYouOverlay');
-      const message = document.getElementById('thankYouMessage');
-      if (overlay && message) {
-        message.textContent = `Feedback Anda telah diterima, ${username}.`;
-        overlay.style.display = 'flex';
-        setTimeout(() => {
-          overlay.style.display = 'none';
-        }, 3000);
-      }
-    };
-
-    // Initialize feedback form
-    function initFeedbackForm() {
-      const feedbackForm = document.getElementById('feedbackForm');
-      const feedbackMessage = document.getElementById('feedbackMessage');
-      const charCount = document.getElementById('charCount');
-
-      console.log('initFeedbackForm called');
-      console.log('Form element:', feedbackForm);
-      console.log('Message textarea:', feedbackMessage);
-
-      if (feedbackMessage && charCount) {
-        feedbackMessage.addEventListener('input', function() {
-          charCount.textContent = this.value.length;
-        });
-      }
-
-      if (feedbackForm) {
-        feedbackForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          console.log('Form submit event fired');
-
-          if (!auth.currentUser) {
-            console.log('User not logged in');
-            showToast('Login dulu untuk mengirim feedback', 'error');
-            return;
-          }
-
-          const message = feedbackMessage.value.trim();
-          console.log('Message:', message);
-          if (!message) {
-            showToast('Tulis pesan feedback dulu', 'error');
-            return;
-          }
-
-          const submitBtn = feedbackForm.querySelector('.btn-feedback-submit');
-          if (submitBtn) submitBtn.disabled = true;
-
-          try {
-            // Check daily limit
-            const uid = auth.currentUser.uid;
-            const today = new Date().toISOString().split('T')[0];
-            const feedbackKey = `feedback_${today}`;
-
-            const userRef = db.ref('users/' + uid);
-            const snapshot = await userRef.once('value');
-            const userData = snapshot.val() || {};
-
-            if (userData[feedbackKey]) {
-              showToast('Anda sudah mengirim feedback hari ini. Coba lagi besok.', 'error');
-              return;
-            }
-
-            // Get user info
-            const username = userData.username || userData.displayName || 'User';
-            const timestamp = new Date().toLocaleString('id-ID', {
-              timeZone: 'Asia/Jakarta',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit'
-            });
-
-            // Save feedback to Firebase
-            const feedbacksRef = db.ref('feedbacks');
-            const feedbackId = feedbacksRef.push().key;
-            
-            await feedbacksRef.child(feedbackId).set({
-              userId: uid,
-              username: username,
-              message: message,
-              timestamp: timestamp,
-              date: today,
-              status: 'unread'
-            });
-
-            // Send to Discord via Netlify function
-            try {
-              const discordResponse = await fetch('/.netlify/functions/send-feedback', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  username: username,
-                  userId: uid,
-                  message: message,
-                  timestamp: timestamp
-                })
-              });
-
-              if (!discordResponse.ok) {
-                console.warn('Discord notification may have failed, but feedback saved locally');
-              }
-            } catch (discordError) {
-              console.warn('Could not send Discord notification:', discordError);
-              // Continue anyway since feedback is saved in Firebase
-            }
-
-            // Mark as sent today in user data
-            await userRef.child(feedbackKey).set(true);
-
-            // Close modal and show thank you
-            closeFeedbackModal();
-            showThankYouAnimation(username);
-
-            showToast('Feedback berhasil dikirim! Terima kasih atas masukan Anda.', 'success');
-
-          } catch (error) {
-            console.error('Feedback error - Full error:', error);
-            console.error('Error message:', error.message);
-            console.error('Error stack:', error.stack);
-            showToast('Gagal mengirim feedback: ' + error.message, 'error');
-          } finally {
-            if (submitBtn) submitBtn.disabled = false;
-          }
-        });
-      }
-    }
-
-    // Initialize feedback button
-    function initFeedbackButton() {
-      const btn = document.getElementById('btnFeedback');
-      if (btn) {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Feedback button clicked');
-          window.openFeedbackModal();
-        });
-        console.log('Feedback button initialized');
-      } else {
-        console.log('Feedback button not found');
-      }
-    }
-
-    // Call init when DOM is ready
     function initProfileTagButton() {
       const btn = document.getElementById('btnProfileTag');
       if (btn) {
@@ -7811,13 +7344,9 @@
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() {
-        initFeedbackButton();
-        initFeedbackForm();
         initProfileTagButton();
       });
     } else {
-      initFeedbackButton();
-      initFeedbackForm();
       initProfileTagButton();
     }
 
@@ -12660,21 +12189,6 @@
     (function(){
       function attachFallbackHandlers(){
         try{
-          const fb = document.getElementById('btnFeedback');
-          if(fb && !fb.hasAttribute('onclick')){
-            fb.style.pointerEvents = 'auto'; fb.style.zIndex = '100100';
-            fb.addEventListener('click', function(e){
-              e && e.preventDefault && e.preventDefault();
-              e && e.stopPropagation && e.stopPropagation();
-              console.log('btnFeedback fallback clicked');
-              if (typeof window.openFeedbackModal === 'function') {
-                window.openFeedbackModal();
-              } else {
-                window.location.href = 'feedback.html';
-              }
-            });
-          }
-
           const pt = document.getElementById('btnProfileTag');
           if(pt && !pt.hasAttribute('onclick')){
             pt.style.pointerEvents = 'auto'; pt.style.zIndex = '100100';
@@ -12692,7 +12206,7 @@
             });
           }
 
-          console.log('Fallback handlers attached for feedback and profile tag buttons');
+          console.log('Fallback handlers attached for profile tag button');
         }catch(err){
           console.error('Error attaching fallback handlers', err);
         }
@@ -12715,55 +12229,7 @@
     </div>
   </div>
 
-  <script>
-    // Embedded-frame helpers: render feedback and tag selector inside overlay
-    window.openFeedbackFrame = function(){
-      const overlay = document.getElementById('externalFrameOverlay');
-      const content = document.getElementById('externalFrameContent');
-      if(!overlay || !content) return;
-      content.innerHTML = `
-        <h2 style="margin-top:0;color:var(--accent)">Masukkan & Feedback</h2>
-        <div style="font-size:13px;color:#88c;margin-bottom:8px">Kirim masukan (1x/hari). Login diperlukan.</div>
-        <textarea id="ef_msg" maxlength="500" placeholder="Tulis masukan atau saran Anda di sini..." style="width:100%;min-height:160px;border-radius:8px;padding:12px;background:#071119;border:1px solid rgba(255,255,255,0.03);color:#dfffe4"></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px"><button id="ef_send" style="background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;padding:10px 14px;border-radius:8px;color:#001;cursor:pointer">Kirim Feedback</button><button id="ef_cancel" style="background:rgba(255,255,255,0.02);border:none;padding:10px 14px;border-radius:8px;color:#fff;cursor:pointer">Batal</button></div>
-        <div id="ef_status" style="margin-top:10px;color:#aee;font-size:13px"></div>
-      `;
-      overlay.style.display = 'flex';
-      document.getElementById('externalFrameClose').focus();
 
-      const sendBtn = document.getElementById('ef_send');
-      const cancelBtn = document.getElementById('ef_cancel');
-      const msgEl = document.getElementById('ef_msg');
-      const status = document.getElementById('ef_status');
-
-      function setStatus(t){ if(status) status.textContent = t; }
-
-      sendBtn.addEventListener('click', async function(){
-        const text = (msgEl.value||'').trim();
-        if(!text){ setStatus('Tulis pesan feedback dulu'); return; }
-        try{
-          if(auth && auth.currentUser){
-            const uid = auth.currentUser.uid;
-            const today = new Date().toISOString().split('T')[0];
-            const feedbacksRef = db.ref('feedbacks');
-            const id = feedbacksRef.push().key;
-            const username = (userData && (userData.username||userData.displayName)) || 'User';
-            const timestamp = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-            await feedbacksRef.child(id).set({ userId: uid, username, message: text, timestamp, date: today, status: 'unread' });
-            try{ await db.ref('users/'+uid+'/feedback_'+today).set(true); }catch(e){}
-            if(window.showThankYouAnimation) window.showThankYouAnimation(username);
-            if(window.showToast) window.showToast('Feedback berhasil dikirim!','success');
-            setStatus('Feedback terkirim. Terima kasih!');
-            setTimeout(()=> overlay.style.display='none',900);
-          } else {
-            setStatus('Login dulu untuk mengirim feedback');
-          }
-        }catch(err){ console.error('Feedback send error',err); setStatus('Gagal mengirim: '+(err.message||err)); }
-      });
-
-      cancelBtn.addEventListener('click', function(){ overlay.style.display='none'; });
-      document.getElementById('externalFrameClose').onclick = function(){ overlay.style.display='none'; };
-    };
 
 
     window.openTagSelectorFrame = function(){
