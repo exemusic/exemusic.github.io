@@ -168,11 +168,14 @@ function scheduleAutoWish() {
  setTimeout(async () => {
    try {
      const addCount = 1 + Math.floor(Math.random()*2);
-     const promises = Array.from({length: addCount}, () => push(ref(db, "wishes"), randomWish()));
-     await Promise.all(promises);
-     console.log(`✓ ${addCount} wish(es) saved to Firebase`);
+     const promises = [];
+     for (let i = 0; i < addCount; i++) {
+       promises.push(push(ref(db, "wishes"), randomWish()));
+     }
+     const results = await Promise.all(promises);
+     console.log(`[AUTO] ✓ ${addCount} wish(es) confirmed sent (${results.length} keys)`);
    } catch(err) {
-     console.error("❌ Failed to save auto-wish:", err);
+     console.error("[ERROR] Failed to save auto-wish:", err);
    }
    scheduleAutoWish();
  }, delay);
@@ -208,17 +211,18 @@ sendBtn.onclick = async () => {
  try {
    sendBtn.disabled = true;
    sendBtn.textContent = "Sending...";
-   await push(ref(db, "wishes"), {
+   const ref_key = await push(ref(db, "wishes"), {
      name: n,
      timestamp: Date.now()
    });
+   console.log(`[USER] ✓ Wish from "${n}" sent (key: ${ref_key.key})`);
    localStorage.setItem("wish_cd", String(Date.now() + COOLDOWN_MS));
    nameInput.value = "";
    modal.style.display = "none";
    showToast();
    updateCooldown();
  } catch(err) {
-   console.error(err);
+   console.error("[ERROR] Failed to send user wish:", err);
    alert("Failed to send wishes. Check Firebase Rules and Console.");
  } finally {
    if (Date.now() >= Number(localStorage.getItem("wish_cd") || 0)) {
@@ -236,9 +240,10 @@ async function handleWishes(snap) {
      const seedCount = 40 + Math.floor(Math.random()*11);
      const seedItems = generateFakeWishes(seedCount);
      try {
-       await Promise.all(seedItems.map(item => push(ref(db, "wishes"), item)));
+       const refs = await Promise.all(seedItems.map(item => push(ref(db, "wishes"), item)));
        localStorage.setItem("wish_seed_done", "1");
-       console.log(`[SEED] ${seedCount} wishes saved to Firebase`);
+       console.log(`[SEED] ✓ ${seedCount} wishes sent (${refs.length} confirmed)`);
+       setTimeout(() => location.reload(), 500);
      } catch(err) {
        console.error("[ERROR] Failed to seed wishes:", err);
        localStorage.removeItem("wish_seed_done");
@@ -248,7 +253,7 @@ async function handleWishes(snap) {
    arr = generateFakeWishes(40 + Math.floor(Math.random()*11));
    try {
      await Promise.all(arr.map(item => push(ref(db, "wishes"), item)));
-     console.log(`[FALLBACK] ${arr.length} wishes saved to Firebase`);
+     console.log(`[FALLBACK] ✓ ${arr.length} wishes saved to Firebase`);
    } catch(err) {
      console.error("[ERROR] Failed to save fallback wishes:", err);
    }
@@ -258,10 +263,35 @@ async function handleWishes(snap) {
  renderList();
 }
 
+window.resendWishes = async () => {
+ console.log("[RESEND] Clearing cache and resending 40+ wishes...");
+ localStorage.removeItem("wish_seed_done");
+ const seedCount = 45 + Math.floor(Math.random()*6);
+ const seedItems = generateFakeWishes(seedCount);
+ let success = 0;
+ for (let i = 0; i < seedItems.length; i++) {
+   try {
+     await push(ref(db, "wishes"), seedItems[i]);
+     success++;
+     if (success % 5 === 0) console.log(`[RESEND] Progress: ${success}/${seedCount} sent`);
+   } catch(err) {
+     console.error(`[ERROR] Failed item ${i}:`, err);
+   }
+ }
+ console.log(`[RESEND] ✓ COMPLETE: ${success}/${seedCount} wishes sent to Firebase`);
+ localStorage.setItem("wish_seed_done", "1");
+ setTimeout(() => location.reload(), 1000);
+};
+
+console.log("[SYSTEM] Type 'resendWishes()' in console to manually resend 40+ wishes to Firebase");
+
 onValue(ref(db, "wishes"), snap => {
- handleWishes(snap).catch(err => console.error(err));
+ const count = Object.keys(snap.val() || {}).length;
+ console.log(`[SYNC] ✓ Database synced: ${count} total wishes`);
+ handleWishes(snap).catch(err => console.error("[SYNC ERROR]", err));
 });
 
+console.log("[SYSTEM] ✓ App loaded and listening to Firebase RTDB");
 scheduleAutoWish();
 </script>
 </body>
