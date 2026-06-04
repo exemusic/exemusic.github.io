@@ -90,25 +90,52 @@ function showToast(){
  setTimeout(()=>toast.style.display="none",2500);
 }
 
-sendBtn.onclick=async()=>{
- const n=name.value.trim();
- if(!n)return;
+sendBtn.onclick = async () => {
 
- const cd=localStorage.getItem("wish_cd");
- if(cd && Date.now()<+cd){
-   sendBtn.textContent="Cooldown active";
+ const nameInput = document.getElementById("name");
+ const n = nameInput.value.trim();
+
+ if (!n) {
+   alert("Please enter your name");
    return;
  }
 
- await push(ref(db,"wishes"),{
-   name:n,
-   timestamp:Date.now()
- });
+ const cd = localStorage.getItem("wish_cd");
 
- localStorage.setItem("wish_cd",Date.now()+30000);
- name.value="";
- modal.style.display="none";
- showToast();
+ if (cd && Date.now() < Number(cd)) {
+   const remain = Math.ceil((Number(cd) - Date.now()) / 1000);
+   alert(`Please wait ${remain}s`);
+   return;
+ }
+
+ try {
+
+   sendBtn.disabled = true;
+   sendBtn.textContent = "Sending...";
+
+   await push(ref(db,"wishes"),{
+     name:n,
+     timestamp:Date.now()
+   });
+
+   localStorage.setItem("wish_cd",Date.now()+30000);
+
+   nameInput.value="";
+   modal.style.display="none";
+   showToast();
+
+ } catch(err) {
+
+   console.error(err);
+   alert("Failed to send wishes. Check Firebase Rules and Console.");
+
+ } finally {
+
+   sendBtn.disabled = false;
+   sendBtn.textContent = "Send Wishes ✨";
+
+ }
+
 };
 
 onValue(ref(db,"wishes"),snap=>{
