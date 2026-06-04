@@ -140,17 +140,6 @@ loadMoreBtn.onclick = () => {
  renderList();
 };
 
-function randomWish() {
- return {
-   name: randomNames[Math.floor(Math.random()*randomNames.length)],
-   timestamp: Date.now() - Math.floor(Math.random()*86400000)
- };
-}
-
-function generateFakeWishes(count) {
- return Array.from({length: count}, () => randomWish());
-}
-
 function createWishCard(v) {
  return `
  <div class="card">
@@ -172,8 +161,8 @@ function renderList() {
 function scheduleAutoWish() {
  const delay = 300000 + Math.floor(Math.random()*300000);
  setTimeout(async () => {
-   const count = 1 + Math.floor(Math.random()*2);
-   const promises = Array.from({length: count}, () => push(ref(db, "wishes"), randomWish()));
+   const addCount = 1 + Math.floor(Math.random()*2);
+   const promises = Array.from({length: addCount}, () => push(ref(db, "wishes"), randomWish()));
    await Promise.all(promises);
    scheduleAutoWish();
  }, delay);
@@ -234,13 +223,13 @@ async function handleWishes(snap) {
  let arr = Object.values(data);
  if (!arr.length) {
    if (!localStorage.getItem("wish_seed_done")) {
-     const seedCount = 32 + Math.floor(Math.random()*9);
+     const seedCount = 40 + Math.floor(Math.random()*11);
      const seedItems = generateFakeWishes(seedCount);
      await Promise.all(seedItems.map(item => push(ref(db, "wishes"), item)));
      localStorage.setItem("wish_seed_done", "1");
      return;
    }
-   arr = generateFakeWishes(32);
+   arr = generateFakeWishes(40 + Math.floor(Math.random()*11));
  }
  wishesData = arr.sort((a,b) => b.timestamp - a.timestamp);
  wishDisplayLimit = Math.min(wishDisplayLimit, wishesData.length) || MAX_INITIAL;
