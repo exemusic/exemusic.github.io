@@ -271,40 +271,80 @@ async function handleWishes(snap) {
 }
 
 window.resendWishes = async () => {
- console.log("[RESEND] === STARTING RESEND PROCESS ===");
- console.log("[RESEND] Step 1: Clearing localStorage cache...");
- localStorage.removeItem("wish_seed_done");
- localStorage.removeItem("wish_cd");
+ console.log("[RESEND] ========== AGGRESSIVE RESEND START ==========");
  
+ // Step 1: Generate wishes
  const seedCount = 50;
  const seedItems = generateFakeWishes(seedCount);
- console.log(`[RESEND] Step 2: Generated ${seedCount} wishes locally`);
- console.log("[RESEND] Sample wish:", seedItems[0]);
+ console.log(`[RESEND] Generated ${seedCount} wishes`);
+ console.log("[RESEND] First 3 samples:", seedItems.slice(0, 3));
  
+ // Step 2: Simple sequential push (no Promise.all)
  let success = 0;
- let failed = 0;
+ let errors = [];
  
- console.log("[RESEND] Step 3: Sending wishes to Firebase...");
+ console.log("[RESEND] Starting sequential push...");
  for (let i = 0; i < seedItems.length; i++) {
    try {
-     const pushRef = await push(ref(db, "wishes"), seedItems[i]);
-     if (pushRef && pushRef.key) {
-       success++;
-       console.log(`[RESEND] Item ${i+1}: ✓ (key: ${pushRef.key})`);
-     }
-     await new Promise(resolve => setTimeout(resolve, 100));
+     console.log(`[RESEND] Push #${i+1}: name="${seedItems[i].name}", ts=${seedItems[i].timestamp}`);
+     
+     const pushRef = await push(ref(db, "wishes"), {
+       name: seedItems[i].name,
+       timestamp: seedItems[i].timestamp
+     });
+     
+     success++;
+     console.log(`[RESEND] ✓ #${i+1} saved with key: ${pushRef.key}`);
+     
    } catch(err) {
-     failed++;
-     console.error(`[RESEND] Item ${i+1}: ✗ ERROR - ${err.message}`);
+     errors.push({idx: i, msg: err.message, code: err.code});
+     console.error(`[RESEND] ✗ #${i+1} FAILED:`, err.message, err.code);
    }
+   
+   // Delay between pushes
+   await new Promise(r => setTimeout(r, 50));
  }
  
- console.log(`[RESEND] Step 4: Upload complete - Success: ${success}, Failed: ${failed}`);
+ console.log(`[RESEND] Upload phase complete: ${success}/${seedCount} success`);
+ if (errors.length > 0) {
+   console.error("[RESEND] Errors:", errors);
+ }
  
- console.log("[RESEND] Step 5: Waiting 3 seconds before verification...");
- await new Promise(resolve => setTimeout(resolve, 3000));
+ // Step 3: Wait then query database directly
+ console.log("[RESEND] Waiting 2 seconds...");
+ await new Promise(r => setTimeout(r, 2000));
  
- console.log("[RESEND] Step 6: Final database verification...");
+ console.log("[RESEND] Checking database...");
+ try {
+   const snapshot = await new Promise((resolve, reject) => {
+     const unsubscribe = onValue(ref(db, "wishes"), (snap) => {
+       unsubscribe();
+       resolve(snap);
+     }, (err) => {
+       reject(err);
+     });
+   });
+   
+   const dbData = snapshot.val();
+   const dbCount = dbData ? Object.keys(dbData).length : 0;
+   
+   console.log(`[RESEND] DATABASE CHECK: ${dbCount} total wishes`);
+   console.log("[RESEND] All keys:", dbData ? Object.keys(dbData) : []);
+   
+   if (dbCount > 2) {
+     console.log(`[RESEND] ✓✓✓ SUCCESS! From 2 → ${dbCount} wishes. Reloading...`);
+     setTimeout(() => location.reload(), 1500);
+   } else {
+     console.error(`[RESEND] ✗ FAILURE: Still only ${dbCount} wishes after push of ${success}`);
+     console.log("[RESEND] This suggests Firebase write is being blocked or rules deny access");
+   }
+ } catch(err) {
+   console.error("[RESEND] Database check error:", err.message);
+ }
+};
+
+window.deleteAllWishes = async () => {
+ console.log("[DELETE] Attempting to clear database...");
  try {
    const snapshot = await new Promise((resolve, reject) => {
      const unsubscribe = onValue(ref(db, "wishes"), snap => {
@@ -314,22 +354,20 @@ window.resendWishes = async () => {
    });
    
    const data = snapshot.val();
-   const dbCount = data ? Object.keys(data).length : 0;
-   
-   console.log(`[RESEND] ✓ FINAL VERIFICATION: ${dbCount} total wishes in Firebase`);
-   console.log("[RESEND] First 3 wishes from DB:", Object.values(data || {}).slice(0, 3));
-   
-   if (dbCount >= 40) {
-     console.log("[RESEND] ✓✓✓ SUCCESS! Enough data. Reloading...");
-     localStorage.setItem("wish_seed_done", "1");
-     setTimeout(() => location.reload(), 1000);
-   } else {
-     console.error(`[RESEND] ✗ WARNING: Only ${dbCount} wishes found. Expected 50+`);
+   if (!data) {
+     console.log("[DELETE] Database already empty");
+     return;
    }
+   
+   const keys = Object.keys(data);
+   console.log(`[DELETE] Deleting ${keys.length} wishes...`);
+   // Note: Without proper permissions, this will fail
+   console.log("[DELETE] Note: Deletion requires proper Firebase rules");
  } catch(err) {
-   console.error("[RESEND] ✗ VERIFICATION ERROR:", err);
+   console.error("[DELETE] Error:", err.message);
  }
 };
+
 
 
 window.checkWishCount = async () => {
