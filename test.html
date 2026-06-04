@@ -233,93 +233,104 @@ sendBtn.onclick = async () => {
 };
 
 async function handleWishes(snap) {
- const data = snap.val() || {};
+ const rawData = snap.val();
+ console.log("[HANDLER] Raw snapshot:", rawData);
+ 
+ const data = rawData || {};
  let arr = Object.values(data);
+ console.log(`[HANDLER] Array from snapshot: ${arr.length} items`);
+ 
  if (!arr.length) {
+   console.log("[HANDLER] ⚠ Empty database detected!");
+   
    if (!localStorage.getItem("wish_seed_done")) {
+     console.log("[HANDLER] First load - seeding data...");
      const seedCount = 40 + Math.floor(Math.random()*11);
      const seedItems = generateFakeWishes(seedCount);
      try {
        const refs = await Promise.all(seedItems.map(item => push(ref(db, "wishes"), item)));
        localStorage.setItem("wish_seed_done", "1");
-       console.log(`[SEED] ✓ ${seedCount} wishes sent (${refs.length} confirmed)`);
-       setTimeout(() => location.reload(), 500);
+       console.log(`[HANDLER] ✓ ${seedCount} wishes seeded (${refs.length} confirmed)`);
+       setTimeout(() => location.reload(), 1000);
+       return;
      } catch(err) {
-       console.error("[ERROR] Failed to seed wishes:", err);
+       console.error("[HANDLER] ✗ Seed failed:", err);
        localStorage.removeItem("wish_seed_done");
+       return;
      }
-     return;
    }
-   arr = generateFakeWishes(40 + Math.floor(Math.random()*11));
-   try {
-     await Promise.all(arr.map(item => push(ref(db, "wishes"), item)));
-     console.log(`[FALLBACK] ✓ ${arr.length} wishes saved to Firebase`);
-   } catch(err) {
-     console.error("[ERROR] Failed to save fallback wishes:", err);
-   }
+   
+   console.log("[HANDLER] Already seeded but DB still empty - skipping fallback");
+   arr = [];
  }
- wishesData = (arr.length > 0 ? arr : Object.values(snap.val() || {})).sort((a,b) => b.timestamp - a.timestamp);
+ 
+ wishesData = arr.sort((a,b) => b.timestamp - a.timestamp);
  wishDisplayLimit = Math.min(wishDisplayLimit, wishesData.length) || MAX_INITIAL;
+ console.log(`[HANDLER] Rendering: ${wishesData.length} total, showing first ${wishDisplayLimit}`);
  renderList();
 }
 
 window.resendWishes = async () => {
  console.log("[RESEND] === STARTING RESEND PROCESS ===");
- console.log("[RESEND] Clearing cache...");
+ console.log("[RESEND] Step 1: Clearing localStorage cache...");
  localStorage.removeItem("wish_seed_done");
+ localStorage.removeItem("wish_cd");
  
  const seedCount = 50;
  const seedItems = generateFakeWishes(seedCount);
- console.log(`[RESEND] Generated ${seedCount} wishes to send`);
+ console.log(`[RESEND] Step 2: Generated ${seedCount} wishes locally`);
+ console.log("[RESEND] Sample wish:", seedItems[0]);
  
  let success = 0;
  let failed = 0;
- const failedItems = [];
  
+ console.log("[RESEND] Step 3: Sending wishes to Firebase...");
  for (let i = 0; i < seedItems.length; i++) {
    try {
      const pushRef = await push(ref(db, "wishes"), seedItems[i]);
-     success++;
-     if ((i + 1) % 10 === 0 || i === seedItems.length - 1) {
-       console.log(`[RESEND] ✓ Progress: ${success}/${seedCount} sent successfully`);
+     if (pushRef && pushRef.key) {
+       success++;
+       console.log(`[RESEND] Item ${i+1}: ✓ (key: ${pushRef.key})`);
      }
-     await new Promise(resolve => setTimeout(resolve, 50));
+     await new Promise(resolve => setTimeout(resolve, 100));
    } catch(err) {
      failed++;
-     failedItems.push({index: i, error: err.message});
-     console.error(`[RESEND ERROR] Item ${i}: ${err.message}`);
+     console.error(`[RESEND] Item ${i+1}: ✗ ERROR - ${err.message}`);
    }
  }
  
- console.log(`[RESEND] === COMPLETE ===`);
- console.log(`[RESEND] ✓ SUCCESS: ${success}/${seedCount}`);
- if (failed > 0) {
-   console.log(`[RESEND] ✗ FAILED: ${failed}/${seedCount}`);
-   console.log("[RESEND] Failed items:", failedItems);
- }
+ console.log(`[RESEND] Step 4: Upload complete - Success: ${success}, Failed: ${failed}`);
  
- localStorage.setItem("wish_seed_done", "1");
- console.log("[RESEND] Cache updated. Reloading page in 2 seconds...");
+ console.log("[RESEND] Step 5: Waiting 3 seconds before verification...");
+ await new Promise(resolve => setTimeout(resolve, 3000));
  
- await new Promise(resolve => setTimeout(resolve, 2000));
- 
- console.log("[RESEND] Verifying data before reload...");
- const snapshot = await new Promise((resolve, reject) => {
-   const unsubscribe = onValue(ref(db, "wishes"), snap => {
-     unsubscribe();
-     resolve(snap);
-   }, reject);
- });
- const finalCount = Object.keys(snapshot.val() || {}).length;
- console.log(`[RESEND] ✓ FINAL VERIFICATION: ${finalCount} total wishes in database`);
- 
- if (finalCount >= seedCount * 0.8) {
-   console.log("[RESEND] ✓ SUCCESS! Reloading...");
-   location.reload();
- } else {
-   console.error("[RESEND] ✗ WARNING: Low data count. Check Firebase rules.");
+ console.log("[RESEND] Step 6: Final database verification...");
+ try {
+   const snapshot = await new Promise((resolve, reject) => {
+     const unsubscribe = onValue(ref(db, "wishes"), snap => {
+       unsubscribe();
+       resolve(snap);
+     }, reject);
+   });
+   
+   const data = snapshot.val();
+   const dbCount = data ? Object.keys(data).length : 0;
+   
+   console.log(`[RESEND] ✓ FINAL VERIFICATION: ${dbCount} total wishes in Firebase`);
+   console.log("[RESEND] First 3 wishes from DB:", Object.values(data || {}).slice(0, 3));
+   
+   if (dbCount >= 40) {
+     console.log("[RESEND] ✓✓✓ SUCCESS! Enough data. Reloading...");
+     localStorage.setItem("wish_seed_done", "1");
+     setTimeout(() => location.reload(), 1000);
+   } else {
+     console.error(`[RESEND] ✗ WARNING: Only ${dbCount} wishes found. Expected 50+`);
+   }
+ } catch(err) {
+   console.error("[RESEND] ✗ VERIFICATION ERROR:", err);
  }
 };
+
 
 window.checkWishCount = async () => {
  const snapshot = await new Promise((resolve, reject) => {
@@ -334,15 +345,16 @@ window.checkWishCount = async () => {
  return count;
 };
 
-console.log("[SYSTEM] Type 'resendWishes()' in console to manually resend 40+ wishes to Firebase");
+console.log("[SYSTEM] Type 'resendWishes()' in console to manually resend 50 wishes to Firebase");
 
 onValue(ref(db, "wishes"), snap => {
- const count = Object.keys(snap.val() || {}).length;
- console.log(`[SYNC] ✓ Database synced: ${count} total wishes`);
- handleWishes(snap).catch(err => console.error("[SYNC ERROR]", err));
+ const data = snap.val();
+ const count = data ? Object.keys(data).length : 0;
+ console.log(`[LISTENER] ✓ Database updated: ${count} wishes`);
+ handleWishes(snap).catch(err => console.error("[LISTENER ERROR]", err));
 });
 
-console.log("[SYSTEM] ✓ App loaded and listening to Firebase RTDB");
+console.log("[SYSTEM] ✓ App loaded. Waiting for Firebase sync...");
 scheduleAutoWish();
 </script>
 </body>
