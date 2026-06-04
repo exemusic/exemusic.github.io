@@ -1,273 +1,128 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chika 21st Birthday Countdown</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #0f172a, #1e1b4b);
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 40px 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-width: 500px;
-            width: 100%;
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-            background: linear-gradient(to right, #f472b6, #38bdf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle {
-            font-size: 1rem;
-            color: #94a3b8;
-            margin-bottom: 30px;
-        }
-
-        /* Countdown Style */
-        .countdown {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-
-        .time-box {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 12px;
-            width: 80px;
-            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
-        }
-
-        .time-box span {
-            display: block;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #f472b6;
-        }
-
-        .time-box .label {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            margin-top: 5px;
-        }
-
-        /* Form & Button Style */
-        .wish-section {
-            margin-top: 20px;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.2);
-            color: #fff;
-            font-size: 1rem;
-            text-align: center;
-            outline: none;
-            margin-bottom: 15px;
-            transition: 0.3s;
-        }
-
-        input:focus {
-            border-color: #38bdf8;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #f472b6, #db2777);
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s ease;
-            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(244, 114, 182, 0.6);
-        }
-
-        button:disabled {
-            background: #475569;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        /* Guestbook List */
-        .guest-list {
-            margin-top: 25px;
-            max-height: 150px;
-            overflow-y: auto;
-            text-align: left;
-            padding-right: 5px;
-        }
-
-        .guest-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            border-left: 3px solid #38bdf8;
-            animation: fadeIn 0.5s ease;
-        }
-
-        /* Custom Scrollbar */
-        .guest-list::-webkit-scrollbar {
-            width: 5px;
-        }
-        .guest-list::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Chika.R.V • Turns 21</title>
+<meta name="theme-color" content="#ff6cab">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,sans-serif}
+body{min-height:100vh;background:linear-gradient(180deg,#fff5f8,#ffe6f1);color:#5a4450;overflow-x:hidden}
+.bg span{position:fixed;font-size:120px;opacity:.07;pointer-events:none;animation:f 8s ease-in-out infinite}
+.bg span:nth-child(1){left:5%;top:5%}.bg span:nth-child(2){right:5%;top:15%}.bg span:nth-child(3){left:10%;bottom:10%}.bg span:nth-child(4){right:10%;bottom:10%}
+@keyframes f{50%{transform:translateY(-20px)}}
+.wrap{max-width:1000px;margin:auto;padding:20px}
+.hero{text-align:center;padding-top:60px}
+.hero h1{font-size:clamp(3rem,10vw,5.5rem);color:#ff5fa2}
+.timer{display:inline-block;margin-top:20px;background:#fff;padding:18px 28px;border-radius:999px;box-shadow:0 10px 25px rgba(255,95,162,.15);font-size:clamp(1.4rem,6vw,3rem);font-weight:800}
+.btn{margin-top:24px;border:none;background:linear-gradient(135deg,#ff83bc,#ff5fa2);color:#fff;padding:16px 28px;border-radius:999px;font-weight:800;cursor:pointer}
+.stats{text-align:center;margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.card{background:#fff;border-radius:20px;padding:14px;box-shadow:0 8px 20px rgba(0,0,0,.05)}
+.row{display:flex;gap:10px;align-items:center}
+.avatar{width:42px;height:42px;border-radius:50%;background:#ffd2e4;display:flex;align-items:center;justify-content:center;font-weight:700}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;padding:20px}
+.panel{background:#fff;border-radius:24px;padding:22px;width:min(400px,100%)}
+input{width:100%;padding:14px;border:2px solid #ffd6e8;border-radius:14px;margin:12px 0}
+.send{width:100%;padding:14px;border:none;border-radius:14px;background:#ff5fa2;color:#fff;font-weight:700}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#fff;padding:12px 18px;border-radius:14px;display:none;box-shadow:0 10px 25px rgba(0,0,0,.12)}
+</style>
 </head>
 <body>
+<div class="bg"><span>🧸</span><span>🎀</span><span>💖</span><span>✨</span></div>
 
-    <div class="container">
-        <h1 id="title">Chika.R.V</h1>
-        <p class="subtitle" id="subtitle">Counting down to 21 Years Old</p>
+<div class="wrap">
+<div class="hero">
+<div style="font-size:60px">🧸</div>
+<h1>CHIKA.R.V</h1>
+<p>turns 21 in...</p>
+<div class="timer" id="timer">00 : 00 : 00 : 00</div><br>
+<button class="btn" id="wishBtn">💌 Send Wishes</button>
+</div>
 
-        <div class="countdown" id="countdown-box">
-            <div class="time-box">
-                <span id="days">00</span>
-                <div class="label">Hari</div>
-            </div>
-            <div class="time-box">
-                <span id="hours">00</span>
-                <div class="label">Jam</div>
-            </div>
-            <div class="time-box">
-                <span id="minutes">00</span>
-                <div class="label">Menit</div>
-            </div>
-            <div class="time-box">
-                <span id="seconds">00</span>
-                <div class="label">Detik</div>
-            </div>
-        </div>
+<div class="stats"><span id="count">0</span> Wishes Sent</div>
+<div class="grid" id="list"></div>
+</div>
 
-        <div class="wish-section">
-            <input type="text" id="visitor-name" placeholder="Masukkan nama kamu..." maxlength="20">
-            <button id="wish-btn" onclick="sendWish()">🎉 Kirim Ucapan Selamat</button>
-        </div>
+<div class="modal" id="modal">
+ <div class="panel">
+  <h2>🎀 Birthday Wish</h2>
+  <input id="name" maxlength="30" placeholder="Your name...">
+  <button class="send" id="sendBtn">Send Wishes ✨</button>
+ </div>
+</div>
 
-        <div class="guest-list" id="guest-box"></div>
-    </div>
+<div class="toast" id="toast">Thank you 💖</div>
 
-    <script>
-        // 1. PENGATURAN WAKTU TARGET (9 Juni 2026 jam 00:00:00)
-        const targetDate = new Date("June 9, 2026 00:00:00").getTime();
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-        const countdownInterval = setInterval(function() {
-            const now = new Date().getTime();
-            const difference = targetDate - now;
+const firebaseConfig={
+ apiKey:"AIzaSyDtt4EGfBSK8SbLbiGKnsMlSgUW7fuKN8I",
+ authDomain:"countdown-52c81.firebaseapp.com",
+ projectId:"countdown-52c81",
+ storageBucket:"countdown-52c81.firebasestorage.app",
+ messagingSenderId:"121072761781",
+ appId:"1:121072761781:web:5d8092a2795d50869b37fc",
+ measurementId:"G-FCR7ZQKPPJ",
+ databaseURL:"https://countdown-52c81-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
 
-            // Perhitungan waktu Matematika dasar
-            const d = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((difference % (1000 * 60)) / 1000);
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
 
-            // Tampilkan ke HTML dengan format 2 digit (pakai String().padStart)
-            document.getElementById("days").innerText = String(d).padStart(2, '0');
-            document.getElementById("hours").innerText = String(h).padStart(2, '0');
-            document.getElementById("minutes").innerText = String(m).padStart(2, '0');
-            document.getElementById("seconds").innerText = String(s).padStart(2, '0');
+const target=new Date("2026-06-09T00:00:00+07:00").getTime();
+setInterval(()=>{
+ let d=target-Date.now(); if(d<0)d=0;
+ let days=Math.floor(d/86400000);
+ let hrs=Math.floor(d%86400000/3600000);
+ let min=Math.floor(d%3600000/60000);
+ let sec=Math.floor(d%60000/1000);
+ timer.textContent=`${days} : ${hrs} : ${min} : ${sec}`;
+},1000);
 
-            // Jika waktu hitung mundur habis / sudah tanggal 9 Juni
-            if (difference < 0) {
-                clearInterval(countdownInterval);
-                document.getElementById("countdown-box").style.display = "none";
-                document.getElementById("subtitle").style.display = "none";
-                document.getElementById("title").innerHTML = "🎂 HAPPY 21st BIRTHDAY CHIKA.R.V! 🎂";
-            }
-        }, 1000); // Diperbarui setiap 1 detik (1000 milidetik) agar akurat
+wishBtn.onclick=()=>modal.style.display="flex";
+modal.onclick=e=>{if(e.target===modal)modal.style.display="none";};
 
-        // 2. FITUR STORAGE TOMBOL UCAPAN
-        // Fungsi untuk memuat daftar nama dari LocalStorage saat halaman dibuka
-        function loadWishes() {
-            const guestBox = document.getElementById("guest-box");
-            guestBox.innerHTML = ""; // Bersihkan list lawas
-            
-            // Ambil data array dari localStorage, jika kosong buat array baru []
-            const wishes = JSON.parse(localStorage.getItem("chika_birthday_wishes")) || [];
-            
-            // Tampilkan nama terbalik (yang terbaru paling atas)
-            wishes.reverse().forEach(name => {
-                const item = document.createElement("div");
-                item.className = "guest-item";
-                item.innerText = `✨ ${name} telah mengucapkan Selamat!`;
-                guestBox.appendChild(item);
-            });
-        }
+function showToast(){
+ toast.style.display="block";
+ setTimeout(()=>toast.style.display="none",2500);
+}
 
-        // Fungsi saat tombol di-klik
-        function sendWish() {
-            const nameInput = document.getElementById("visitor-name");
-            const name = nameInput.value.trim();
+sendBtn.onclick=async()=>{
+ const n=name.value.trim();
+ if(!n)return;
 
-            if (name === "") {
-                alert("Masukkan nama kamu dulu ya!");
-                return;
-            }
+ const cd=localStorage.getItem("wish_cd");
+ if(cd && Date.now()<+cd){
+   sendBtn.textContent="Cooldown active";
+   return;
+ }
 
-            // Ambil data lama, masukkan nama baru ke dalam array
-            const wishes = JSON.parse(localStorage.getItem("chika_birthday_wishes")) || [];
-            wishes.push(name);
+ await push(ref(db,"wishes"),{
+   name:n,
+   timestamp:Date.now()
+ });
 
-            // Simpan kembali ke localStorage dalam bentuk teks String
-            localStorage.setItem("chika_birthday_wishes", JSON.stringify(wishes));
+ localStorage.setItem("wish_cd",Date.now()+30000);
+ name.value="";
+ modal.style.display="none";
+ showToast();
+};
 
-            // Reset input form dan muat ulang daftar nama
-            nameInput.value = "";
-            loadWishes();
-            
-            alert(`Terima kasih ${name} atas ucapannya! 🎉`);
-        }
-
-        // Jalankan fungsi loadWishes pertama kali saat web dibuka
-        window.onload = loadWishes;
-    </script>
+onValue(ref(db,"wishes"),snap=>{
+ const data=snap.val()||{};
+ const arr=Object.values(data).sort((a,b)=>b.timestamp-a.timestamp);
+ count.textContent=arr.length;
+ list.innerHTML=arr.map(v=>`
+ <div class="card">
+  <div class="row">
+   <div class="avatar">${(v.name||"?")[0].toUpperCase()}</div>
+   <div><b>${v.name}</b><br><small>sent birthday wishes 💖</small></div>
+  </div>
+ </div>`).join("");
+});
+</script>
 </body>
 </html>
