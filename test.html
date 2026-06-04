@@ -25,6 +25,7 @@ body{min-height:100vh;background:linear-gradient(180deg,#fff5f8,#ffe6f1);color:#
 .panel{background:#fff;border-radius:24px;padding:22px;width:min(400px,100%)}
 input{width:100%;padding:14px;border:2px solid #ffd6e8;border-radius:14px;margin:12px 0}
 .send{width:100%;padding:14px;border:none;border-radius:14px;background:#ff5fa2;color:#fff;font-weight:700}
+.more-wrap{text-align:center;margin:12px 0}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#fff;padding:12px 18px;border-radius:14px;display:none;box-shadow:0 10px 25px rgba(0,0,0,.12)}
 </style>
 </head>
@@ -42,6 +43,8 @@ input{width:100%;padding:14px;border:2px solid #ffd6e8;border-radius:14px;margin
 
 <div class="stats"><span id="count">0</span> Wishes Sent</div>
 <div class="grid" id="list"></div>
+<div class="stats"><small id="showing">Showing 0 / 0</small></div>
+<div class="more-wrap"><button class="btn" id="loadMoreBtn" style="display:none">Load More</button></div>
 </div>
 
 <div class="modal" id="modal">
@@ -71,6 +74,15 @@ const firebaseConfig={
 
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
+const timer = document.getElementById("timer");
+const wishBtn = document.getElementById("wishBtn");
+const modal = document.getElementById("modal");
+const sendBtn = document.getElementById("sendBtn");
+const list = document.getElementById("list");
+const count = document.getElementById("count");
+const showing = document.getElementById("showing");
+const loadMoreBtn = document.getElementById("loadMoreBtn");
+const toast = document.getElementById("toast");
 
 const target=new Date("2026-06-09T00:00:00+07:00").getTime();
 setInterval(()=>{
@@ -82,74 +94,132 @@ setInterval(()=>{
  timer.textContent=`${days} : ${hrs} : ${min} : ${sec}`;
 },1000);
 
-wishBtn.onclick=()=>modal.style.display="flex";
-modal.onclick=e=>{if(e.target===modal)modal.style.display="none";};
+const COOLDOWN_MS = 86400000;
+const MAX_INITIAL = 50;
+const LOAD_STEP = 10;
+const randomNames = ["Alya","Raka","Naya","Arif","Dinda","Fira","Gilang","Hani","Icha","Jaka","Kirana","Lia","Mika","Novi","Onyx","Pasha","Qila","Rena","Safa","Tara","Vina","Wira","Yuna","Zara"];
+let wishDisplayLimit = MAX_INITIAL;
+let wishesData = [];
 
-function showToast(){
- toast.style.display="block";
- setTimeout(()=>toast.style.display="none",2500);
-}
-
-sendBtn.onclick = async () => {
-
- const nameInput = document.getElementById("name");
- const n = nameInput.value.trim();
-
- if (!n) {
-   alert("Please enter your name");
-   return;
- }
-
- const cd = localStorage.getItem("wish_cd");
-
- if (cd && Date.now() < Number(cd)) {
-   const remain = Math.ceil((Number(cd) - Date.now()) / 1000);
-   alert(`Please wait ${remain}s`);
-   return;
- }
-
- try {
-
-   sendBtn.disabled = true;
-   sendBtn.textContent = "Sending...";
-
-   await push(ref(db,"wishes"),{
-     name:n,
-     timestamp:Date.now()
-   });
-
-   localStorage.setItem("wish_cd",Date.now()+30000);
-
-   nameInput.value="";
-   modal.style.display="none";
-   showToast();
-
- } catch(err) {
-
-   console.error(err);
-   alert("Failed to send wishes. Check Firebase Rules and Console.");
-
- } finally {
-
-   sendBtn.disabled = false;
-   sendBtn.textContent = "Send Wishes ✨";
-
- }
-
+wishBtn.onclick = () => modal.style.display = "flex";
+modal.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+loadMoreBtn.onclick = () => {
+ wishDisplayLimit = Math.min(wishDisplayLimit + LOAD_STEP, wishesData.length);
+ renderList();
 };
 
-onValue(ref(db,"wishes"),snap=>{
- const data=snap.val()||{};
- const arr=Object.values(data).sort((a,b)=>b.timestamp-a.timestamp);
- count.textContent=arr.length;
- list.innerHTML=arr.map(v=>`
+function randomWish() {
+ return {
+   name: randomNames[Math.floor(Math.random()*randomNames.length)],
+   timestamp: Date.now() - Math.floor(Math.random()*86400000)
+ };
+}
+
+function generateFakeWishes(count) {
+ return Array.from({length: count}, () => randomWish());
+}
+
+function createWishCard(v) {
+ return `
  <div class="card">
   <div class="row">
    <div class="avatar">${(v.name||"?")[0].toUpperCase()}</div>
    <div><b>${v.name}</b><br><small>sent birthday wishes 💖</small></div>
   </div>
- </div>`).join("");
+ </div>`;
+}
+
+function renderList() {
+ const visible = wishesData.slice(0, wishDisplayLimit);
+ count.textContent = wishesData.length;
+ list.innerHTML = visible.map(createWishCard).join("");
+ showing.textContent = `Showing ${visible.length} / ${wishesData.length}`;
+ loadMoreBtn.style.display = wishesData.length > visible.length ? "inline-flex" : "none";
+}
+
+function scheduleAutoWish() {
+ const delay = 300000 + Math.floor(Math.random()*300000);
+ setTimeout(async () => {
+   const count = 1 + Math.floor(Math.random()*2);
+   const promises = Array.from({length: count}, () => push(ref(db, "wishes"), randomWish()));
+   await Promise.all(promises);
+   scheduleAutoWish();
+ }, delay);
+}
+
+function updateCooldown() {
+ const cd = Number(localStorage.getItem("wish_cd") || 0);
+ if (Date.now() < cd) {
+   const remaining = Math.ceil((cd - Date.now()) / 1000);
+   sendBtn.textContent = `Wait ${remaining}s`;
+   sendBtn.disabled = true;
+   setTimeout(updateCooldown, 1000);
+ } else {
+   sendBtn.textContent = "Send Wishes ✨";
+   sendBtn.disabled = false;
+ }
+}
+updateCooldown();
+
+sendBtn.onclick = async () => {
+ const nameInput = document.getElementById("name");
+ const n = nameInput.value.trim();
+ if (!n) {
+   alert("Please enter your name");
+   return;
+ }
+ const cd = Number(localStorage.getItem("wish_cd") || 0);
+ if (Date.now() < cd) {
+   const remain = Math.ceil((cd - Date.now()) / 1000);
+   alert(`Please wait ${remain}s before sending again.`);
+   return;
+ }
+ try {
+   sendBtn.disabled = true;
+   sendBtn.textContent = "Sending...";
+   await push(ref(db, "wishes"), {
+     name: n,
+     timestamp: Date.now()
+   });
+   localStorage.setItem("wish_cd", String(Date.now() + COOLDOWN_MS));
+   nameInput.value = "";
+   modal.style.display = "none";
+   showToast();
+   updateCooldown();
+ } catch(err) {
+   console.error(err);
+   alert("Failed to send wishes. Check Firebase Rules and Console.");
+ } finally {
+   if (Date.now() >= Number(localStorage.getItem("wish_cd") || 0)) {
+     sendBtn.disabled = false;
+     sendBtn.textContent = "Send Wishes ✨";
+   }
+ }
+};
+
+async function handleWishes(snap) {
+ const data = snap.val() || {};
+ let arr = Object.values(data);
+ if (!arr.length) {
+   if (!localStorage.getItem("wish_seed_done")) {
+     const seedCount = 32 + Math.floor(Math.random()*9);
+     const seedItems = generateFakeWishes(seedCount);
+     await Promise.all(seedItems.map(item => push(ref(db, "wishes"), item)));
+     localStorage.setItem("wish_seed_done", "1");
+     return;
+   }
+   arr = generateFakeWishes(32);
+ }
+ wishesData = arr.sort((a,b) => b.timestamp - a.timestamp);
+ wishDisplayLimit = Math.min(wishDisplayLimit, wishesData.length) || MAX_INITIAL;
+ renderList();
+}
+
+onValue(ref(db, "wishes"), snap => {
+ handleWishes(snap).catch(err => console.error(err));
 });
+
+scheduleAutoWish();
 </script>
 </body>
 </html>
