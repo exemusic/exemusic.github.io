@@ -97,9 +97,41 @@ setInterval(()=>{
 const COOLDOWN_MS = 86400000;
 const MAX_INITIAL = 50;
 const LOAD_STEP = 10;
-const randomNames = ["Alya","Raka","Naya","Arif","Dinda","Fira","Gilang","Hani","Icha","Jaka","Kirana","Lia","Mika","Novi","Onyx","Pasha","Qila","Rena","Safa","Tara","Vina","Wira","Yuna","Zara"];
+const randomNames = [
+  "Aldi","Amir","Aulia","Andi","Arya","Bayu","Bima","Cahaya","Dani","Dara",
+  "Dimas","Eka","Fajar","Farhan","Gema","Hadi","Ilham","Indra","Iqbal","Jalu",
+  "Jasmine","Johan","Kania","Karel","Luna","Lutfi","Maya","Mukti","Nadia","Nanda",
+  "Naufal","Nina","Oki","Putri","Rafi","Rania","Rian","Rizka","Sari","Salma",
+  "Salman","Sinta","Tara","Teguh","Vika","Vino","Wira","Wulan","Yusuf","Yuni",
+  "Zaki","Zara","Zein","Rizal","Biru","Cinta","Dewi","Feri","Galih","Hana",
+  "Kirana","Mila","Rena","Raka","Novi","Tama","Dian","Rama","Shinta","Safa"
+];
 let wishDisplayLimit = MAX_INITIAL;
 let wishesData = [];
+
+function pickRandomName(exclude = []) {
+  const available = randomNames.filter(name => !exclude.includes(name));
+  return available.length ? available[Math.floor(Math.random() * available.length)] : randomNames[Math.floor(Math.random() * randomNames.length)];
+}
+
+function randomWish() {
+ return {
+   name: pickRandomName(),
+   timestamp: Date.now() - Math.floor(Math.random()*86400000)
+ };
+}
+
+function generateFakeWishes(count) {
+ const names = [...randomNames];
+ for (let i = names.length - 1; i > 0; i--) {
+   const j = Math.floor(Math.random() * (i + 1));
+   [names[i], names[j]] = [names[j], names[i]];
+ }
+ return Array.from({length: count}, (_, index) => ({
+   name: names[index % names.length],
+   timestamp: Date.now() - Math.floor(Math.random()*86400000)
+ }));
+}
 
 wishBtn.onclick = () => modal.style.display = "flex";
 modal.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
