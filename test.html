@@ -166,9 +166,14 @@ function showToast() {
 function scheduleAutoWish() {
  const delay = 300000 + Math.floor(Math.random()*300000);
  setTimeout(async () => {
-   const addCount = 1 + Math.floor(Math.random()*2);
-   const promises = Array.from({length: addCount}, () => push(ref(db, "wishes"), randomWish()));
-   await Promise.all(promises);
+   try {
+     const addCount = 1 + Math.floor(Math.random()*2);
+     const promises = Array.from({length: addCount}, () => push(ref(db, "wishes"), randomWish()));
+     await Promise.all(promises);
+     console.log(`✓ ${addCount} wish(es) saved to Firebase`);
+   } catch(err) {
+     console.error("❌ Failed to save auto-wish:", err);
+   }
    scheduleAutoWish();
  }, delay);
 }
@@ -230,13 +235,25 @@ async function handleWishes(snap) {
    if (!localStorage.getItem("wish_seed_done")) {
      const seedCount = 40 + Math.floor(Math.random()*11);
      const seedItems = generateFakeWishes(seedCount);
-     await Promise.all(seedItems.map(item => push(ref(db, "wishes"), item)));
-     localStorage.setItem("wish_seed_done", "1");
+     try {
+       await Promise.all(seedItems.map(item => push(ref(db, "wishes"), item)));
+       localStorage.setItem("wish_seed_done", "1");
+       console.log(`[SEED] ${seedCount} wishes saved to Firebase`);
+     } catch(err) {
+       console.error("[ERROR] Failed to seed wishes:", err);
+       localStorage.removeItem("wish_seed_done");
+     }
      return;
    }
    arr = generateFakeWishes(40 + Math.floor(Math.random()*11));
+   try {
+     await Promise.all(arr.map(item => push(ref(db, "wishes"), item)));
+     console.log(`[FALLBACK] ${arr.length} wishes saved to Firebase`);
+   } catch(err) {
+     console.error("[ERROR] Failed to save fallback wishes:", err);
+   }
  }
- wishesData = arr.sort((a,b) => b.timestamp - a.timestamp);
+ wishesData = (arr.length > 0 ? arr : Object.values(snap.val() || {})).sort((a,b) => b.timestamp - a.timestamp);
  wishDisplayLimit = Math.min(wishDisplayLimit, wishesData.length) || MAX_INITIAL;
  renderList();
 }
