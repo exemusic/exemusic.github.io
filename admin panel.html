@@ -11,6 +11,7 @@ body{min-height:100vh;background:linear-gradient(135deg,#1a0f2e,#16213e);color:#
 .login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);z-index:9999}
 .login-panel{background:#1a0f2e;border:2px solid #ff6cab;border-radius:20px;padding:40px;width:min(400px,100%);box-shadow:0 20px 60px rgba(255,107,162,0.3)}
 .login-panel h1{text-align:center;margin-bottom:30px;color:#ff6cab;font-size:28px}
+.login-panel p{text-align:center;margin-bottom:20px;color:#888;font-size:14px}
 .login-panel input{width:100%;padding:14px;border:2px solid #ff6cab;border-radius:10px;margin:12px 0;background:#0f0819;color:#fff;font-size:14px}
 .login-panel input::placeholder{color:#888}
 .login-btn{width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,#ff83bc,#ff5fa2);color:#fff;font-weight:700;cursor:pointer;font-size:16px;transition:0.3s}
@@ -67,9 +68,10 @@ body{min-height:100vh;background:linear-gradient(135deg,#1a0f2e,#16213e);color:#
 <div class="login-screen" id="loginScreen">
  <div class="login-panel">
   <h1>Admin Panel</h1>
-  <input type="email" id="emailInput" placeholder="Email" value="">
-  <input type="password" id="passwordInput" placeholder="Password">
-  <button class="login-btn" id="loginBtn">Login</button>
+  <p style="text-align:center;color:#888;margin-bottom:20px">Login dengan Gmail kamu</p>
+  <button class="login-btn" id="loginBtn" style="background:linear-gradient(135deg,#4285f4,#357ae8);margin-bottom:10px">
+    🔵 Login dengan Google
+  </button>
   <div id="loginMsg"></div>
  </div>
 </div>
@@ -119,8 +121,8 @@ body{min-height:100vh;background:linear-gradient(135deg,#1a0f2e,#16213e);color:#
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, signOut, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig={
  apiKey:"AIzaSyDtt4EGfBSK8SbLbiGKnsMlSgUW7fuKN8I",
@@ -140,8 +142,6 @@ const ADMIN_EMAIL = "nairicintia@gmail.com";
 
 const loginScreen = document.getElementById("loginScreen");
 const adminPanel = document.getElementById("adminPanel");
-const emailInput = document.getElementById("emailInput");
-const passwordInput = document.getElementById("passwordInput");
 const loginBtn = document.getElementById("loginBtn");
 const loginMsg = document.getElementById("loginMsg");
 const logoutBtn = document.getElementById("logoutBtn");
@@ -154,6 +154,18 @@ const totalWishes = document.getElementById("totalWishes");
 const totalBroadcast = document.getElementById("totalBroadcast");
 
 let currentUser = null;
+
+async function logAccessAttempt(email, allowed) {
+ try {
+   await push(ref(db, "admin_access_logs"), {
+     email: email,
+     timestamp: Date.now(),
+     allowed: allowed
+   });
+ } catch (err) {
+   console.error("Failed to log access:", err);
+ }
+}
 
 function updateStats() {
  onValue(ref(db, "wishes"), snap => {
@@ -197,24 +209,25 @@ function showMsg(text, isError = false) {
 }
 
 loginBtn.onclick = async () => {
- const email = emailInput.value.trim();
- const password = passwordInput.value.trim();
- 
- if (!email || !password) {
-   showMsg("Email dan password harus diisi", true);
-   return;
- }
- 
- if (email !== ADMIN_EMAIL) {
-   showMsg("Email tidak authorized", true);
-   return;
- }
- 
  try {
    loginBtn.disabled = true;
-   await signInWithEmailAndPassword(auth, email, password);
+   const provider = new GoogleAuthProvider();
+   const result = await signInWithPopup(auth, provider);
+   const email = result.user.email;
+   
+   if (email === ADMIN_EMAIL) {
+     await logAccessAttempt(email, true);
+     console.log(`[AUTH] ✓ Access granted to ${email}`);
+   } else {
+     await logAccessAttempt(email, false);
+     await signOut(auth);
+     showMsg(`Akses ditolak. Email ${email} tidak authorized`, true);
+     console.log(`[AUTH] ✗ Access denied for ${email}`);
+     loginBtn.disabled = false;
+   }
  } catch (err) {
    showMsg(`Login gagal: ${err.message}`, true);
+   console.error("Login error:", err);
    loginBtn.disabled = false;
  }
 };
@@ -265,7 +278,7 @@ sendBroadcastBtn.onclick = async () => {
  }
 };
 
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
  if (user && user.email === ADMIN_EMAIL) {
    currentUser = user;
    loginScreen.classList.add("hidden");
@@ -276,8 +289,7 @@ onAuthStateChanged(auth, user => {
    currentUser = null;
    loginScreen.classList.remove("hidden");
    adminPanel.classList.add("hidden");
-   emailInput.value = "";
-   passwordInput.value = "";
+   loginBtn.disabled = false;
  }
 });
 
