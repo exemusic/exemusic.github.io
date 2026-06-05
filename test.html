@@ -59,7 +59,7 @@ input{width:100%;padding:14px;border:2px solid #ffd6e8;border-radius:14px;margin
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig={
  apiKey:"AIzaSyDtt4EGfBSK8SbLbiGKnsMlSgUW7fuKN8I",
@@ -74,6 +74,7 @@ const firebaseConfig={
 
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
+const wishesRef = ref(db, "wishes");
 const timer = document.getElementById("timer");
 const wishBtn = document.getElementById("wishBtn");
 const modal = document.getElementById("modal");
@@ -163,18 +164,54 @@ function showToast() {
  setTimeout(() => toast.style.display = "none", 2200);
 }
 
+async function pushWish(item) {
+ try {
+   const result = await push(wishesRef, item);
+   return { success: true, key: result.key };
+ } catch (err) {
+   console.error("[DB] pushWish failed:", err);
+   return { success: false, error: err };
+ }
+}
+
+async function addWishes(items) {
+ let success = 0;
+ const errors = [];
+ for (const item of items) {
+   const result = await pushWish(item);
+   if (result.success) {
+     success++;
+   } else {
+     errors.push(result.error);
+   }
+   await new Promise(r => setTimeout(r, 25));
+ }
+ return { success, errors };
+}
+
+async function verifyWishCount() {
+ try {
+   const snapshot = await get(wishesRef);
+   const data = snapshot.val() || {};
+   return { count: Object.keys(data).length, data };
+ } catch (err) {
+   console.error("[DB] verifyWishCount failed:", err);
+   return { count: 0, data: null, error: err };
+ }
+}
+
 function scheduleAutoWish() {
  const delay = 300000 + Math.floor(Math.random()*300000);
  setTimeout(async () => {
    try {
      const addCount = 1 + Math.floor(Math.random()*2);
-     const promises = [];
-     for (let i = 0; i < addCount; i++) {
-       promises.push(push(ref(db, "wishes"), randomWish()));
+     const items = Array.from({ length: addCount }, randomWish);
+     const result = await addWishes(items);
+     console.log(`[AUTO] ✓ ${result.success}/${addCount} wish(es) confirmed sent`);
+     if (result.errors.length) {
+       console.error("[AUTO] Some auto-wishes failed:", result.errors);
      }
-     const results = await Promise.all(promises);
-     console.log(`[AUTO] ✓ ${addCount} wish(es) confirmed sent (${results.length} keys)`);
-   } catch(err) {
+   } catch (err) {
      console.error("[ERROR] Failed to save auto-wish:", err);
    }
    scheduleAutoWish();
@@ -211,11 +248,12 @@ sendBtn.onclick = async () => {
  try {
    sendBtn.disabled = true;
    sendBtn.textContent = "Sending...";
-   const ref_key = await push(ref(db, "wishes"), {
+   const result = await pushWish({
      name: n,
      timestamp: Date.now()
    });
-   console.log(`[USER] ✓ Wish from "${n}" sent (key: ${ref_key.key})`);
+   if (!result.success) throw result.error;
+   console.log(`[USER] ✓ Wish from "${n}" sent (key: ${result.key})`);
    localStorage.setItem("wish_cd", String(Date.now() + COOLDOWN_MS));
    nameInput.value = "";
    modal.style.display = "none";
@@ -247,20 +285,25 @@ async function handleWishes(snap) {
      console.log("[HANDLER] First load - seeding data...");
      const seedCount = 40 + Math.floor(Math.random()*11);
      const seedItems = generateFakeWishes(seedCount);
-     try {
-       const refs = await Promise.all(seedItems.map(item => push(ref(db, "wishes"), item)));
-       localStorage.setItem("wish_seed_done", "1");
-       console.log(`[HANDLER] ✓ ${seedCount} wishes seeded (${refs.length} confirmed)`);
-       setTimeout(() => location.reload(), 1000);
-       return;
-     } catch(err) {
-       console.error("[HANDLER] ✗ Seed failed:", err);
-       localStorage.removeItem("wish_seed_done");
-       return;
+     const result = await addWishes(seedItems);
+     if (result.success === seedCount) {
+       const verify = await verifyWishCount();
+       if (verify.count >= seedCount) {
+         localStorage.setItem("wish_seed_done", "1");
+         console.log(`[HANDLER] ✓ Verified ${verify.count} wishes in DB`);
+         setTimeout(() => location.reload(), 1000);
+         return;
+       }
+       console.warn("[HANDLER] Seed completed but verification count is lower than expected:", verify.count);
+     } else {
+       console.error("[HANDLER] ✗ Seed incomplete:", result.errors);
      }
+     localStorage.removeItem("wish_seed_done");
+     return;
    }
    
-   console.log("[HANDLER] Already seeded but DB still empty - skipping fallback");
+   console.warn("[HANDLER] Already seeded but DB still empty. Will retry shortly.");
+   setTimeout(() => location.reload(), 5000);
    arr = [];
  }
  
@@ -288,13 +331,14 @@ window.resendWishes = async () => {
    try {
      console.log(`[RESEND] Push #${i+1}: name="${seedItems[i].name}", ts=${seedItems[i].timestamp}`);
      
-     const pushRef = await push(ref(db, "wishes"), {
+     const result = await pushWish({
        name: seedItems[i].name,
        timestamp: seedItems[i].timestamp
      });
      
+     if (!result.success) throw result.error;
      success++;
-     console.log(`[RESEND] ✓ #${i+1} saved with key: ${pushRef.key}`);
+     console.log(`[RESEND] ✓ #${i+1} saved with key: ${result.key}`);
      
    } catch(err) {
      errors.push({idx: i, msg: err.message, code: err.code});
@@ -317,7 +361,7 @@ window.resendWishes = async () => {
  console.log("[RESEND] Checking database...");
  try {
    const snapshot = await new Promise((resolve, reject) => {
-     const unsubscribe = onValue(ref(db, "wishes"), (snap) => {
+     const unsubscribe = onValue(wishesRef, (snap) => {
        unsubscribe();
        resolve(snap);
      }, (err) => {
@@ -347,7 +391,7 @@ window.deleteAllWishes = async () => {
  console.log("[DELETE] Attempting to clear database...");
  try {
    const snapshot = await new Promise((resolve, reject) => {
-     const unsubscribe = onValue(ref(db, "wishes"), snap => {
+     const unsubscribe = onValue(wishesRef, snap => {
        unsubscribe();
        resolve(snap);
      }, reject);
@@ -368,11 +412,9 @@ window.deleteAllWishes = async () => {
  }
 };
 
-
-
 window.checkWishCount = async () => {
  const snapshot = await new Promise((resolve, reject) => {
-   const unsubscribe = onValue(ref(db, "wishes"), snap => {
+   const unsubscribe = onValue(wishesRef, snap => {
      unsubscribe();
      resolve(snap);
    }, reject);
@@ -385,7 +427,7 @@ window.checkWishCount = async () => {
 
 console.log("[SYSTEM] Type 'resendWishes()' in console to manually resend 50 wishes to Firebase");
 
-onValue(ref(db, "wishes"), snap => {
+onValue(wishesRef, snap => {
  const data = snap.val();
  const count = data ? Object.keys(data).length : 0;
  console.log(`[LISTENER] ✓ Database updated: ${count} wishes`);
