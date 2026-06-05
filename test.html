@@ -109,6 +109,7 @@ const randomNames = [
 ];
 let wishDisplayLimit = MAX_INITIAL;
 let wishesData = [];
+let seedAttempted = false;
 
 function pickRandomName(exclude = []) {
   const available = randomNames.filter(name => !exclude.includes(name));
@@ -281,7 +282,8 @@ async function handleWishes(snap) {
  if (!arr.length) {
    console.log("[HANDLER] ⚠ Empty database detected!");
    
-   if (!localStorage.getItem("wish_seed_done")) {
+   if (!seedAttempted) {
+     seedAttempted = true;
      console.log("[HANDLER] First load - seeding data...");
      const seedCount = 40 + Math.floor(Math.random()*11);
      const seedItems = generateFakeWishes(seedCount);
@@ -289,7 +291,6 @@ async function handleWishes(snap) {
      if (result.success === seedCount) {
        const verify = await verifyWishCount();
        if (verify.count >= seedCount) {
-         localStorage.setItem("wish_seed_done", "1");
          console.log(`[HANDLER] ✓ Verified ${verify.count} wishes in DB`);
          setTimeout(() => location.reload(), 1000);
          return;
@@ -298,11 +299,12 @@ async function handleWishes(snap) {
      } else {
        console.error("[HANDLER] ✗ Seed incomplete:", result.errors);
      }
-     localStorage.removeItem("wish_seed_done");
+     console.log("[HANDLER] Seed attempt finished, retrying if DB still empty...");
+     setTimeout(() => location.reload(), 5000);
      return;
    }
    
-   console.warn("[HANDLER] Already seeded but DB still empty. Will retry shortly.");
+   console.warn("[HANDLER] DB still empty after seed attempt. Retrying soon...");
    setTimeout(() => location.reload(), 5000);
    arr = [];
  }
