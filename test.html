@@ -97,6 +97,7 @@ setInterval(()=>{
 
 const COOLDOWN_MS = 86400000;
 const MAX_INITIAL = 50;
+const MIN_SEED_COUNT = 40;
 const LOAD_STEP = 10;
 const randomNames = [
   "Aldi","Amir","Aulia","Andi","Arya","Bayu","Bima","Cahaya","Dani","Dara",
@@ -279,19 +280,20 @@ async function handleWishes(snap) {
  let arr = Object.values(data);
  console.log(`[HANDLER] Array from snapshot: ${arr.length} items`);
  
- if (!arr.length) {
-   console.log("[HANDLER] ⚠ Empty database detected!");
+ if (arr.length < MIN_SEED_COUNT) {
+   const missing = MIN_SEED_COUNT - arr.length;
+   console.log(`[HANDLER] ⚠ Database has only ${arr.length} wishes, needs ${missing} more to reach ${MIN_SEED_COUNT}`);
    
    if (!seedAttempted) {
      seedAttempted = true;
-     console.log("[HANDLER] First load - seeding data...");
-     const seedCount = 40 + Math.floor(Math.random()*11);
+     const seedCount = missing + Math.floor(Math.random()*11);
      const seedItems = generateFakeWishes(seedCount);
+     console.log(`[HANDLER] Seeding ${seedCount} wish(es) to reach minimum count...`);
      const result = await addWishes(seedItems);
      if (result.success === seedCount) {
        const verify = await verifyWishCount();
-       if (verify.count >= seedCount) {
-         console.log(`[HANDLER] ✓ Verified ${verify.count} wishes in DB`);
+       if (verify.count >= arr.length + seedCount) {
+         console.log(`[HANDLER] ✓ Verified ${verify.count} total wishes in DB`);
          setTimeout(() => location.reload(), 1000);
          return;
        }
@@ -299,12 +301,12 @@ async function handleWishes(snap) {
      } else {
        console.error("[HANDLER] ✗ Seed incomplete:", result.errors);
      }
-     console.log("[HANDLER] Seed attempt finished, retrying if DB still empty...");
+     console.log("[HANDLER] Seed attempt finished, retrying soon...");
      setTimeout(() => location.reload(), 5000);
      return;
    }
    
-   console.warn("[HANDLER] DB still empty after seed attempt. Retrying soon...");
+   console.warn("[HANDLER] DB still below minimum after seed attempt. Retrying soon...");
    setTimeout(() => location.reload(), 5000);
    arr = [];
  }
