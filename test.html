@@ -27,12 +27,24 @@ input{width:100%;padding:14px;border:2px solid #ffd6e8;border-radius:14px;margin
 .send{width:100%;padding:14px;border:none;border-radius:14px;background:#ff5fa2;color:#fff;font-weight:700}
 .more-wrap{text-align:center;margin:12px 0}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#fff;padding:12px 18px;border-radius:14px;display:none;box-shadow:0 10px 25px rgba(0,0,0,.12)}
+.broadcast-container{margin:30px auto;max-width:1000px}
+.broadcast-banner{background:linear-gradient(135deg,#ff6cab,#ff5fa2);border-radius:15px;padding:20px;margin-bottom:20px;box-shadow:0 10px 30px rgba(255,107,162,.2);animation:slideDown 0.5s ease}
+.broadcast-msg{color:#fff;font-size:18px;font-weight:700;line-height:1.6;word-wrap:break-word}
+.broadcast-sender{font-size:12px;color:rgba(255,255,255,0.8);margin-top:8px;text-align:right}
+@keyframes slideDown{from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1}}
 </style>
 </head>
 <body>
 <div class="bg"><span>🧸</span><span>🎀</span><span>💖</span><span>✨</span></div>
 
 <div class="wrap">
+<div class="broadcast-container" id="broadcastContainer" style="display:none">
+ <div class="broadcast-banner">
+  <div class="broadcast-msg" id="broadcastMsg"></div>
+  <div class="broadcast-sender">— Chika</div>
+ </div>
+</div>
+
 <div class="hero">
 <div style="font-size:60px">🧸</div>
 <h1>CHIKA.R.V</h1>
@@ -75,6 +87,7 @@ const firebaseConfig={
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
 const wishesRef = ref(db, "wishes");
+const broadcastsRef = ref(db, "broadcasts");
 const timer = document.getElementById("timer");
 const wishBtn = document.getElementById("wishBtn");
 const modal = document.getElementById("modal");
@@ -84,6 +97,8 @@ const count = document.getElementById("count");
 const showing = document.getElementById("showing");
 const loadMoreBtn = document.getElementById("loadMoreBtn");
 const toast = document.getElementById("toast");
+const broadcastContainer = document.getElementById("broadcastContainer");
+const broadcastMsg = document.getElementById("broadcastMsg");
 
 const target=new Date("2026-06-09T00:00:00+07:00").getTime();
 setInterval(()=>{
@@ -106,7 +121,35 @@ const randomNames = [
   "Naufal","Nina","Oki","Putri","Rafi","Rania","Rian","Rizka","Sari","Salma",
   "Salman","Sinta","Tara","Teguh","Vika","Vino","Wira","Wulan","Yusuf","Yuni",
   "Zaki","Zara","Zein","Rizal","Biru","Cinta","Dewi","Feri","Galih","Hana",
-  "Kirana","Mila","Rena","Raka","Novi","Tama","Dian","Rama","Shinta","Safa"
+  "Kirana","Mila","Rena","Raka","Novi","Tama","Dian","Rama","Shinta","Safa",
+
+  // Nama modern
+  "Akmal","Alvaro","Alfian","Aqila","Anindya","Bintang","Brandon","Bryan","Celine",
+  "Chika","Chelsea","Daffa","Davin","Denzel","Elena","Farel","Felix","Gavin",
+  "Gio","Gilang","Haikal","Jefri","Kezia","Kayla","Leon","Lorenzo","Mikha",
+  "Nayla","Nabila","Rayhan","Rasya","Rere","Salsa","Syifa","Tasya","Tiara",
+  "Vania","Zahra","Zivana","Nico","Kevin","Reza","Riko","Rendy","Yuda","Yoga",
+
+  // Nama Roblox/Gaming
+  "Shadow","Dark","Hunter","Legend","Phoenix","Dragon","Reaper","Ghost",
+  "Sniper","Titan","Storm","Blaze","Inferno","Vortex","Nova","Venom",
+  "Thunder","Knight","Wolf","Falcon","Ninja","Samurai","Pirate","Wizard"
+];
+const alayNames = [
+  "yanz","kinz","kenz","xenz","ryzz","rayz","nayz","fizz","yazz","kyz",
+  "lizzy","zinz","kazz","pengz","banz","vanz","sanz","brickz","keyz","renz",
+
+  // Alay 2025-2026
+  "xyzz","rizxx","fanzz","rafzz","alzz","vellz","cellz","callz","danzz",
+  "dyorr","dyorr","xyroo","zeynn","zeyy","zall","zalll","rellz","rell",
+  "rellzz","ceyy","ceyyy","cezz","celo","cello","vell","vellz","viorr",
+  "vior","viizz","kiyy","kiyyy","kiizz","kaizz","kaiz","kaizzx","renn",
+  "rennn","renzy","renzyy","skyzz","skyy","skyyyy","fikzz","fikz",
+  "azzamzz","aryzz","aryy","aryaaa","xyra","xyraa","xyrell","xylen",
+  "xyroo","xynzz","xyvann","xyvannz","xeynn","xeyy","kenzy","kenzyy",
+  "nayy","nayyy","nayzz","nayzxx","auraa","auryy","aurizz","aurenn",
+  "celly","cellyy","cellaa","cellazz","felzz","felzzz","vellaa","vellaaa",
+  "ryukk","ryukzz","roryy","rorzz","rorr","fanzxy","sanzxy","vanzxy"
 ];
 let wishDisplayLimit = MAX_INITIAL;
 let wishesData = [];
@@ -117,23 +160,52 @@ function pickRandomName(exclude = []) {
   return available.length ? available[Math.floor(Math.random() * available.length)] : randomNames[Math.floor(Math.random() * randomNames.length)];
 }
 
-function randomWish() {
+function getUsedNames(existingForBatch = []) {
+  const used = new Set(existingForBatch.map(n => String(n).trim().toLowerCase()).filter(Boolean));
+  wishesData.forEach(item => {
+    if (item && item.name) used.add(String(item.name).trim().toLowerCase());
+  });
+  return used;
+}
+
+function makeUniqueName(base, used) {
+  let candidate = String(base).trim();
+  let suffix = 1;
+  while (used.has(candidate.toLowerCase())) {
+    candidate = `${base}${suffix}`;
+    suffix += 1;
+  }
+  used.add(candidate.toLowerCase());
+  return candidate;
+}
+
+function generateWishName(existingNames = new Set()) {
+ if (Math.random() < 0.3) {
+   const base = alayNames[Math.floor(Math.random() * alayNames.length)];
+   const name = Math.random() < 0.7 ? `${base}` : `${base}${Math.random() < 0.5 ? 'zz' : 'z'}`;
+   return makeUniqueName(name, existingNames);
+ }
+ const name = pickRandomName();
+ const finalName = Math.random() < 0.15 ? `${name}${Math.floor(Math.random() * 90 + 10)}` : name;
+ return makeUniqueName(finalName, existingNames);
+}
+
+function randomWish(existingNames = new Set()) {
  return {
-   name: pickRandomName(),
+   name: generateWishName(existingNames),
    timestamp: Date.now() - Math.floor(Math.random()*86400000)
  };
 }
 
-function generateFakeWishes(count) {
- const names = [...randomNames];
- for (let i = names.length - 1; i > 0; i--) {
-   const j = Math.floor(Math.random() * (i + 1));
-   [names[i], names[j]] = [names[j], names[i]];
+function generateFakeWishes(count, existingNames = new Set()) {
+ const names = [];
+ for (let i = 0; i < count; i++) {
+   names.push({
+     name: generateWishName(existingNames),
+     timestamp: Date.now() - Math.floor(Math.random()*86400000)
+   });
  }
- return Array.from({length: count}, (_, index) => ({
-   name: names[index % names.length],
-   timestamp: Date.now() - Math.floor(Math.random()*86400000)
- }));
+ return names;
 }
 
 wishBtn.onclick = () => modal.style.display = "flex";
@@ -207,7 +279,7 @@ function scheduleAutoWish() {
  setTimeout(async () => {
    try {
      const addCount = 1 + Math.floor(Math.random()*2);
-     const items = Array.from({ length: addCount }, randomWish);
+     const items = Array.from({ length: addCount }, () => randomWish(getUsedNames()));
      const result = await addWishes(items);
      console.log(`[AUTO] ✓ ${result.success}/${addCount} wish(es) confirmed sent`);
      if (result.errors.length) {
@@ -250,8 +322,9 @@ sendBtn.onclick = async () => {
  try {
    sendBtn.disabled = true;
    sendBtn.textContent = "Sending...";
+   const uniqueName = makeUniqueName(n, getUsedNames());
    const result = await pushWish({
-     name: n,
+     name: uniqueName,
      timestamp: Date.now()
    });
    if (!result.success) throw result.error;
@@ -287,7 +360,7 @@ async function handleWishes(snap) {
    if (!seedAttempted) {
      seedAttempted = true;
      const seedCount = missing + Math.floor(Math.random()*11);
-     const seedItems = generateFakeWishes(seedCount);
+     const seedItems = generateFakeWishes(seedCount, getUsedNames(arr.map(item => item.name || '')));
      console.log(`[HANDLER] Seeding ${seedCount} wish(es) to reach minimum count...`);
      const result = await addWishes(seedItems);
      if (result.success === seedCount) {
@@ -322,7 +395,7 @@ window.resendWishes = async () => {
  
  // Step 1: Generate wishes
  const seedCount = 50;
- const seedItems = generateFakeWishes(seedCount);
+ const seedItems = generateFakeWishes(seedCount, getUsedNames());
  console.log(`[RESEND] Generated ${seedCount} wishes`);
  console.log("[RESEND] First 3 samples:", seedItems.slice(0, 3));
  
@@ -430,6 +503,22 @@ window.checkWishCount = async () => {
 };
 
 console.log("[SYSTEM] Type 'resendWishes()' in console to manually resend 50 wishes to Firebase");
+
+onValue(broadcastsRef, snap => {
+ const data = snap.val();
+ if (data) {
+   const latestKey = Object.keys(data).sort().pop();
+   const latest = data[latestKey];
+   if (latest && latest.text) {
+     broadcastMsg.innerHTML = latest.text.replace(/\n/g, "<br>");
+     broadcastContainer.style.display = "block";
+     console.log(`[BROADCAST] Real-time update: ${latest.text.substring(0,50)}...`);
+     setTimeout(() => {
+       broadcastContainer.style.display = "none";
+     }, 5000);
+   }
+ }
+});
 
 onValue(wishesRef, snap => {
  const data = snap.val();
