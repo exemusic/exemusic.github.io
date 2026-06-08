@@ -2304,6 +2304,30 @@
       font-size: 12px;
       line-height: 1.4;
     }
+    .request-status.status-pending {
+      background: rgba(76,175,80,0.12);
+      border-color: rgba(76,175,80,0.25);
+    }
+    .request-status.status-accepted {
+      background: rgba(0,150,136,0.12);
+      border-color: rgba(0,150,136,0.25);
+    }
+    .request-status.status-rejected {
+      background: rgba(244,67,54,0.12);
+      border-color: rgba(244,67,54,0.25);
+    }
+    .status-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+      vertical-align: middle;
+    }
+    .status-badge.status-pending { background: #4caf50; color: #fff; }
+    .status-badge.status-accepted { background: #009688; color: #fff; }
+    .status-badge.status-rejected { background: #f44336; color: #fff; }
 
     /* ============================================================
        SUPABASE FILE UPLOAD - v3.2.3
@@ -6488,17 +6512,6 @@
       }
     }
 
-    const defaultFirebaseConfig = {
-      apiKey: "AIzaSyCVJYSR4nHeoRA9WTMZa3-2xliKQRrd5g4",
-      authDomain: "exemusic-execuriverp.firebaseapp.com",
-      databaseURL: "https://exemusic-execuriverp-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "exemusic-execuriverp",
-      storageBucket: "exemusic-execuriverp.firebasestorage.app",
-      messagingSenderId: "722057744401",
-      appId: "1:722057744401:web:cd6a6a103692059bda61b0",
-      measurementId: "G-2P56Y7QQ18"
-    };
-
     const firebaseConfig = parseJsonEnv('FIREBASE_CONFIG') || defaultFirebaseConfig;
     if (!firebaseConfig || !firebaseConfig.apiKey) {
       console.error('Firebase config missing. Set FIREBASE_CONFIG in environment variables.');
@@ -6514,11 +6527,6 @@
     window.auth = auth;
     window.db = db;
 
-    // ============================================================
-    // SUPABASE CONFIGURATION - v3.2.3
-    // ============================================================
-    const defaultSupabaseUrl = 'https://rirernnkstrjjquvblge.supabase.co';
-    const defaultSupabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpcmVybm5rc3RyampxdXZibGdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0OTYyMzAsImV4cCI6MjA4OTA3MjIzMH0.M2JDFy327Pny7gchW2pZVt5dzNbyw63gebYe_SkP4Mk';
     const supabaseUrl = getEnvValue('SUPABASE_URL') || defaultSupabaseUrl;
     const supabaseKey = getEnvValue('SUPABASE_ANON_KEY') || defaultSupabaseKey;
     if (!supabaseUrl || !supabaseKey) {
@@ -10641,22 +10649,79 @@
     function formatPendingExpiry(timestamp) {
       return new Date(timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
     }
-    function updateRequestStatusUI() {
-      const pending = getPendingUploadRequest();
-      const statusText = pending ? `Status request: PENDING. Tunggu admin meninjau sampai ${formatPendingExpiry(pending.expiresAt)}.` : 'Belum ada request pending.';
+    function getRequestStatusBadge(status) {
+      if (status === 'accepted') return '<span class="status-badge status-accepted">ACCEPTED</span>';
+      if (status === 'rejected') return '<span class="status-badge status-rejected">REJECTED</span>';
+      return '<span class="status-badge status-pending">PENDING</span>';
+    }
+    async function syncUploadRequestStatus(storedRequest) {
+      if (!storedRequest || !storedRequest.requestId || !db) return storedRequest;
+      try {
+        const snap = await db.ref('requests/' + storedRequest.requestId).once('value');
+        const req = snap.val();
+        if (!req) return storedRequest;
+        const status = req.status || 'pending';
+        const updated = {
+          ...storedRequest,
+          status,
+          response: req.response || '',
+          expiresAt: req.expiresAt || storedRequest.expiresAt,
+          processedAt: req.processedAt || storedRequest.processedAt || null
+        };
+        localStorage.setItem('exeUploadRequestPending', JSON.stringify(updated));
+        return updated;
+      } catch (err) {
+        console.error('Unable to refresh request status:', err);
+        return storedRequest;
+      }
+    }
+    async function updateRequestStatusUI() {
+      let request = getPendingUploadRequest();
+      request = await syncUploadRequestStatus(request);
       const statusUser = document.getElementById('requestStatusUser');
       const statusGuest = document.getElementById('requestStatusGuest');
-      if (statusUser) statusUser.textContent = statusText;
-      if (statusGuest) statusGuest.textContent = statusText;
+      const statusClassList = ['status-pending', 'status-accepted', 'status-rejected'];
+      if (!request) {
+        if (statusUser) {
+          statusUser.classList.remove(...statusClassList);
+          statusUser.innerHTML = 'Belum ada request pending.';
+        }
+        if (statusGuest) {
+          statusGuest.classList.remove(...statusClassList);
+          statusGuest.innerHTML = 'Belum ada request pending.';
+        }
+      } else {
+        const status = (request.status || 'pending').toLowerCase();
+        const badge = getRequestStatusBadge(status);
+        const message = status === 'pending'
+          ? `Tunggu admin meninjau sampai ${formatPendingExpiry(request.expiresAt)}.`
+          : `Request ${status} oleh admin.`;
+        const responseHtml = request.response ? `<div style="margin-top:8px;color:#c0f7ff;font-size:12px"><strong>Respon admin:</strong> ${escapeHtml(request.response)}</div>` : '';
+        const html = `Status request: ${badge} ${message}${responseHtml}`;
+        if (statusUser) {
+          statusUser.classList.remove(...statusClassList);
+          statusUser.classList.add(`status-${status}`);
+          statusUser.innerHTML = html;
+        }
+        if (statusGuest) {
+          statusGuest.classList.remove(...statusClassList);
+          statusGuest.classList.add(`status-${status}`);
+          statusGuest.innerHTML = html;
+        }
+      }
       const userBtn = document.querySelector('#requestFormUser button');
       const guestBtn = document.querySelector('#uploadFormGuest button');
+      const disableBtn = request && request.status !== 'rejected';
+      const buttonText = request
+        ? (request.status === 'pending' ? 'PENDING...' : request.status === 'accepted' ? 'REQUEST ACCEPTED' : 'KIRIM REQUEST LAGI')
+        : 'KIRIM REQUEST';
       if (userBtn) {
-        userBtn.disabled = !!pending;
-        userBtn.textContent = pending ? 'PENDING...' : 'KIRIM REQUEST';
+        userBtn.disabled = disableBtn;
+        userBtn.textContent = buttonText;
       }
       if (guestBtn) {
-        guestBtn.disabled = !!pending;
-        guestBtn.textContent = pending ? 'PENDING...' : 'KIRIM REQUEST';
+        guestBtn.disabled = disableBtn;
+        guestBtn.textContent = buttonText;
       }
     }
     function openReq() {
@@ -10695,7 +10760,7 @@
       const now = Date.now();
       const expiresAt = now + 7 * 24 * 60 * 60 * 1000;
       const existing = getPendingUploadRequest();
-      if (existing) return msg('Kamu masih punya request pending. Tunggu admin meninjau dulu.');
+      if (existing && existing.status === 'pending') return msg('Kamu masih punya request pending. Tunggu admin meninjau dulu.');
       let payload = {
         status: 'pending',
         type: 'upload',
